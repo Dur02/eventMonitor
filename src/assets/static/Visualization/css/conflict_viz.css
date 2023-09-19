@@ -1,0 +1,86 @@
+#type_pie_chart{
+    width: 100%;
+    height: 650px;
+}
+#map_all{
+    width:100%;
+    height:650px;
+}
+#type_map_all{
+    width:100%;
+    height:650px;
+}
+#type_map_affect{
+    width:100%;
+    height:650px;
+}
+#type_map_arrest{
+    width:100%;
+    height:650px;
+}
+#type_map_kidnap{
+    width:100%;
+    height:650px;
+}
+#type_map_kill{
+    width:100%;
+    height:650px;
+}
+#type_map_protest{
+    width:100%;
+    height:650px;
+}
+#type_map_seize{
+    width:100%;
+    height:650px;
+}
+#type_map_wound{
+    width:100%;
+    height:650px;
+}
+#map_country{
+    width:100%;
+    height:650px;
+}
+#map_state{
+    width:100%;
+    height:650px;
+}
+#map_city{
+    width:100%;
+    height:650px;
+}
+#button_type_bubble1{
+    left: 10px;
+    top: 10px;
+    z-index: 99;
+    position: absolute;
+}
+#button_type_bubble2{
+    left: 10px;
+    top: 43px;
+    z-index: 99;
+    position: absolute;
+}
+#button_location{
+    right: 10px;
+    top: 10px;
+    z-index: 99;
+    position: absolute;
+}
+#button_type{
+    right: 10px;
+    top: 10px;
+    z-index: 99;
+    position: absolute;
+}
+#button_type_pie{
+    right: 10px;
+    top: 10px;
+    z-index: 1000;
+    position: absolute;
+}
+#code_pie_chart{
+    width: 100%;
+    height: 650px;
+}

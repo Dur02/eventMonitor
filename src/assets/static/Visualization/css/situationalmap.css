@@ -1,0 +1,79 @@
+/********************actormap*********************/
+.black{
+    color:black;
+}
+#introduction_area{
+    font-family: Verdana;
+
+}
+#map {
+    width: 100%;
+
+}
+
+#map div.leaflet-tile-pane {
+
+}
+
+.leaflet-control-legend {
+    max-height: none !important;
+}
+
+#export{
+    position: absolute;
+    z-index: 99;
+    left: 4px;
+    bottom: 2px;
+}
+.button-default{
+    border: 1px solid lightgray;
+    color: black;
+}
+
+#charts_area{
+}
+
+.btn-show{
+    border:1px solid #428bca;
+    background-color: white;
+    margin-bottom: 6%;
+    margin-top: 10%;
+}
+#text-content{
+    position: absolute;
+    text-align: center;
+    left:0;
+    right:0;
+    z-index: 100;
+}
+#button_content{
+    position: absolute;
+    right:10%;
+    margin-top: 6%;
+    z-index: 100;
+}
+
+/*********/
+.filterable {
+    margin-top: 15px;
+}
+.filterable .panel-heading .pull-right {
+    margin-top: -20px;
+}
+.filterable .filters input[disabled] {
+    background-color: transparent;
+    border: none;
+    cursor: auto;
+    box-shadow: none;
+    padding: 0;
+    height: auto;
+}
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+    color: #333;
+}
+.filterable .filters input[disabled]::-moz-placeholder {
+    color: #333;
+}
+.filterable .filters input[disabled]:-ms-input-placeholder {
+    color: #333;
+}

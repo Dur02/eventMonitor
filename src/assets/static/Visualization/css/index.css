@@ -1,0 +1,307 @@
+/*导航下图片*/
+
+
+#backgroundimg {
+	margin:0px;
+	height:500px;
+	background-color:#eee;
+	border-bottom:1px;
+	}
+
+#backgroundimg .btext
+{
+	text-align:center;
+	margin-top:180px;
+	}
+#backgroundimg .bbutton
+{
+	text-align:center;
+	margin-top:50px;
+	}
+
+
+/*导航下图片结束*/
+
+/*幻灯片kaishi*/
+#divMain h2
+{
+    font-size: 40px;
+    color: #428bca ;
+    /*background-color:  RGBA(66,139,202,0.5);*/
+    padding:30px 35px 20px 35px;
+
+}
+#divMain>.le{
+	padding-left:100px;
+	padding-right:100px;
+	text-align:center;
+	}
+#divMain .img-text
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    background-color: #fff;
+}
+#divMain img
+{
+    border-radius: 0;
+}
+.list_carousel{}
+.list_carousel ul {
+	margin-top: 20px;
+	margin-bottom:35px;
+	padding: 0;
+	list-style: none;
+	display: block;
+}
+.list_carousel li {
+	margin: 10px;
+	height:180px;
+	display: block;
+	float: left;
+
+}
+.list_carousel.responsive {
+	width: auto;
+	margin-left: 0;
+}
+#divMain>.carbutton
+{
+	text-align:center;
+	}
+/*#divMain .overlay {*/
+  /*margin: 2px;*/
+  /*bottom: 0;*/
+  /*left: 0;*/
+  /*opacity: 0;*/
+  /*overflow: hidden;*/
+  /*position: absolute;*/
+  /*right: 0;*/
+  /*top: 0;*/
+  /*text-align: center;*/
+  /*transition-duration: 0.5s;*/
+/*}*/
+
+/*幻灯片结束*/
+
+/*三角形开始*/
+
+.triangle-container
+{
+	height:70px;
+	width:30px;
+	margin:auto;
+	padding-right:92px;
+
+	}
+.triangle-down {
+	border-left: 46px solid transparent;
+	border-right: 46px solid transparent;
+	border-top: 27px solid #eee;
+
+}
+
+/*三角形结束*/
+
+
+/*旋转地球区域*/
+#globe_canvase .quakeCanvas_container
+{
+    height: 510px;
+    padding-top: 30px;
+    padding-bottom: 0px;
+    background-image: url('/static/Visualization/img/index/sky.jpg');
+}
+#globe_canvase .control_container
+{
+    margin-top:20px;
+
+}
+#globe_canvase .quakeCanvas_text
+{
+
+    position:absolute;
+    z-index:2;
+    margin-top: 40px;
+    margin-left: 30px;
+}
+
+#globe_canvase .quakeCanvas_text h1
+{
+    font-size: 47px;
+    color: #fff ;
+    background-color:  RGBA(66,139,202,0.6);
+
+    padding:25px 35px 25px 35px;
+    display: inline-block;
+
+}
+#globe_canvase .quakeCanvas_text h3
+{
+    font-size: 21px;
+    color: #fff ;
+    background-color:  RGBA(200,200,200,0.3);
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding:8px 15px 8px 15px;
+    display: inline-block;
+
+}
+#globe_canvase .quakeCanvas_text .btn
+{
+    font-size: 15px;
+
+    display: inline-block;
+
+}
+#globe_canvase .quakeCanvas_text span
+{
+    color: #fff;
+    margin-left: 10px;
+    margin-right: 10px;
+
+}
+/*旋转地球区域结束*/
+
+/*introduction 部分*/
+#section-introduction
+{
+    text-align: center;
+}
+#section-introduction h2
+{
+    font-size: 40px;
+    color: #428bca ;
+    /*background-color:  RGBA(66,139,202,0.5);*/
+    padding:30px 35px 20px 35px;
+
+}
+#section-introduction p
+{
+    line-height: 35px;
+    font-size: 20px;
+    color: #777777 ;
+    /*background-color:  RGBA(66,139,202,0.5);*/
+    padding:20px 120px 40px 120px;
+
+}
+/*introduction部分结束*/
+/*section-features部分*/
+#section-features {
+  padding: 40px 0;
+}
+
+#section-features {
+	padding:40px 0;
+}
+
+#section-features .row > div {
+	border-right:1px solid #D5D5D5;
+}
+
+#section-features .row > div:last-child {
+	border-right:0;
+}
+
+#section-features .feature {
+	text-align:center;
+	padding:15px 0;
+}
+
+#section-features .feature i {
+	font-size:38px;
+
+	border:2px solid #428bca;
+	border-radius:50%;
+	width:90px;
+	height:90px;
+	padding-top:25px;
+	transition-duration:0.4s;
+}
+
+#section-features .feature h3 {
+	text-transform:uppercase;
+	font-size:20px;
+	margin:20px 0 15px;
+}
+
+#section-features .feature p {
+	font-size:13px;
+	color:#555;
+	margin:0;
+}
+
+#section-features .feature:hover i {
+	color:#FFFFFF;
+    background-color: #428bca ;
+}
+/*section-features部分结束*/
+.content-separator
+{
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.content-separator h2 {
+	font-size:26px;
+	color: #FFFFFF;
+	text-align:center;
+}
+
+.content-separator p {
+	font-size:15px;
+	color:#fff;
+	margin-top:5px;
+    margin-bottom: 5px;
+}
+.content-separator .btn
+{
+    display: inline-block;
+    background-color: RGBA(200,200,200,0);
+    border: 2px solid #fff;
+    font-size:15px;
+    color: #fff ;
+}
+
+
+#section-portfolio .portfolio-item .hover-overlay {
+		padding-top: 5px;
+	}
+
+#section-portfolio .portfolio-item p {
+		font-size:13px;
+		line-height:18px;
+		margin-bottom:8px;
+	}
+
+#section-portfolio .portfolio-item a i {
+		font-size: 14px;
+		height: 35px;
+		padding-top:9px;
+		width: 35px;
+	}
+
+.map-section
+{
+    text-align: center;
+    margin-top:100px;
+    margin-bottom: 100px;
+
+}
+#bubble_map
+{
+    padding-left: 100px;
+    padding-right: 100px;
+    width: 100%;
+    height: 850px;
+}
+.map-section h2
+{
+
+    font-size: 30px;
+    color: #428bca ;
+    /*background-color:  RGBA(66,139,202,0.5);*/
+    padding:30px 35px 20px 35px;
+
+}

@@ -1,0 +1,391 @@
+body {
+	background: #1d2334;
+	color: #fff;
+}
+
+.event_top {
+	width: 100%;
+	height: 36px;
+	line-height: 36px;
+	border-bottom: 1px solid #4b546e;
+}
+
+.event_top h4 {
+	line-height: 36px;
+}
+
+.event_top h4 span:first-child {
+	margin-left: 20px;
+	border-left: 4px solid #00aeff;
+	padding-left: 20px;
+}
+
+.main {
+	height: calc(100% - -8px);
+	background-color: #fff;
+}
+
+.event_option {
+	width: 98.28%;
+	margin: 0 auto;
+	padding-top: 12px;
+	height: 34px;
+	color: #bdcae6;
+}
+
+.event_option ul {
+	width: 260px;
+	height: 32px;
+	background: #333c57;
+	border-radius: 3px;
+}
+
+.event_option ul li {
+	width: 86px;
+	height: 24px;
+	color: #bdcae6;
+	float: left;
+	text-align: center;
+	line-height: 24px;
+	margin-top: 4px;
+	border-right: 1px solid #6c7798;
+	cursor: pointer;
+}
+
+.event_option ul li:last-child {
+	border: none;
+}
+
+.event_option button {
+	width: 58px;
+	height: 24px;
+	background-color: #287fcb;
+	border-radius: 3px;
+	border: none;
+	color: #fff;
+}
+
+.active {
+	border: none;
+	background: #287fcb;
+	height: 32px !important;
+	margin-top: 0px !important;
+	line-height: 32px !important;
+	border-radius: 3px;
+	color: #fff !important;
+	font-weight: bold;
+}
+
+.news_container {
+	width: 98.28%;
+	height: 85%;
+	border: 1px solid #ccc;
+	margin: 10px auto;
+	overflow: hidden;
+	position: relative;
+	overflow-y: auto;
+}
+
+.news_content {
+	margin: 32px 35px 0;
+	border-bottom: 1px solid #ccc;
+}
+
+.news_content:last-child {
+	border: none;
+}
+
+.news_content h5 {
+	width: 400px;
+	color: #287fcb;
+	font-size: 14px;
+	text-decoration: underline;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: "microsoft yahei";
+	cursor: pointer;
+}
+
+.news_content h5 span {
+	color: #ff000a;
+}
+
+.news_content .and {
+	margin: 20px 0;
+	color: black;
+}
+
+.news_content .and .url {
+	color: #2b7c32;
+}
+
+.news_content .and .time {
+	color: #2f64d6;
+}
+
+.news_content p {
+	color: #666666;
+	height: 40px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+.news_content .but {
+	height: 26px;
+}
+
+.news_content .but button {
+	width: 52px;
+	height: 18px;
+	border: 1px solid #287fcb;
+	color: #287fcb;
+	background: transparent;
+	float: right;
+}
+
+.pup_url {
+	/* width: calc(100% - 40px); */
+	margin-left: 89px;
+	line-height: 12px;
+}
+
+.pup_url label:last-child {
+	display: inline-block;
+	cursor: pointer;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 88%;
+}
+
+.nav_page {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+}
+
+.nav_page li {
+	float: left;
+	padding: 0 8px;
+	border: 1px solid #aaaaee;
+	border-radius: 3px;
+	margin: 0 5px;
+	color: #aeaeae;
+	cursor: pointer;
+}
+
+.nav_page .first {
+	background: #414551;
+	border-color: #999999;
+	color: #999;
+}
+
+.nav_page .bgtive {
+	background: #2266bb;
+	color: #fff;
+}
+
+.inquire {
+	width: 98.28%;
+	height: 30px;
+	margin: 0 auto;
+}
+
+.inquire button {
+	background: transparent;
+	border: none;
+	color: #287fcb;
+}
+
+.inquire .deco {
+	text-decoration: underline;
+}
+
+.inquire .up {
+	transform: rotate(-90deg);
+	margin-left: 5px;
+}
+
+.pop_up {
+	/* width: 64.17%;
+	height: 82.33%;
+	background-color: #121725;
+	border-radius: 20px;
+	border: solid 1px #42485b;
+	position: relative;
+	font-family: MicrosoftYaHei;
+	color: #aabcef;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	display: none; */
+    width: 64.17%;
+    height: 82.33%;
+    background-color: #cacfdc;
+    border-radius: 20px;
+    border: solid 1px #777777;
+    position: relative;
+    font-family: MicrosoftYaHei;
+    color: #666666;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    display: none;
+}
+
+.pop_up h5, .pop_up .list, .pop_up .list_text, .pop_up .list_url {
+	width: 93.31%;
+	margin: 0 auto;
+}
+
+.pop_up img {
+	cursor: pointer; position : absolute;
+	top: 15px;
+	right: 20px;
+	position: absolute;
+}
+
+.pop_up h5 {
+	font-size: 14px;
+	text-align: center;
+	margin: 25px auto;
+	color: #131313;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pop_up .list {
+	height: 55px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.pop_up .list ul {
+	line-height: 24px;
+}
+
+.pop_up .list ul li label {
+	display: inline-block;
+	width: 60px;
+}
+
+.pop_up .list ul li label:first-child {
+	text-align: right;
+	width: 61px;
+}
+
+.pop_up .list .list_detail3 label {
+	width: 120px;
+}
+
+.pop_up .list_text {
+	width: calc(93.31% - 66px);
+	height: calc(54.1% - 38px);
+	padding: 22px 36px 16px 30px;
+	background-color: #b5bac7;
+	border: solid 1px #777777;
+	line-height: 20px;
+	overflow: auto;
+	margin-top: 16px;
+}
+
+.pop_up .list_text::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+	background-color: #b5bac7;
+}
+
+.pop_up .list_text::-webkit-scrollbar-track {
+	background: #b5bac7;
+	border-radius: 4px;
+}
+
+.pop_up .list_text::-webkit-scrollbar-thumb {
+	background: #b5bac7;
+	border-radius: 4px;
+}
+
+.pop_up .list_text::-webkit-scrollbar-thumb:hover {
+	background: #b5bac7;
+}
+
+.pop_up .list_text::-webkit-scrollbar-corner {
+	background: #b5bac7;
+}
+
+.pop_up .list_url {
+	width: 93.31%;
+	height: 54px;
+	margin-top: 24px;
+}
+
+#s_pic {
+	height: 54px;
+	overflow: auto;
+	width: 100%;
+	padding-left: 31px!important;
+}
+
+#s_pic::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+	background-color: #0b1123;
+}
+
+#s_pic::-webkit-scrollbar-track {
+	background: #0b1123;
+	border-radius: 4px;
+}
+
+#s_pic::-webkit-scrollbar-thumb {
+	background: #363f5a;
+	border-radius: 4px;
+}
+
+#s_pic::-webkit-scrollbar-thumb:hover {
+	background: #363f5a;
+}
+
+#s_pic::-webkit-scrollbar-corner {
+	background: #363f5a;
+}
+
+.turn_on {
+	display: block;
+}
+
+.news_container::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+	background-color: #fff;
+}
+
+.news_container::-webkit-scrollbar-track {
+	background: #fff;
+	border-radius: 4px;
+}
+
+.news_container::-webkit-scrollbar-thumb {
+	background: #fff;
+	border-radius: 4px;
+}
+
+.news_container::-webkit-scrollbar-thumb:hover {
+	background: #fff;
+}
+
+.news_container::-webkit-scrollbar-corner {
+	background: #fff;
+}
+/*# sourceMappingURL=news.css.map */

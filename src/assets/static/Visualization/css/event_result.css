@@ -1,0 +1,93 @@
+.show-graph p{
+
+    color: #767c8d;
+}
+.headline {
+	margin:0px 0 50px 0;
+	border-bottom:1px dotted #428bca;
+	padding-left:0px;
+	color:#428bca;
+    font-size: 20px;
+    text-align: center;
+}
+.chart-text
+{
+
+    margin-top: 100px;
+    visibility:visible;
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+    opacity: 0;
+
+}
+.chart-text.show {
+    margin-top: 40px;
+    margin-left: 0px;
+    visibility:visible;
+    cursor:pointer;
+    opacity: 1.0;
+
+}
+
+#alalysis {
+	margin-top:30px;
+
+	background-color:#fff;
+	border-bottom:1px;
+	}
+
+#alalysis .bbutton
+{
+	text-align:center;
+	}
+#alalysis p
+{
+	font-weight:normal;
+	line-height:1.5;
+	}
+#alalysis h3>span
+{
+
+	}
+.submit-button
+{
+
+	width:150px;
+	height:45px;
+	}
+
+
+.form-group
+{
+	margin-top:30px;
+
+}
+h1
+{
+
+    font-size: 25px;
+    color:#428bca;
+    margin:20px 0 30px 0;
+}
+
+.amcharts
+{
+    width: 100%;
+    height: 400px;
+    border: 1px solid #fff;
+}
+.ammap
+{
+    width: 100%;
+    height: 400px;
+}
+.map-text
+{
+    text-align: center;
+}
+
+
+

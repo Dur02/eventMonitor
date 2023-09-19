@@ -1,0 +1,96 @@
+/*------------------------------
+	SIGN IN / SING UP
+------------------------------*/
+.panel {
+    background-color: transparent;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin:-225px 0 0 -300px; /*设定这个div的margin-top的负值为自身的高度的一半,margin-left的值也是自身的宽度的一半的负值.(感觉在绕口令)*/
+    width:600px; /*宽为400,那么margin-top为-200px*/
+    height:450px; /*高为200那么margin-left为-100px;*/
+    z-index:99; /*浮动在最上层 */
+}
+
+.panel-body {
+    padding: 80px;
+    background-color: rgba(2555,255,255,.3);
+}
+
+.btn-primary
+{
+    width: 100%;
+    font-size: 18px;
+}
+
+.panel-title{
+    color:  #428bca;
+    font-size: 15px;
+}
+
+/*------------------------------
+	FEATURES
+------------------------------*/
+.login-group-checkbox
+{
+    font-size: 20px;
+}
+.login-group-checkbox label
+{
+     font-weight: normal;
+}
+.input-group .form-control {
+    height: 45px;
+    font-size:20px;
+
+}
+.input-group{
+    margin-top: 15px;
+    margin-bottom: 12px;
+}
+
+.input-group-addon {
+	color:#888888;
+	font-size:20px;
+	border-color: #D5D5D5;
+
+}
+.input-group-addon i{
+    width: 20px;
+}
+
+.error {
+	padding: 10px;
+	font-size: 16px;
+}
+
+#particles {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    z-index: -2;
+}
+
+.iconmelon,
+.im {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: block;
+  fill: #525151;
+}
+
+.iconmelon:after,
+.im:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

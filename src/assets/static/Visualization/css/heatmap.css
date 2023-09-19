@@ -1,0 +1,50 @@
+.black{
+    color:black;
+}
+#introduction_area{
+    font-family: Verdana;
+}
+#charts_area{
+}
+#text-content{
+    position: absolute;
+    text-align: center;
+    left:0;
+    right:0;
+    z-index: 100;
+}
+#button_content{
+    position: absolute;
+    right:10%;
+    margin-top: 6%;
+    z-index: 100;
+}
+.btn-show{
+    border:1px solid #428bca;
+    background-color: white;
+    margin-bottom: 6%;
+    margin-top: 10%;
+}
+.btn-default{
+}
+#map {
+
+}
+#map div.leaflet-tile-pane {
+    opacity: 0.4;
+}
+
+div.leaflet-control-legend {
+    width: 400px;
+    max-height: 80px;
+}
+
+#info {
+    margin: 10px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 250px;
+    overflow-y: auto;
+    z-index: 99;
+}

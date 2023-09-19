@@ -1,0 +1,84 @@
+.black{
+    color:black;
+}
+.gray{
+    color:#e3e3e3;
+}
+.white{
+    color:white;
+}
+.left{
+    text-align: left;
+}
+.center{
+    text-align: center;
+}
+.right{
+    text-align: right;
+}
+.btn-show{
+    border:1px solid #428bca;
+    background-color: white;
+    margin-bottom: 6%;
+    margin-top: 10%;
+}
+.btn-default{
+}
+#introduction_area{
+    font-family: Verdana;
+    background-image: url('../img/leaflet/worldmap_img.png');
+}
+#map_area{
+    background-color: rgba(10,22,41,0.95);
+}
+#charts_area{
+}
+#text-content{
+    position: absolute;
+    text-align: center;
+    left:0;
+    right:0;
+    z-index: 100;
+}
+#button_content{
+    position: absolute;
+    right:10%;
+    margin-top: 3%;
+    z-index: 100;
+}
+#country_display{
+     visibility: hidden;
+     background: white;
+     left: 10px;
+     top: 10px;
+     position: absolute;
+     width: 250px;
+     max-height: 650px;
+     z-index: 100;
+}
+.country_content{
+    margin-left: 8px;
+}
+#color_display{
+    border-radius:5px;
+    right: 1px;
+    bottom: 1px;
+    position: absolute;
+    width: 345px;
+    height: 85px;
+    z-index: 100;
+}
+.color_content{
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-top: 10px;
+}
+#button_display{
+    position: absolute;
+    width: 40px;
+    height: 100px;
+    z-index: 100;
+}
+#map_display{
+    height: 650px;
+}

@@ -1,0 +1,26 @@
+*{ margin:0; padding:0; font-size:12px;}
+a{ text-decoration:none;}
+ul,ol,dl,dt,dd{margin:0; padding:0;}
+li{ list-style:none}
+img{ vertical-align:top;}
+input{outline:none; border:none;}
+b,i{font-weight:normal;}
+.fl{float:left;}
+.fr{float:right;}	
+.clearfix:after{ content:''; display:block; clear:both;}
+.clearfix{zoom:1;}
+
+.font_gray{color:#606060;}
+.font_blue{color:#6cadfe;}
+.show{
+	display:block!important;	
+}
+.none{
+	display:none!important;
+}
+.blcok{
+	display:block!important;
+}
+.inlineblock{
+	display:inline-block!important;
+}

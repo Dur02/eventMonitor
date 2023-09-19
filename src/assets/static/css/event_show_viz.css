@@ -1,0 +1,93 @@
+ .layui-table thead tr{
+ 	background:#2c385b !important;
+ 	color:#fff;
+ 	
+ }
+ .layui-table thead tr th{
+ 	border-bottom:1px solid #4a5165 !important;
+ }
+ .layui-table tbody tr{
+ 	background:#20263a;
+ }
+  .layui-table tbody tr:hover{
+  	background:#20263a !important;
+  }
+ .layui-table-view{
+ 	border:none !important;
+ }
+ .layui-table th,.layui-table td,.layui-table-header{
+ 	border-color:#4a5165 !important;
+ }
+  .layui-table thead tr{
+  	color:#fff !important;
+  }
+  .layui-table td{
+  	color:#bdcae6;
+  }
+  .layui-table-header{
+  	border:none !important;
+  }
+  .layui-table-header table{
+  	border-bottom:2px solid #4a5165 !important;
+  }
+ .layui-table tbody tr:nth-child(2n){
+ 	background:#1a1f2f !important;
+ } 
+ .layui-laypage a,.layui-laypage span{
+ 	color:black !important;
+ 	border:1px solid #aaaaee !important;
+ 	border-radius:3px;
+ 	margin:0 4px !important;
+ 	height:20px !important;
+ 	line-height:20px !important;
+ } 
+ .layui-laypage-em{
+ 	background:#1d2334 !important;
+ }
+ .layui-laypage-limits,.layui-laypage-btn,.layui-laypage-skip input{
+ 	background:#1d2334 !important;
+ 	color:#fff;
+ 	height:20px !important;
+ 	line-height:20px !important;
+ }
+ .layui-laypage select{
+ 	border-color:#aaaaee !important ;
+ }
+ .layui-laypage-limits{
+ 	border:none !important;
+ }
+.layui-laypage-limits select{
+	background:#1d2334 !important;
+	color:#fff;
+	padding:0 !important;
+}
+.layui-box .layui-laypage-skip{
+	border:none !important;
+}
+.layui-laypage input,.layui-laypage button{
+	border-color:#aaaaee !important;
+    color: black;
+    background-color: #fff !important;
+}
+.layui-table-body::-webkit-scrollbar{
+    width:8px;
+    height:8px;
+    background-color: #61B6EB;
+}
+.layui-table-body::-webkit-scrollbar-track{
+    background: #1d2334;
+    border-radius:2px;
+}
+.layui-table-body::-webkit-scrollbar-thumb{
+    background: #363f5a;
+    border-radius:2px;
+}
+.layui-table-body::-webkit-scrollbar-thumb:hover{
+    background: #363f5a;
+}
+.layui-table-body::-webkit-scrollbar-corner{
+    background: #363f5a;
+}
+.layui-table td,.layui-table th{
+	padding:0 !important;
+}

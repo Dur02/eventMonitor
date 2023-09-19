@@ -1,0 +1,20 @@
+/********************actormap*********************/
+.black{
+    color:black;
+}
+#introduction_area{
+    font-family: Verdana;
+    background-image: url('../img/leaflet/worldmap_img.png');
+}
+#map {
+    width: 100%;
+    background-image: url('../img/leaflet/worldmap_img2.png');
+}
+
+#map div.leaflet-tile-pane {
+    opacity: 0.5;
+}
+
+.leaflet-control-legend {
+    max-height: none !important;
+}

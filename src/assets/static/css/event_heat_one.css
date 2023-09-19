@@ -1,0 +1,33 @@
+@charset "UTF-8";
+
+
+/* .details {
+	width: 8%;
+	height: 38px;
+	background: url('../../static/images/placebg.png') no-repeat center
+		center;
+	background-size: 100% 100%;
+	margin: 0 50px;
+	text-align: center;
+	line-height: 38px;
+} */
+.details{
+	    height: 30px;
+	    z-index: 9999952;
+	    position: 27px;
+	   /*  position: relative; */
+	    top: 125px;
+	    left: 150px;
+   		width: 47%;
+}
+.place{
+	background-image: url(../../static/images/placebg.png);
+	height: 29px;
+    width: 60px;
+    text-align: center;
+    line-height: 29px;
+    float: left;
+    margin-left: 6px;
+    cursor: pointer;
+    color: white;
+}

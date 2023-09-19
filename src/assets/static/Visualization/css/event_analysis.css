@@ -1,0 +1,41 @@
+.headline {
+	margin:10px 0 10px 0;
+	border-bottom:1px dotted #428bca;
+	padding-left:0px;
+	color:#428bca;
+}
+
+
+#alalysis {
+	margin-top:30px;
+
+	background-color:#fff;
+	border-bottom:1px;
+	}
+
+#alalysis .bbutton
+{
+	text-align:center;
+	}
+#alalysis p
+{
+	font-weight:normal;
+	line-height:1.5;
+	}
+#alalysis h3>span
+{
+
+	}
+.submit-button
+{
+
+	width:150px;
+	height:45px;
+	}
+
+
+.form-group
+{
+	margin-top:30px;
+
+}

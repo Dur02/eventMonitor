@@ -1,0 +1,17 @@
+html,body{
+	background:#1d2334;
+}
+.index_top{
+	height:37px;
+	line-height:37px;
+	border-bottom:1px solid #4b546e;
+	background:url(../images/dh.png) no-repeat 30px 12px;
+}
+.title{
+	font-size:14px;
+	padding-left:50px;
+	color:#fff;
+}
+.index_bottom{
+	padding:6px;
+}

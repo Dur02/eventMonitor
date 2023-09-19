@@ -1,0 +1,39 @@
+@CHARSET "UTF-8";
+
+.information {
+	position: absolute;
+	left: 200px;
+	top: 200px;
+	width: 150px;
+	border: 1px red solid;
+}
+
+.information>li {
+	width: 50px;
+	height: 50px;
+	float: left;
+}
+
+.show-details {
+	display: none;
+	width: 140px;
+	padding-left: 37px;
+	height: 80px;
+	background: url(/monitorsystem/static/images/bg.png) no-repeat center
+		center/140px 80px;
+	position: absolute;
+	left: 1225px;
+	top: -39px;
+	z-index: 1000;
+}
+
+.show-details li {
+	font-size: 13px;
+	color: #fff;
+	margin-top: 9px;
+	width: 100%;
+}
+
+.clearfix {
+	position: relative;
+}

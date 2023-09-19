@@ -1,0 +1,38 @@
+/********************typemap*********************/
+.black{
+    color:black;
+}
+#introduction_area{
+    font-family: Verdana;
+    background-image: url('../img/leaflet/worldmap_img.png');
+}
+#text-content{
+    position: absolute;
+    text-align: center;
+    left:0;
+    right:0;
+    z-index: 100;
+}
+#button_content{
+    position: absolute;
+    right:5%;
+    margin-top: 3%;
+    z-index: 100;
+}
+.btn-show{
+    border:1px solid #428bca;
+    margin-bottom: 6%;
+    background-color: white;
+    margin-top: 10%;
+}
+.btn-default{
+}
+#map {
+    width: 100%;
+    background-image: url('../img/leaflet/worldmap_img2.png');
+}
+
+#map div.leaflet-tile-pane {
+    opacity: 0.1;
+}
+

@@ -1,0 +1,123 @@
+.header{
+	height:67px;
+	background:url(../images/top2.png) #115c9d no-repeat;
+	line-height:67px;
+}
+.header h2{
+	font-size: 26px;
+	color:#fff;
+	margin-left: 116px;
+}
+.header_r{
+	width:220px;
+	margin-right:10px;
+}
+.time{
+	font-family:"黑体";
+	font-size:14px;
+	margin-right:15px;
+	color:#fff;
+}
+.skin{
+	height:15px;
+	line-height:15px;
+	padding:10px 0px;
+}
+.white{
+	width:13px;
+	height:13px;
+	background:#b5c3f1;
+	border:1px solid #a5acc5;
+	display:block;
+	cursor:pointer;
+	float:right;
+	margin-right:10px;
+}
+.black_btn{
+	width:13px;
+	height:13px;
+	background:#2e3a62;
+	border:1px solid #566799;
+	display:block;
+	cursor:pointer;
+	float:right;
+}
+.user{
+	height:25px;
+	line-height:25px;
+	position:relative;
+}
+.email{
+	width:23px;
+	height:15px;
+	background:url(../images/email_2.png) no-repeat;
+	position:relative;
+	margin-top:2px;
+	margin-right:20px;
+}
+.have{
+	width:8px;
+	height:8px;
+	background: url(../images/email2.png);
+	display:block;
+	position:absolute;
+	right:-2px;
+	top:-2px;
+}
+.userinfo{
+	height:25px;
+	line-height:25px;
+}
+.userinfo li{
+	float:left;
+}
+.user_img{
+	width:18px;
+	height:18px;
+	background:url(../images/user_image_2.png) no-repeat;
+}
+.user_name{
+	padding:0px 10px;
+	height:18px;
+	font-size:14px;
+	color:#fff;
+	max-width:60px;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+}
+.user_change{
+	color:#ded9d9;
+	cursor:pointer;
+}
+/*修改密码*/
+.user_upd {
+    color: #ded9d9;
+    cursor: pointer;
+    padding-left: 9px;
+}
+.user_change:hover{
+	color:#fff;
+}
+/*修改密码*/
+.user_upd:hover{
+	color:#b5c7fd;
+}
+.user_changebox{
+	width:200px;
+	height:150px;
+	border:1px solid #1d2334;
+	background:#1d2334;
+	position:absolute;
+	top:37px;
+	right:0px;
+	display:none;
+	z-index:999;
+}
+.show{
+	display:block;
+}
+
+
+
+
