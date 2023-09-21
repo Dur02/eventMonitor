@@ -33,3 +33,7 @@ yarn.lock
 # 编译生成的文件
 auto-imports.d.ts
 components.d.ts
+
+# idle生成的文件
+.vscode
+.idea
