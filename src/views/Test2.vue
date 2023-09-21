@@ -3,9 +3,9 @@
 </script>
 
 <template>
-
+  <h1>147</h1>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 
 </style>

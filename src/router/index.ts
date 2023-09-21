@@ -1,23 +1,58 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
+import {
+  createDiscreteApi
+} from 'naive-ui'
+
+// https://www.naiveui.com/zh-CN/os-theme/components/discrete 脱离上下文使用API
+const { loadingBar } = createDiscreteApi(
+  ['loadingBar']
+)
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
+      redirect: '/login'
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/home',
+      redirect: { name: 'test1' },
+      component: () => import('../views/LayoutView.vue'),
+      children: [
+        {
+          path: 'test1',
+          name: 'test1',
+          meta: {
+            key: 'test1'
+          },
+          component: () => import('../views/Test1.vue')
+        },
+        {
+          path: 'test2',
+          name: 'test2',
+          meta: {
+            key: 'test2'
+          },
+          component: () => import('../views/Test2.vue')
+        },
+      ]
     }
   ]
+})
+
+router.beforeEach((to: RouteLocationNormalized, form: RouteLocationNormalized): boolean => {
+  loadingBar.start()
+  return true
+})
+
+router.afterEach((to: RouteLocationNormalized, form: RouteLocationNormalized): void => {
+  loadingBar.finish()
 })
 
 export default router

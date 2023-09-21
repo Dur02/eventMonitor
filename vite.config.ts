@@ -58,7 +58,7 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
         'vue',
         'vue-router',
         'pinia',
-        'axios',
+        'axios'
         // '@vueuse/core',
         // 'path-to-regexp',
         // 'echarts',
