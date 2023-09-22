@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import {
   type Ref,
-  h, Component, onBeforeMount, ref
+  onBeforeMount, ref
 } from 'vue'
 
 import {
   type MenuOption,
-  NIcon, NLayoutSider, NMenu
+  NLayoutSider, NMenu
 } from 'naive-ui'
 
 import {
-  LogOutOutline as HomeIcon
+  NavigateCircle
 } from '@vicons/ionicons5'
 
 import {
@@ -18,23 +18,23 @@ import {
   useRoute, useRouter
 } from 'vue-router'
 
+import renderIcon from '@/utils/function/renderIcon'
+
 const route: RouteLocationNormalizedLoaded = useRoute()
 const router: Router = useRouter()
-const selectedMenu: Ref<string> = ref('')
 
-function renderIcon (icon: Component) {
-  return () => h(NIcon, null, { default: () => h(icon) })
-}
+const selectedMenu: Ref<string> = ref('')
+const isCollapse: Ref<boolean> = ref(false)
 
 const menuOptions: MenuOption[] = [
   {
-    label: 'Home',
+    label: '回家',
     key: 'home',
-    icon: renderIcon(HomeIcon),
+    icon: renderIcon(NavigateCircle),
     children: [
       {
         label: '测试',
-        key: 'test1'
+        key: 'test1',
       },
       {
         label: '测试2',
@@ -55,14 +55,21 @@ onBeforeMount((): void => {
 
 <template>
   <n-layout-sider
+    class="sider-bar"
     :native-scrollbar="false"
     collapse-mode="width"
     :collapsed-width="64"
+    :collapsed="isCollapse"
+    @collapse="isCollapse = true"
+    @expand="isCollapse = false"
     :width="240"
     show-trigger="bar"
     inverted
     bordered
   >
+    <h3 v-show="!isCollapse">
+      测试系统名字
+    </h3>
     <n-menu
       v-model:value="selectedMenu"
       inverted
@@ -76,5 +83,10 @@ onBeforeMount((): void => {
 </template>
 
 <style scoped lang="scss">
-
+.sider-bar {
+  h3 {
+    text-align: center;
+    margin: 10px 0;
+  }
+}
 </style>

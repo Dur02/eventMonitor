@@ -13,28 +13,25 @@ import { Person, LockOpen } from '@vicons/ionicons5'
 import Cookies from 'js-cookie'
 import { encode, decode } from 'js-base64'
 
-// Interface
+type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
+type InputThemeOverrides = NonNullable<InputProps['themeOverrides']>
+type CheckBoxThemeOverrides = NonNullable<CheckboxProps['themeOverrides']>
+
 interface ModelType {
   username: string | null
   password: string | null
   rememberMe: boolean
 }
 
-// type
-type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
-type InputThemeOverrides = NonNullable<InputProps['themeOverrides']>
-type CheckBoxThemeOverrides = NonNullable<CheckboxProps['themeOverrides']>
-
-// ref
 const model = ref<ModelType>({
   username: null,
   password: null,
   rememberMe: false
 })
+
 const formRef = ref<FormInst | null>(null)
 const isBtnLoading: Ref<boolean> = ref(false)
 
-// ThemeOverrides
 const formThemeOverrides: FormThemeOverrides = {
   blankHeightMedium: '30px'
 }

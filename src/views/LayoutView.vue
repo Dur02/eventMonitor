@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {
   NLayout,
-  NLayoutHeader,
-  NLayoutContent,
   NLayoutFooter
 } from 'naive-ui'
-import Sider from '@/components/layout/sider.vue'
+import CustomSider from '@/components/layout/sider.vue'
+import CustomHeader from '@/components/layout/header.vue'
+import CustomContent from '@/components/layout/content.vue'
 
 </script>
 
@@ -18,30 +18,16 @@ import Sider from '@/components/layout/sider.vue'
       has-sider
       embedded
     >
-      <sider />
+      <custom-sider />
       <n-layout>
-        <n-layout-header
-          position="absolute"
-          bordered
-          style="height: 40px;"
-        >
-          颐和园路
-        </n-layout-header>
-        <n-layout-content
-          position="absolute"
-          :native-scrollbar="false"
-          content-style="padding: 24px;"
-          embedded
-          style="top: 40px;"
-        >
-          <router-view/>
-        </n-layout-content>
-        <n-layout-footer
-          position="absolute"
-          bordered
-        >
-          成府路
-        </n-layout-footer>
+        <custom-header />
+        <custom-content />
+<!--        <n-layout-footer-->
+<!--          position="absolute"-->
+<!--          bordered-->
+<!--        >-->
+<!--          成府路-->
+<!--        </n-layout-footer>-->
       </n-layout>
     </n-layout>
   </div>
