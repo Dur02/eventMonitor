@@ -21,6 +21,10 @@
     "skipLibCheck": true,
     // 允许默认导入
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true
+//    "emitDeclarationOnly": true, // 只输出声明文件(ts 产物)
+//    "declaration": true, // 自动生成声明文件
+//    "declarationDir": "dist", // 声明文件生成的目录
   }
 }

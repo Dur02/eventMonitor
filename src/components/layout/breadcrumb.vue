@@ -10,7 +10,7 @@ import {
 
 import {
   type Ref,
-  onBeforeMount, ref
+  onBeforeMount, ref, watch
 } from 'vue'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
@@ -20,6 +20,13 @@ const nameArray: Ref<string[]> = ref([])
 onBeforeMount(() => {
   nameArray.value = route.meta.name as string[]
 })
+
+watch(
+  () => route.meta.name,
+  (name) => {
+    nameArray.value = name as string[]
+  }
+)
 </script>
 
 <template>

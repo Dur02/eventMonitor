@@ -52,12 +52,12 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to: RouteLocationNormalized, form: RouteLocationNormalized): boolean => {
+router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized): boolean => {
   loadingBar.start()
   return true
 })
 
-router.afterEach((to: RouteLocationNormalized, form: RouteLocationNormalized): void => {
+router.afterEach((to: RouteLocationNormalized, from: RouteLocationNormalized): void => {
   loadingBar.finish()
 })
 

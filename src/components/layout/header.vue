@@ -50,7 +50,7 @@ const updateShowModal = (bool: boolean): void => {
     position="absolute"
     bordered
   >
-<!--    <custom-bread-crumb />-->
+    <custom-bread-crumb />
     <n-space
       align="center"
     >
@@ -82,7 +82,7 @@ const updateShowModal = (bool: boolean): void => {
   height: 40px;
   padding: 7px 24px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: baseline;
 }
 </style>

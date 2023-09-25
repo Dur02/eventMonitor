@@ -46,7 +46,6 @@ const checkBoxThemeOverrides: CheckBoxThemeOverrides = {
   textColor: 'rgba(255, 255, 255, 1)'
 }
 
-// rules
 const rules: FormRules = {
   username: [
     { required: true, message: '请输入账号', trigger: ['input', 'blur'] }
