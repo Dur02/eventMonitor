@@ -44,7 +44,7 @@ const menuOptions: MenuOption[] = [
   },
 ]
 
-const handleSelectedChange = (key: string, item: MenuOption): void => {
+const handleSelectedChange = (key: string): void => {
   router.push({ name: `${key}` })
 }
 

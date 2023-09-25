@@ -30,7 +30,7 @@ const router = createRouter({
           name: 'test1',
           meta: {
             key: 'test1',
-            name: ['回家', '测试1']
+            breadcrumbName: ['回家', '测试1']
           },
           component: () => import('../views/Test1.vue')
         },
@@ -39,7 +39,7 @@ const router = createRouter({
           name: 'test2',
           meta: {
             key: 'test2',
-            name: ['回家', '测试2']
+            breadcrumbName: ['回家', '测试2']
           },
           component: () => import('../views/Test2.vue')
         },

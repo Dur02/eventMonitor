@@ -18,13 +18,13 @@ const route: RouteLocationNormalizedLoaded = useRoute()
 const nameArray: Ref<string[]> = ref([])
 
 onBeforeMount(() => {
-  nameArray.value = route.meta.name as string[]
+  nameArray.value = route.meta.breadcrumbName as string[]
 })
 
 watch(
-  () => route.meta.name,
-  (name) => {
-    nameArray.value = name as string[]
+  () => route.meta.breadcrumbName,
+  (breadcrumbName) => {
+    nameArray.value = breadcrumbName as string[]
   }
 )
 </script>
