@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import {
-  type Ref,
-  ref, onBeforeMount,
-} from 'vue'
-
-import {
-  type FormProps, type InputProps, type CheckboxProps, type FormRules, type FormInst, type FormValidationError,
-  NForm, NFormItem, NInput, NIcon, NCheckbox, NButton,
-} from 'naive-ui'
-
+import type { Ref } from 'vue'
+import { ref, onMounted, } from 'vue'
+import type { FormProps, InputProps, CheckboxProps, FormRules, FormInst, FormValidationError, } from 'naive-ui'
+import { NForm, NFormItem, NInput, NIcon, NCheckbox, NButton, } from 'naive-ui'
 import { Person, LockOpen } from '@vicons/ionicons5'
-import Cookies from 'js-cookie'
 import { encode, decode } from 'js-base64'
+import Cookies from 'js-cookie'
 
 type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
 type InputThemeOverrides = NonNullable<InputProps['themeOverrides']>
@@ -100,7 +94,7 @@ const queryLocalForm = (): void => {
   }
 }
 
-onBeforeMount(() => {
+onMounted(() => {
   queryLocalForm()
 })
 </script>

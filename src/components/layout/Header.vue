@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import {
-  NLayoutHeader, NIcon, NAvatar, NSpace, NDropdown, NBreadcrumb, NBreadcrumbItem
-} from 'naive-ui'
-
-import {
-  LogOutOutline, Pencil, Person,
-} from '@vicons/ionicons5'
-
-import renderIcon from '@/utils/function/renderIcon'
-import CustomBreadCrumb from '@/components/layout/breadcrumb.vue'
-import ChangePassword from '@/components/modal/changePassword.vue'
 import { ref } from 'vue'
+import { NLayoutHeader, NIcon, NAvatar, NSpace, NDropdown } from 'naive-ui'
+import { LogOutOutline, Pencil, Person } from '@vicons/ionicons5'
+import renderIcon from '@/utils/function/renderIcon'
+import CustomBreadCrumb from '@/components/layout/Breadcrumb.vue'
+import ChangePassword from '@/components/modal/ChangePassword.vue'
 
 const showModal = ref<boolean>(false)
 

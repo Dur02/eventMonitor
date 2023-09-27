@@ -3,9 +3,9 @@ import {
   NLayout,
   NLayoutFooter
 } from 'naive-ui'
-import CustomSider from '@/components/layout/sider.vue'
-import CustomHeader from '@/components/layout/header.vue'
-import CustomContent from '@/components/layout/content.vue'
+import CustomSider from '@/components/layout/Sider.vue'
+import CustomHeader from '@/components/layout/Header.vue'
+import CustomContent from '@/components/layout/Content.vue'
 
 </script>
 

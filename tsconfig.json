@@ -13,7 +13,7 @@
       "node",
       "naive-ui/volar",
       "vite/client"
-    ]
+    ],
   },
   "include": [
     "src/**/*.ts",

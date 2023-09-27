@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1>147</h1>
+  <p>123456</p>
 </template>
 
 <style scoped lang="scss">

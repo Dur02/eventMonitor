@@ -7,7 +7,7 @@ import {
   type PaginationProps, type DataTableColumns, type DataTableBaseColumn,
   NDataTable
 } from 'naive-ui'
-// import { type TableBaseColumn } from 'naive-ui/es/data-table/src/interface';
+import type {FilterOptionValue, SortOrder} from 'naive-ui/es/data-table/src/interface'
 
 interface rowData {
   column1: number,
@@ -54,8 +54,8 @@ const columns: DataTableColumns<rowData> = [
   }
 ]
 
-const dataRef = ref([])
-const loadingRef = ref(true)
+const dataRef: Ref<rowData[]> = ref([])
+const loadingRef: Ref<boolean> = ref(true)
 const columnsRef: Ref<DataTableColumns<rowData>> = ref(columns)
 const column1Reactive: DataTableBaseColumn<rowData> = reactive(column1)
 const column2Reactive: DataTableBaseColumn<rowData> = reactive(column2)
@@ -63,23 +63,23 @@ const paginationReactive: false | PaginationProps = reactive({
   page: 1,
   pageCount: 1,
   pageSize: 50,
+  showSizePicker: true,
+  showQuickJumper: true,
+  pageSizes: [10, 20, 50, 100],
   prefix ({ itemCount }) {
-    return `Total is ${itemCount}.`
+    return `共${itemCount}条数据`
   }
 })
 
-const mockTableData: rowData[] = Array.apply(
-  null,
-  { length: 987 }).map((_: unknown, index: number): rowData => {
-    return {
-      column1: index,
-      column2: (index % 2) + 1,
-      column3: 'a' + index
-    }
+const mockTableData: rowData[] = Array.apply(null, { length: 987 }).map((_: unknown, index: number): rowData => {
+  return {
+    column1: index,
+    column2: (index % 2) + 1,
+    column3: 'a' + index
   }
-)
+})
 
-function query (page: number, pageSize: number = 10, order: string | boolean = 'ascend', filterValues: number[] = []) {
+function query (page: number, pageSize: number = 10, order: SortOrder, filterValues: FilterOptionValue[] = []) {
   return new Promise((resolve) => {
     const copiedData = mockTableData.map((v) => v)
     const orderedData = order === 'descend' ? copiedData.reverse() : copiedData
@@ -113,7 +113,7 @@ const handleSorterChange = (sorter) => {
         paginationReactive.page,
         paginationReactive.pageSize,
         !sorter ? false : sorter.order,
-        column2Reactive.filterOptionValues as number[]
+        column2Reactive.filterOptionValues
       ).then((data: queryResultType) => {
         column1Reactive.sortOrder = !sorter ? false : sorter.order
         dataRef.value = data.data
@@ -133,7 +133,7 @@ const handleFiltersChange = (filters) => {
       paginationReactive.page,
       paginationReactive.pageSize,
       column1Reactive.sortOrder,
-      filterValues as number[]
+      filterValues
     ).then((data: queryResultType) => {
       column2Reactive.filterOptionValues = filterValues
       dataRef.value = data.data
@@ -151,7 +151,7 @@ const handlePageChange = (currentPage) => {
       currentPage,
       paginationReactive.pageSize,
       column1Reactive.sortOrder,
-      column2Reactive.filterOptionValues as number[]
+      column2Reactive.filterOptionValues
     ).then((data: queryResultType) => {
       dataRef.value = data.data
       paginationReactive.page = currentPage
@@ -167,7 +167,7 @@ onMounted(() => {
     paginationReactive.page,
     paginationReactive.pageSize,
     column1Reactive.sortOrder,
-    column2Reactive.filterOptionValues as number[]
+    column2Reactive.filterOptionValues
   ).then((data: queryResultType) => {
     dataRef.value = data.data
     paginationReactive.pageCount = data.pageCount
@@ -189,6 +189,8 @@ onMounted(() => {
     @update:sorter="handleSorterChange"
     @update:filters="handleFiltersChange"
     @update:page="handlePageChange"
+    style="height: calc(100vh - 80px);"
+    flex-height
   />
 </template>
 

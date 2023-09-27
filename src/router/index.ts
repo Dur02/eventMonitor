@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
-import {
-  createDiscreteApi
-} from 'naive-ui'
+import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteLocationNormalized } from 'vue-router'
+import { createDiscreteApi } from 'naive-ui'
+import menuRoutes from '@/router/menuRoutes'
 
 // https://www.naiveui.com/zh-CN/os-theme/components/discrete 脱离上下文使用API
 const { loadingBar } = createDiscreteApi(
@@ -20,31 +20,7 @@ const router = createRouter({
       name: 'login',
       component: () => import('../views/LoginView.vue')
     },
-    {
-      path: '/home',
-      redirect: { name: 'test1' },
-      component: () => import('../views/LayoutView.vue'),
-      children: [
-        {
-          path: 'test1',
-          name: 'test1',
-          meta: {
-            key: 'test1',
-            breadcrumbName: ['回家', '测试1']
-          },
-          component: () => import('../views/Test1.vue')
-        },
-        {
-          path: 'test2',
-          name: 'test2',
-          meta: {
-            key: 'test2',
-            breadcrumbName: ['回家', '测试2']
-          },
-          component: () => import('../views/Test2.vue')
-        },
-      ]
-    },
+    ...menuRoutes,
     {
       path: '/:pathMatch(.*)',
       component: () => import('../components/error/404.vue')

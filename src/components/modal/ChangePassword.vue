@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import {
-  type FormInst, type FormItemInst, type FormItemRule, type FormRules,
-  NModal, NForm, NFormItem, NInput, NButton, NCol, NRow,
-  useMessage
-} from 'naive-ui'
-
 import { ref } from 'vue'
+import { NModal, NForm, NFormItem, NInput, NButton, NCol, NRow, useMessage } from 'naive-ui'
+import type { FormInst, FormItemInst, FormItemRule, FormRules } from 'naive-ui'
 
 interface ModelType {
   password: string | null
