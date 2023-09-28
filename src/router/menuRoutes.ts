@@ -19,7 +19,7 @@ export default [
         meta: {
           breadcrumb: '事件展示'
         },
-        component: () => import('../views/event/display.vue')
+        component: () => import('../views/event/EventDisplayView.vue')
       },
       {
         path: 'timeline',
@@ -27,7 +27,7 @@ export default [
         meta: {
           breadcrumb: '事件时间线'
         },
-        component: () => import('../views/event/timeline.vue')
+        component: () => import('../views/event/EventTimelineView.vue')
       },
     ]
   },
@@ -47,7 +47,7 @@ export default [
         meta: {
           breadcrumb: '图谱展示'
         },
-        component: () => import('../views/graph/display.vue')
+        component: () => import('../views/graph/GraphDisplayView.vue')
       },
       {
         path: 'timeline',
@@ -55,7 +55,7 @@ export default [
         meta: {
           breadcrumb: '图谱时间线'
         },
-        component: () => import('../views/graph/timeline.vue')
+        component: () => import('../views/graph/GraphTimelineView.vue')
       },
     ]
   }

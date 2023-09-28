@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import {
-  type Ref,
-  ref, reactive, onMounted
-} from 'vue'
-import {
-  type PaginationProps, type DataTableColumns, type DataTableBaseColumn,
-  NDataTable
-} from 'naive-ui'
-import type {FilterOptionValue, SortOrder} from 'naive-ui/es/data-table/src/interface'
+import type { Ref } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import type { PaginationProps, DataTableColumns, DataTableBaseColumn, DataTableSortState, DataTableFilterState } from 'naive-ui'
+import { NDataTable } from 'naive-ui'
+import type { FilterOptionValue, SortOrder } from 'naive-ui/es/data-table/src/interface'
 
 interface rowData {
   column1: number,
@@ -79,7 +75,7 @@ const mockTableData: rowData[] = Array.apply(null, { length: 987 }).map((_: unkn
   }
 })
 
-function query (page: number, pageSize: number = 10, order: SortOrder, filterValues: FilterOptionValue[] = []) {
+function query (page: number, pageSize: number = 10, order: SortOrder, filterValues: FilterOptionValue[] = []): Promise<queryResultType> {
   return new Promise((resolve) => {
     const copiedData = mockTableData.map((v) => v)
     const orderedData = order === 'descend' ? copiedData.reverse() : copiedData
@@ -105,7 +101,7 @@ const rowKey = (rowData) => {
   return rowData.column1
 }
 
-const handleSorterChange = (sorter) => {
+const handleSorterChange = (sorter: DataTableSortState | null) => {
   if (!sorter || sorter.columnKey === 'column1') {
     if (!loadingRef.value) {
       loadingRef.value = true
@@ -125,17 +121,17 @@ const handleSorterChange = (sorter) => {
   }
 }
 
-const handleFiltersChange = (filters) => {
+const handleFiltersChange = (filters: DataTableFilterState) => {
   if (!loadingRef.value) {
     loadingRef.value = true
-    const filterValues = filters.column2 || []
+    const filterValues = filters.column2
     query(
       paginationReactive.page,
       paginationReactive.pageSize,
       column1Reactive.sortOrder,
-      filterValues
+      filterValues as FilterOptionValue[]
     ).then((data: queryResultType) => {
-      column2Reactive.filterOptionValues = filterValues
+      column2Reactive.filterOptionValues = filterValues as FilterOptionValue[]
       dataRef.value = data.data
       paginationReactive.pageCount = data.pageCount
       paginationReactive.itemCount = data.total
@@ -144,7 +140,7 @@ const handleFiltersChange = (filters) => {
   }
 }
 
-const handlePageChange = (currentPage) => {
+const handlePageChange = (currentPage: number) => {
   if (!loadingRef.value) {
     loadingRef.value = true
     query(

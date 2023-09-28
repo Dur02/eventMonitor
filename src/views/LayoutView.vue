@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import {
-  NLayout,
-  NLayoutFooter
-} from 'naive-ui'
+import { NLayout } from 'naive-ui'
 import CustomSider from '@/components/layout/Sider.vue'
 import CustomHeader from '@/components/layout/Header.vue'
 import CustomContent from '@/components/layout/Content.vue'
-
 </script>
 
 <template>

@@ -7,23 +7,5 @@
     {
       "path": "./tsconfig.app.json"
     }
-  ],
-  "compilerOptions": {
-    "types": [
-      "node",
-      "naive-ui/volar",
-      "vite/client"
-    ],
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "env.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import EventTimelineDisplay from '@/components/event/EventTimelineDisplay.vue'
+import EventTimeline from '@/components/event/EventTimeline.vue'
 </script>
 
 <template>
   <div class="display-container">
-    <event-timeline-display />
+    <event-timeline />
   </div>
 </template>
 

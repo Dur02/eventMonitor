@@ -48,7 +48,7 @@ onMounted(() => {
   echartsLine.value.setOption(option)
 
   window.addEventListener('resize', () => {
-    echartsLine.value.resize()
+    echartsLine.value?.resize()
   }, {
     signal: controller.signal
   })
@@ -56,7 +56,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   controller.abort()
-  echartsLine.value.dispose()
+  echartsLine.value?.dispose()
 })
 </script>
 
