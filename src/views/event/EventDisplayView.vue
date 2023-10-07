@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
+import type { Ref, VNodeChild } from 'vue'
 import { ref, reactive, onMounted } from 'vue'
-import type { PaginationProps, DataTableColumns, DataTableBaseColumn, DataTableSortState, DataTableFilterState } from 'naive-ui'
+import type {
+  PaginationProps,
+  DataTableColumns,
+  DataTableBaseColumn,
+  DataTableSortState,
+  DataTableFilterState,
+  PaginationInfo,
+} from 'naive-ui'
 import { NDataTable } from 'naive-ui'
 import type { FilterOptionValue, SortOrder } from 'naive-ui/es/data-table/src/interface'
 
@@ -55,14 +62,14 @@ const loadingRef: Ref<boolean> = ref(true)
 const columnsRef: Ref<DataTableColumns<rowData>> = ref(columns)
 const column1Reactive: DataTableBaseColumn<rowData> = reactive(column1)
 const column2Reactive: DataTableBaseColumn<rowData> = reactive(column2)
-const paginationReactive: false | PaginationProps = reactive({
+const paginationReactive: PaginationProps = reactive({
   page: 1,
   pageCount: 1,
   pageSize: 50,
   showSizePicker: true,
   showQuickJumper: true,
   pageSizes: [10, 20, 50, 100],
-  prefix ({ itemCount }) {
+  prefix ({ itemCount }: PaginationInfo): VNodeChild {
     return `共${itemCount}条数据`
   }
 })
@@ -97,7 +104,7 @@ function query (page: number, pageSize: number = 10, order: SortOrder, filterVal
   })
 }
 
-const rowKey = (rowData) => {
+const rowKey = (rowData: rowData) => {
   return rowData.column1
 }
 
@@ -106,10 +113,10 @@ const handleSorterChange = (sorter: DataTableSortState | null) => {
     if (!loadingRef.value) {
       loadingRef.value = true
       query(
-        paginationReactive.page,
+        paginationReactive.page as number,
         paginationReactive.pageSize,
         !sorter ? false : sorter.order,
-        column2Reactive.filterOptionValues
+        column2Reactive.filterOptionValues as FilterOptionValue[]
       ).then((data: queryResultType) => {
         column1Reactive.sortOrder = !sorter ? false : sorter.order
         dataRef.value = data.data
@@ -126,9 +133,9 @@ const handleFiltersChange = (filters: DataTableFilterState) => {
     loadingRef.value = true
     const filterValues = filters.column2
     query(
-      paginationReactive.page,
+      <number> paginationReactive.page,
       paginationReactive.pageSize,
-      column1Reactive.sortOrder,
+      column1Reactive.sortOrder as SortOrder,
       filterValues as FilterOptionValue[]
     ).then((data: queryResultType) => {
       column2Reactive.filterOptionValues = filterValues as FilterOptionValue[]
@@ -146,8 +153,8 @@ const handlePageChange = (currentPage: number) => {
     query(
       currentPage,
       paginationReactive.pageSize,
-      column1Reactive.sortOrder,
-      column2Reactive.filterOptionValues
+      column1Reactive.sortOrder as SortOrder,
+      column2Reactive.filterOptionValues as FilterOptionValue[]
     ).then((data: queryResultType) => {
       dataRef.value = data.data
       paginationReactive.page = currentPage
@@ -160,10 +167,10 @@ const handlePageChange = (currentPage: number) => {
 
 onMounted(() => {
   query(
-    paginationReactive.page,
+    paginationReactive.page as number,
     paginationReactive.pageSize,
-    column1Reactive.sortOrder,
-    column2Reactive.filterOptionValues
+    column1Reactive.sortOrder as SortOrder,
+    column2Reactive.filterOptionValues as FilterOptionValue[]
   ).then((data: queryResultType) => {
     dataRef.value = data.data
     paginationReactive.pageCount = data.pageCount

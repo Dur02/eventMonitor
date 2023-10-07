@@ -65,7 +65,7 @@ const handleLogin = () => {
             un: encodeUserName,
             p: encodePassword
           }
-          Cookies.set('unp', JSON.stringify(localForm))
+          Cookies.set('unp', JSON.stringify(localForm), { expires: 7 })
         } else {
           Cookies.remove('unp')
         }
@@ -87,7 +87,7 @@ const queryLocalForm = (): void => {
       model.value.username = decode(un)
       model.value.password = decode(p)
     } catch (error) {
-      console.error('本地数据解析失败', error)
+      // console.error('本地数据解析失败', error)
     }
   } else {
     model.value.rememberMe = false
