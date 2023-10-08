@@ -28,7 +28,7 @@ const handleSelect = (key: string | number): void => {
       showModal.value = true
       break
     default:
-      // 推出登录
+      // 退出登录
       break
   }
 }
@@ -74,7 +74,7 @@ const updateShowModal = (bool: boolean): void => {
 <style scoped lang="scss">
 .layout-header {
   height: 40px;
-  padding: 7px 24px;
+  padding: 7px 10px;
   display: flex;
   justify-content: space-between;
   align-items: baseline;

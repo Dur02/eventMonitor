@@ -3,6 +3,7 @@ import { NLayout } from 'naive-ui'
 import CustomSider from '@/components/layout/Sider.vue'
 import CustomHeader from '@/components/layout/Header.vue'
 import CustomContent from '@/components/layout/Content.vue'
+import CustomFooter from '@/components/layout/Footer.vue'
 </script>
 
 <template>
@@ -18,12 +19,7 @@ import CustomContent from '@/components/layout/Content.vue'
       <n-layout>
         <custom-header />
         <custom-content />
-<!--        <n-layout-footer-->
-<!--          position="absolute"-->
-<!--          bordered-->
-<!--        >-->
-<!--          成府路-->
-<!--        </n-layout-footer>-->
+        <custom-footer />
       </n-layout>
     </n-layout>
   </div>

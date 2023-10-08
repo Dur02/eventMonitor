@@ -6,13 +6,13 @@ import { NLayoutSider, NMenu } from 'naive-ui'
 import type { RouteLocationNormalizedLoaded, Router, RouteRecordRaw } from 'vue-router'
 import { useRoute, useRouter } from 'vue-router'
 import menuRoutes from '@/router/menuRoutes'
-import { flow, map } from 'lodash/fp'
+import { map } from 'lodash/fp'
 
 interface routeType {
   key: string,
-  label: string,
+  label: string | null,
   icon: Function | null,
-  children: routeType[] | null
+  children: routeType[] | undefined
 }
 
 const route: RouteLocationNormalizedLoaded = useRoute()
@@ -21,9 +21,10 @@ const router: Router = useRouter()
 const menuInstRef: Ref<MenuInst | null> = ref(null)
 const selectedMenu: Ref<string> = ref('')
 const isCollapse: Ref<boolean> = ref(false)
-const menuOptions: Ref<MenuOption[]> = ref([])
+const menuOptions: Ref<routeType[]> = ref([])
 
 const handleSelectedChange = (key: string): void => {
+  console.log(key)
   router.push({ name: `${key}` })
 }
 
@@ -31,9 +32,9 @@ onMounted((): void => {
   const mapChildren = (param: RouteRecordRaw[]): routeType[] => {
     return map((item: RouteRecordRaw): routeType => ({
       key: item.name as string,
-      label: item.meta.breadcrumb as string,
-      icon: item.meta.icon ? item.meta.icon as Function : null,
-      children: item.children ? mapChildren(item.children) : null
+      label: item.meta ? item.meta.breadcrumb as string : null,
+      icon: item.meta ? item.meta.icon as Function : null,
+      children: item.children ? mapChildren(item.children) : undefined
     }))(param)
   }
 
@@ -42,16 +43,9 @@ onMounted((): void => {
     * @author Dur02
     * @date 2023/9/27
   **/
-  menuOptions.value = flow(
-    map((item: RouteRecordRaw): routeType => ({
-      key: item.name as string,
-      label: item.meta.breadcrumb as string,
-      icon: item.meta.icon ? item.meta.icon as Function : null,
-      children: item.children ? mapChildren(item.children) : null
-    }))
-  )(menuRoutes)
-
+  menuOptions.value = mapChildren(menuRoutes)
   selectedMenu.value = route.name as string
+
   nextTick(() => {
     menuInstRef.value?.showOption(route.name as string)
   })
@@ -82,7 +76,7 @@ onMounted((): void => {
       :root-indent="18"
       :collapsed-width="64"
       :collapsed-icon-size="22"
-      :options="menuOptions"
+      :options="menuOptions as MenuOption[]"
       @update:value="handleSelectedChange"
     />
   </n-layout-sider>

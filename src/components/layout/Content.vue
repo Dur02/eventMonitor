@@ -6,16 +6,19 @@ import { RouterView } from 'vue-router'
 
 <template>
   <n-layout-content
+    class="layout-content"
     position="absolute"
     :native-scrollbar="false"
-    content-style="padding: 10px 24px;"
+    content-style="padding: 7px 12px;"
     embedded
-    style="top: 40px;"
   >
     <router-view/>
   </n-layout-content>
 </template>
 
 <style scoped lang="scss">
-
+.layout-content {
+  top: 40px;
+  bottom: 40px;
+}
 </style>

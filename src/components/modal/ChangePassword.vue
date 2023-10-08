@@ -12,9 +12,12 @@ const props = defineProps<{
   showModal: boolean
 }>()
 
-const emits = defineEmits<{
-  ModalClose: [showModal: boolean]
-}>()
+// const emits = defineEmits<{
+//   ModalClose: [showModal: boolean]
+// }>()
+
+const emits = defineEmits(['ModalClose'])
+
 
 const model = ref<ModelType>({
   password: null,
@@ -35,6 +38,7 @@ function validatePasswordStartWith (
     model.value.password.length >= value.length
   )
 }
+
 function validatePasswordSame (rule: FormItemRule, value: string): boolean {
   return value === model.value.password
 }
@@ -95,7 +99,7 @@ const handleValidateButtonClick = (e: MouseEvent): void => {
 <template>
   <n-modal
     :show="showModal"
-    class="custom-card"
+    class="modal-container"
     preset="card"
     title="修改密码"
     size="small"
@@ -134,7 +138,7 @@ const handleValidateButtonClick = (e: MouseEvent): void => {
       </n-form-item>
       <n-row :gutter="[0, 24]">
         <n-col :span="24">
-          <div style="display: flex; justify-content: flex-end">
+          <div class="submit-btn" style="display: flex; justify-content: flex-end">
             <n-button
               round
               type="primary"

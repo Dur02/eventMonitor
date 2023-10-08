@@ -192,7 +192,7 @@ onMounted(() => {
     @update:sorter="handleSorterChange"
     @update:filters="handleFiltersChange"
     @update:page="handlePageChange"
-    style="height: calc(100vh - 80px);"
+    style="height: calc(100vh - 100px);"
     flex-height
   />
 </template>

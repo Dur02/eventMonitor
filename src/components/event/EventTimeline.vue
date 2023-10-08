@@ -32,6 +32,10 @@ type ECOption = ComposeOption<
 const echartsRef: Ref<HTMLElement | null> = ref(null)
 const echartsLine: ShallowRef<EChartsType | null>= shallowRef(null)
 const controller: AbortController = new AbortController();
+const resizeObserver = new ResizeObserver(() => {
+  const width = echartsRef.value?.offsetWidth
+  echartsLine.value?.resize({ width, height: "auto" })
+})
 const value: Ref<string> = ref('day')
 const songs = [
   {
@@ -119,10 +123,12 @@ onMounted(() => {
   }, {
     signal: controller.signal
   })
+  resizeObserver.observe(echartsRef.value!)
 })
 
 onBeforeUnmount(() => {
   controller.abort()
+  resizeObserver.unobserve(echartsRef.value!)
   echartsLine.value?.dispose()
 })
 </script>
