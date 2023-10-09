@@ -1,72 +1,358 @@
 <script setup lang="ts">
-import { NButton, NLayoutFooter, NIcon, NSpace } from 'naive-ui'
-import { CaretUpCircleOutline } from '@vicons/ionicons5'
+import { NButton, NLayoutFooter, NIcon, NSpace, NScrollbar } from 'naive-ui'
+import { CaretUpCircle, CaretDownCircle, ArrowForward, ArrowBackSharp } from '@vicons/ionicons5'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
-import { onMounted } from 'vue'
+import type { Ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
-const btnArray = [
+const selectedTab: Ref<string> = ref('')
+const scrollContainer: Ref<HTMLElement | null> = ref(null)
+const footerBtn: Ref<{ name: string }[]> = ref([])
+const footerExpand: Ref<boolean> = ref(false)
+
+const btnArray1 = [
   {
-    name: 'Alpha关系'
+    name: 'A关系'
   },
   {
-    name: 'Beta关系'
-  }
+    name: 'B关系'
+  },
+  {
+    name: 'c关系'
+  },
+  {
+    name: 'd关系'
+  },
+  {
+    name: 'e关系'
+  },
+  {
+    name: 'f关系'
+  },
+  {
+    name: 'g关系'
+  },
+  {
+    name: 'h关系'
+  },
+  {
+    name: 'i关系'
+  },
+  {
+    name: 'j关系'
+  },
+  {
+    name: 'k关系'
+  },
+  {
+    name: 'l关系'
+  },
+  {
+    name: 'm关系'
+  },
+  {
+    name: 'n关系'
+  },
+  {
+    name: 'o关系'
+  },
+  {
+    name: 'p关系'
+  },
+  {
+    name: 'q关系'
+  },
+  {
+    name: 'r关系'
+  },
+  {
+    name: 's关系'
+  },
+  {
+    name: 't关系'
+  },
+  {
+    name: 'u关系'
+  },
+  {
+    name: 'v关系'
+  },
+  {
+    name: 'w关系'
+  },
+  {
+    name: 'x关系'
+  },
+  {
+    name: 'y关系'
+  },
+  {
+    name: 'z关系'
+  },
+]
+const btnArray2 = [
+  {
+    name: '1关系'
+  },
+  {
+    name: '2关系'
+  },
+  {
+    name: '3关系'
+  },
+  {
+    name: '4关系'
+  },
+  {
+    name: '5关系'
+  },
+  {
+    name: '6关系'
+  },
+  {
+    name: '7关系'
+  },
+  {
+    name: '8关系'
+  },
+  {
+    name: '9关系'
+  },
+  {
+    name: '10关系'
+  },
+  {
+    name: '11关系'
+  },
+  {
+    name: '12关系'
+  },
+  {
+    name: '13关系'
+  },
+  {
+    name: '14关系'
+  },
+  {
+    name: '15关系'
+  },
+  {
+    name: '16关系'
+  },
+  {
+    name: '17关系'
+  },
+  {
+    name: '18关系'
+  },
+  {
+    name: '19关系'
+  },
+  {
+    name: '20关系'
+  },
+  {
+    name: '21关系'
+  },
+  {
+    name: '22关系'
+  },
+  {
+    name: '23关系'
+  },
+  {
+    name: '24关系'
+  },
+  {
+    name: '25关系'
+  },
+  {
+    name: '26关系'
+  },
 ]
 
-const changeData = (name: string) => {
-  console.log(name)
+const getFooterBtn = () => {
+  switch (route.name) {
+    case 'eventDisplay':
+      return btnArray1
+    case 'eventTimeline':
+      return btnArray2
+    default:
+      return []
+  }
+}
+
+const handleScroll = (e: WheelEvent | undefined = undefined, isForward: boolean | undefined = undefined) => {
+  if (e) {
+    const eventDelta = -e.deltaY
+    scrollContainer.value!.scrollBy({ left: eventDelta < 0 ? 100 : -100 })
+  } else {
+    switch (isForward) {
+      case true:
+        scrollContainer.value!.scrollBy({ left: 100 })
+        break
+      case false:
+        scrollContainer.value!.scrollBy({ left: -100 })
+        break
+      default:
+        break
+    }
+  }
+}
+
+const changeSelectedTab = (name: string) => {
+  selectedTab.value = name
+}
+
+const changeExpand = () => {
+  footerExpand.value = !footerExpand.value
 }
 
 onMounted(() => {
-  console.log(route)
+  footerBtn.value = getFooterBtn()
+  selectedTab.value = footerBtn.value[0]?.name
 })
+
+watch(
+  () => route.name,
+  () => {
+    footerBtn.value = getFooterBtn()
+    selectedTab.value = footerBtn.value[0]?.name
+  }
+)
 </script>
 
 <template>
   <n-layout-footer
     class="layout-footer"
+    :class="footerExpand ? 'expand' : ''"
     position="absolute"
     bordered
   >
-    <div>
-      <n-space size="small">
-        <n-button
-          type="primary"
-          size="tiny"
-        >
-          <template #icon>
-            <n-icon>
-              <CaretUpCircleOutline />
-            </n-icon>
-          </template>
-        </n-button>
-        <n-button
-          v-for="item in btnArray"
-          type="primary"
-          size="tiny"
-          @click="() => changeData(item.name)"
-        >
-          {{ item.name }}
-        </n-button>
-      </n-space>
+    <div class="footer-bar">
+      <n-button
+        class="fixed-btn"
+        type="info"
+        size="small"
+        @click="changeExpand"
+      >
+        <template #icon>
+          <n-icon>
+            <CaretUpCircle v-show="!footerExpand" />
+            <CaretDownCircle v-show="footerExpand" />
+          </n-icon>
+        </template>
+      </n-button>
+      <n-button
+        v-if="footerBtn.length !== 0"
+        class="fixed-btn"
+        type="warning"
+        size="small"
+        @click="() => handleScroll(undefined, false)"
+      >
+        <template #icon>
+          <n-icon>
+            <ArrowBackSharp />
+          </n-icon>
+        </template>
+      </n-button>
+      <n-scrollbar
+        class="scroll-container"
+        ref="scrollContainer"
+        x-scrollable
+        style="margin: 0 10px;"
+        @wheel.native.prevent="(e) => handleScroll(e, undefined)"
+      >
+        <div class="scroll-wrapper">
+          <n-button
+            class="footer-btn"
+            v-for="item in footerBtn"
+            :key="item.name"
+            :type="selectedTab === item.name ? 'primary': 'tertiary'"
+            size="small"
+            @click="() => changeSelectedTab(item.name)"
+          >
+            {{ item.name }}
+          </n-button>
+        </div>
+      </n-scrollbar>
+      <n-button
+        v-if="footerBtn.length !== 0"
+        class="fixed-btn"
+        type="warning"
+        size="small"
+        @click="() => handleScroll(undefined, true)"
+      >
+        <template #icon>
+          <n-icon>
+            <ArrowForward />
+          </n-icon>
+        </template>
+      </n-button>
+      <n-button
+        class="fixed-btn"
+        type="info"
+        size="small"
+        @click="changeExpand"
+      >
+        即时查询
+      </n-button>
     </div>
-    <n-button
-      type="primary"
-      size="tiny"
-    >
-      即时查询
-    </n-button>
+    <div style="width: 100%;height: 500px;background: aqua;">
+
+    </div>
   </n-layout-footer>
 </template>
 
 <style scoped lang="scss">
 .layout-footer {
-  height: 40px;
-  padding: 7px 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  height: 50px;
+  padding: 10px 24px;
+  transition: all 1s;
+
+  &.expand {
+    height: 500px;
+    z-index: 3;
+  }
+
+  .footer-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    scroll-snap-type: x mandatory;
+    height: 40px;
+
+    .fixed-btn {
+      margin: 0 5px;
+
+      &:first-of-type {
+        margin-left: 0;
+      }
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+
+    .scroll-container {
+      .scroll-wrapper {
+        white-space: nowrap;
+
+        .footer-btn {
+          margin: 0 5px;
+
+          &:first-of-type {
+            margin-left: 0;
+          }
+
+          &:last-of-type {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

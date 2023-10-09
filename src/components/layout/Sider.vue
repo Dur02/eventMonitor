@@ -24,7 +24,6 @@ const isCollapse: Ref<boolean> = ref(false)
 const menuOptions: Ref<routeType[]> = ref([])
 
 const handleSelectedChange = (key: string): void => {
-  console.log(key)
   router.push({ name: `${key}` })
 }
 

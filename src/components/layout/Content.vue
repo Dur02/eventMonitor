@@ -9,7 +9,7 @@ import { RouterView } from 'vue-router'
     class="layout-content"
     position="absolute"
     :native-scrollbar="false"
-    content-style="padding: 7px 12px;"
+    content-style="padding: 7px 24px;"
     embedded
   >
     <router-view/>
@@ -19,6 +19,6 @@ import { RouterView } from 'vue-router'
 <style scoped lang="scss">
 .layout-content {
   top: 40px;
-  bottom: 40px;
+  bottom: 50px;
 }
 </style>

@@ -99,7 +99,7 @@ function query (page: number, pageSize: number = 10, order: SortOrder, filterVal
           data: pagedData,
           total
         }),
-      1500
+      1000
     )
   })
 }
@@ -192,8 +192,9 @@ onMounted(() => {
     @update:sorter="handleSorterChange"
     @update:filters="handleFiltersChange"
     @update:page="handlePageChange"
-    style="height: calc(100vh - 100px);"
+    style="height: calc(100vh - 110px);"
     flex-height
+    virtual-scroll
   />
 </template>
 
