@@ -5,6 +5,7 @@ export const useSystemStore = defineStore(
   'system',
   (): SystemType => {
     const isLogin: Ref<boolean> = ref(false)
+
     function setIsLogin(param: boolean): void {
       isLogin.value = param
     }

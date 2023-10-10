@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { NLayout } from 'naive-ui'
-import CustomSider from '@/components/layout/Sider.vue'
 import CustomHeader from '@/components/layout/Header.vue'
+import CustomSider from '@/components/layout/Sider.vue'
+import CustomSecondaryHeader from '@/components/layout/SecondaryHeader.vue'
 import CustomContent from '@/components/layout/Content.vue'
 import CustomFooter from '@/components/layout/Footer.vue'
 </script>
@@ -12,14 +13,19 @@ import CustomFooter from '@/components/layout/Footer.vue'
   >
     <n-layout
       position="absolute"
-      has-sider
-      embedded
     >
-      <custom-sider />
-      <n-layout>
-        <custom-header />
-        <custom-content />
-        <custom-footer />
+      <custom-header />
+      <n-layout
+        position="absolute"
+        has-sider
+        style="top: 50px;"
+      >
+        <custom-sider />
+        <n-layout>
+          <custom-secondary-header />
+          <custom-content />
+          <custom-footer />
+        </n-layout>
       </n-layout>
     </n-layout>
   </div>

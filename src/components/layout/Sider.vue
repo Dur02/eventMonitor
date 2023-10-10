@@ -62,16 +62,11 @@ onMounted((): void => {
     @expand="isCollapse = false"
     :width="240"
     show-trigger="bar"
-    inverted
     bordered
   >
-    <h3 v-show="!isCollapse">
-      测试系统名字
-    </h3>
     <n-menu
       ref="menuInstRef"
       v-model:value="selectedMenu"
-      inverted
       :root-indent="18"
       :collapsed-width="64"
       :collapsed-icon-size="22"
@@ -82,10 +77,10 @@ onMounted((): void => {
 </template>
 
 <style scoped lang="scss">
-.sider-bar {
-  h3 {
-    text-align: center;
-    margin: 10px 0;
-  }
-}
+//.sider-bar {
+//  h3 {
+//    text-align: center;
+//    margin: 10px 0;
+//  }
+//}
 </style>

@@ -1,7 +1,17 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/shims-vue.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["src/**/__tests__/*", "node_modules", "dist", "**/*.js"],
+  "include": [
+    "env.d.ts",
+    "src/shims-vue.d.ts",
+    "src/**/*",
+    "src/**/*.vue"
+  ],
+  "exclude": [
+    "src/**/__tests__/*",
+    "node_modules",
+    "dist",
+    "**/*.js"
+  ],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
@@ -22,7 +32,7 @@
     // 允许默认导入
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true
+    "isolatedModules": true,
 //    "emitDeclarationOnly": true, // 只输出声明文件(ts 产物)
 //    "declaration": true, // 自动生成声明文件
 //    "declarationDir": "dist", // 声明文件生成的目录

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { NLayoutHeader, NIcon, NAvatar, NSpace, NDropdown } from 'naive-ui'
+import { NAvatar, NDropdown, NH2, NIcon, NLayoutHeader, NSpace, NText } from 'naive-ui'
 import { LogOutOutline, Pencil, Person } from '@vicons/ionicons5'
-import renderIcon from '@/utils/function/renderIcon'
-import CustomBreadCrumb from '@/components/layout/Breadcrumb.vue'
 import ChangePassword from '@/components/modal/ChangePassword.vue'
+import renderIcon from '@/utils/function/renderIcon'
 
 const showModal = ref<boolean>(false)
 
@@ -21,6 +20,10 @@ const options = [
   }
 ]
 
+const updateShowModal = (bool: boolean): void => {
+  showModal.value = bool
+}
+
 const handleSelect = (key: string | number): void => {
   switch (key) {
     case 'changePassword':
@@ -32,19 +35,19 @@ const handleSelect = (key: string | number): void => {
       break
   }
 }
-
-const updateShowModal = (bool: boolean): void => {
-  showModal.value = bool
-}
 </script>
 
 <template>
   <n-layout-header
-    class="layout-header"
+    class="header-container"
     position="absolute"
     bordered
   >
-    <custom-bread-crumb />
+    <N-h2 class="title" align-text style="">
+      <NText>
+        全球政治安全监测分析系统
+      </NText>
+    </N-h2>
     <n-space
       align="center"
     >
@@ -72,11 +75,17 @@ const updateShowModal = (bool: boolean): void => {
 </template>
 
 <style scoped lang="scss">
-.layout-header {
-  height: 40px;
-  padding: 7px 24px;
+.header-container {
+  height: 50px;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+  padding: 7px 24px;
+
+  .title {
+    margin: 0;
+    line-height: 50px;
+    font-weight: bold;
+  }
 }
 </style>

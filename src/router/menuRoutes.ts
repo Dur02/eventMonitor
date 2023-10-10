@@ -1,6 +1,7 @@
 import type { RouteRecordRaw } from 'vue-router'
 import renderIcon from '@/utils/function/renderIcon'
 import { NavigateCircle, NotificationsSharp } from '@vicons/ionicons5'
+import { getDisplayBtn, getTimelineBtn } from '@/api/footer'
 
 export default [
   {
@@ -8,7 +9,7 @@ export default [
     name: 'event',
     meta: {
       breadcrumb: '事件库分析',
-      icon:  renderIcon(NotificationsSharp)
+      icon: renderIcon(NotificationsSharp),
     },
     redirect: { name: 'eventDisplay' },
     component: () => import('../views/LayoutView.vue'),
@@ -17,7 +18,8 @@ export default [
         path: 'display',
         name: 'eventDisplay',
         meta: {
-          breadcrumb: '事件展示'
+          breadcrumb: '事件展示',
+          requestUrl: getDisplayBtn
         },
         component: () => import('../views/event/EventDisplayView.vue')
       },
@@ -25,7 +27,8 @@ export default [
         path: 'timeline',
         name: 'eventTimeline',
         meta: {
-          breadcrumb: '事件时间线'
+          breadcrumb: '事件时间线',
+          requestUrl: getTimelineBtn
         },
         component: () => import('../views/event/EventTimelineView.vue')
       },

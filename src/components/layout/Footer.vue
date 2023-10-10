@@ -1,200 +1,209 @@
 <script setup lang="ts">
-import { NButton, NLayoutFooter, NIcon, NSpace, NScrollbar } from 'naive-ui'
+import { NButton, NLayoutFooter, NIcon, NScrollbar } from 'naive-ui'
 import { CaretUpCircle, CaretDownCircle, ArrowForward, ArrowBackSharp } from '@vicons/ionicons5'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
 import type { Ref } from 'vue'
 import { onMounted, ref, watch } from 'vue'
+import { useFooterStore } from '@/stores/footer'
+import { storeToRefs } from 'pinia';
 
 const route: RouteLocationNormalizedLoaded = useRoute()
-const selectedTab: Ref<string> = ref('')
-const scrollContainer: Ref<HTMLElement | null> = ref(null)
-const footerBtn: Ref<{ name: string }[]> = ref([])
+const footerStore = useFooterStore()
+const { footerBtn, selectedBtn } = storeToRefs(footerStore)
+const { setFooterBtn, setSelectedBtn } = footerStore
+
+const scrollContainer: any = ref(null)
 const footerExpand: Ref<boolean> = ref(false)
 
-const btnArray1 = [
-  {
-    name: 'A关系'
-  },
-  {
-    name: 'B关系'
-  },
-  {
-    name: 'c关系'
-  },
-  {
-    name: 'd关系'
-  },
-  {
-    name: 'e关系'
-  },
-  {
-    name: 'f关系'
-  },
-  {
-    name: 'g关系'
-  },
-  {
-    name: 'h关系'
-  },
-  {
-    name: 'i关系'
-  },
-  {
-    name: 'j关系'
-  },
-  {
-    name: 'k关系'
-  },
-  {
-    name: 'l关系'
-  },
-  {
-    name: 'm关系'
-  },
-  {
-    name: 'n关系'
-  },
-  {
-    name: 'o关系'
-  },
-  {
-    name: 'p关系'
-  },
-  {
-    name: 'q关系'
-  },
-  {
-    name: 'r关系'
-  },
-  {
-    name: 's关系'
-  },
-  {
-    name: 't关系'
-  },
-  {
-    name: 'u关系'
-  },
-  {
-    name: 'v关系'
-  },
-  {
-    name: 'w关系'
-  },
-  {
-    name: 'x关系'
-  },
-  {
-    name: 'y关系'
-  },
-  {
-    name: 'z关系'
-  },
-]
-const btnArray2 = [
-  {
-    name: '1关系'
-  },
-  {
-    name: '2关系'
-  },
-  {
-    name: '3关系'
-  },
-  {
-    name: '4关系'
-  },
-  {
-    name: '5关系'
-  },
-  {
-    name: '6关系'
-  },
-  {
-    name: '7关系'
-  },
-  {
-    name: '8关系'
-  },
-  {
-    name: '9关系'
-  },
-  {
-    name: '10关系'
-  },
-  {
-    name: '11关系'
-  },
-  {
-    name: '12关系'
-  },
-  {
-    name: '13关系'
-  },
-  {
-    name: '14关系'
-  },
-  {
-    name: '15关系'
-  },
-  {
-    name: '16关系'
-  },
-  {
-    name: '17关系'
-  },
-  {
-    name: '18关系'
-  },
-  {
-    name: '19关系'
-  },
-  {
-    name: '20关系'
-  },
-  {
-    name: '21关系'
-  },
-  {
-    name: '22关系'
-  },
-  {
-    name: '23关系'
-  },
-  {
-    name: '24关系'
-  },
-  {
-    name: '25关系'
-  },
-  {
-    name: '26关系'
-  },
-]
+// const btnArray1 = [
+//   {
+//     name: 'A关系'
+//   },
+//   {
+//     name: 'B关系'
+//   },
+//   {
+//     name: 'c关系'
+//   },
+//   {
+//     name: 'd关系'
+//   },
+//   {
+//     name: 'e关系'
+//   },
+//   {
+//     name: 'f关系'
+//   },
+//   {
+//     name: 'g关系'
+//   },
+//   {
+//     name: 'h关系'
+//   },
+//   {
+//     name: 'i关系'
+//   },
+//   {
+//     name: 'j关系'
+//   },
+//   {
+//     name: 'k关系'
+//   },
+//   {
+//     name: 'l关系'
+//   },
+//   {
+//     name: 'm关系'
+//   },
+//   {
+//     name: 'n关系'
+//   },
+//   {
+//     name: 'o关系'
+//   },
+//   {
+//     name: 'p关系'
+//   },
+//   {
+//     name: 'q关系'
+//   },
+//   {
+//     name: 'r关系'
+//   },
+//   {
+//     name: 's关系'
+//   },
+//   {
+//     name: 't关系'
+//   },
+//   {
+//     name: 'u关系'
+//   },
+//   {
+//     name: 'v关系'
+//   },
+//   {
+//     name: 'w关系'
+//   },
+//   {
+//     name: 'x关系'
+//   },
+//   {
+//     name: 'y关系'
+//   },
+//   {
+//     name: 'z关系'
+//   },
+// ]
 
-const getFooterBtn = () => {
-  switch (route.name) {
-    case 'eventDisplay':
-      return btnArray1
-    case 'eventTimeline':
-      return btnArray2
-    default:
-      return []
-  }
-}
+// const btnArray2 = [
+//   {
+//     name: '1关系'
+//   },
+//   {
+//     name: '2关系'
+//   },
+//   {
+//     name: '3关系'
+//   },
+//   {
+//     name: '4关系'
+//   },
+//   {
+//     name: '5关系'
+//   },
+//   {
+//     name: '6关系'
+//   },
+//   {
+//     name: '7关系'
+//   },
+//   {
+//     name: '8关系'
+//   },
+//   {
+//     name: '9关系'
+//   },
+//   {
+//     name: '10关系'
+//   },
+//   {
+//     name: '11关系'
+//   },
+//   {
+//     name: '12关系'
+//   },
+//   {
+//     name: '13关系'
+//   },
+//   {
+//     name: '14关系'
+//   },
+//   {
+//     name: '15关系'
+//   },
+//   {
+//     name: '16关系'
+//   },
+//   {
+//     name: '17关系'
+//   },
+//   {
+//     name: '18关系'
+//   },
+//   {
+//     name: '19关系'
+//   },
+//   {
+//     name: '20关系'
+//   },
+//   {
+//     name: '21关系'
+//   },
+//   {
+//     name: '22关系'
+//   },
+//   {
+//     name: '23关系'
+//   },
+//   {
+//     name: '24关系'
+//   },
+//   {
+//     name: '25关系'
+//   },
+//   {
+//     name: '26关系'
+//   },
+// ]
+
+// const getFooterBtn = () => {
+//   switch (route.name) {
+//     case 'eventDisplay':
+//       return btnArray1
+//     case 'eventTimeline':
+//       return btnArray2
+//     default:
+//       return []
+//   }
+// }
 
 const handleScroll = (e: WheelEvent | undefined = undefined, isForward: boolean | undefined = undefined) => {
   if (e) {
     const eventDelta = -e.deltaY
     scrollContainer.value!.scrollBy({ left: eventDelta < 0 ? 100 : -100 })
   } else {
+    const container = scrollContainer.value
+    const containerWidth = container?.scrollbarInstRef.containerRef.offsetWidth
+    // const currentScroll = container?.scrollbarInstRef.containerRef.scrollLeft
+
     switch (isForward) {
       case true:
-        scrollContainer.value!.scrollBy({ left: 100 })
+        scrollContainer.value!.scrollBy({ left: containerWidth })
         break
       case false:
-        scrollContainer.value!.scrollBy({ left: -100 })
+        scrollContainer.value!.scrollBy({ left: -containerWidth })
         break
       default:
         break
@@ -203,23 +212,33 @@ const handleScroll = (e: WheelEvent | undefined = undefined, isForward: boolean 
 }
 
 const changeSelectedTab = (name: string) => {
-  selectedTab.value = name
+  setSelectedBtn(name)
 }
 
 const changeExpand = () => {
   footerExpand.value = !footerExpand.value
 }
 
+const refreshBtn = () => {
+  if (route.meta?.requestUrl) {
+    // 模拟footer进行按钮组数据请求
+    const res = (route.meta.requestUrl as Function)()
+    setFooterBtn(res)
+    setSelectedBtn(footerBtn.value[0]?.name)
+  } else {
+    setFooterBtn([])
+    setSelectedBtn('')
+  }
+}
+
 onMounted(() => {
-  footerBtn.value = getFooterBtn()
-  selectedTab.value = footerBtn.value[0]?.name
+  refreshBtn()
 })
 
 watch(
   () => route.name,
   () => {
-    footerBtn.value = getFooterBtn()
-    selectedTab.value = footerBtn.value[0]?.name
+    refreshBtn()
   }
 )
 </script>
@@ -270,7 +289,7 @@ watch(
             class="footer-btn"
             v-for="item in footerBtn"
             :key="item.name"
-            :type="selectedTab === item.name ? 'primary': 'tertiary'"
+            :type="selectedBtn === item.name ? 'primary': 'tertiary'"
             size="small"
             @click="() => changeSelectedTab(item.name)"
           >
