@@ -20,7 +20,7 @@ import CustomFooter from '@/components/layout/Footer.vue'
         has-sider
         style="top: 50px;"
       >
-        <custom-sider />
+        <custom-sider/>
         <n-layout>
           <custom-secondary-header />
           <custom-content />

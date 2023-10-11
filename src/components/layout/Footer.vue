@@ -6,7 +6,7 @@ import { useRoute } from 'vue-router'
 import type { Ref } from 'vue'
 import { onMounted, ref, watch } from 'vue'
 import { useFooterStore } from '@/stores/footer'
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const footerStore = useFooterStore()
@@ -220,9 +220,9 @@ const changeExpand = () => {
 }
 
 const refreshBtn = () => {
-  if (route.meta?.requestUrl) {
+  if (route.meta?.requestBtn) {
     // 模拟footer进行按钮组数据请求
-    const res = (route.meta.requestUrl as Function)()
+    const res = (route.meta.requestBtn as Function)()
     setFooterBtn(res)
     setSelectedBtn(footerBtn.value[0]?.name)
   } else {
@@ -320,7 +320,6 @@ watch(
       </n-button>
     </div>
     <div style="width: 100%;height: 500px;background: aqua;">
-
     </div>
   </n-layout-footer>
 </template>

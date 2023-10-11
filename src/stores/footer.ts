@@ -1,4 +1,5 @@
-import { type Ref, ref } from 'vue'
+import type { Ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 interface FooterBtnType {
@@ -31,11 +32,6 @@ export const useFooterStore = defineStore(
       selectedBtn,
       setFooterBtn,
       setSelectedBtn
-    }
-  },
-  {
-    persist: {
-      storage: sessionStorage
     }
   }
 )
