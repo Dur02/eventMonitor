@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EventTimeline from '@/components/event/EventTimeline.vue'
+import EventTimeline from '@/components/event/timelint/EventTimeline.vue'
 </script>
 
 <template>

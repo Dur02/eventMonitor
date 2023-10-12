@@ -22,7 +22,7 @@ export const useThemeStore = defineStore(
   },
   {
     persist: {
-      storage: sessionStorage
+      storage: localStorage
     }
   }
 )

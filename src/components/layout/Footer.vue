@@ -7,11 +7,12 @@ import type { Ref } from 'vue'
 import { onMounted, ref, watch } from 'vue'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
+import CommonForm from '@/components/layout/CommonForm.vue'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const footerStore = useFooterStore()
 const { footerBtn, selectedBtn } = storeToRefs(footerStore)
-const { setFooterBtn, setSelectedBtn } = footerStore
+const { setFooterBtn, setSelectedBtn, setCurrentRoute } = footerStore
 
 const scrollContainer: any = ref(null)
 const footerExpand: Ref<boolean> = ref(false)
@@ -225,13 +226,15 @@ const refreshBtn = () => {
     const res = (route.meta.requestBtn as Function)()
     setFooterBtn(res)
     setSelectedBtn(footerBtn.value[0]?.name)
+    setCurrentRoute(route.name as string)
   } else {
     setFooterBtn([])
     setSelectedBtn('')
+    setCurrentRoute('')
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   refreshBtn()
 })
 
@@ -319,8 +322,12 @@ watch(
         即时查询
       </n-button>
     </div>
-    <div style="width: 100%;height: 500px;background: aqua;">
-    </div>
+    <common-form>
+      <component
+        :is="route.meta.footerForm"
+        :selectedBtn="selectedBtn"
+      />
+    </common-form>
   </n-layout-footer>
 </template>
 
@@ -328,18 +335,20 @@ watch(
 .layout-footer {
   height: 50px;
   padding: 10px 24px;
-  transition: all 1s;
+  z-index: 3;
+  transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);
+  -moz-transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Firefox 4 */
+  -webkit-transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Safari and Chrome */
+  -o-transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Opera */
 
   &.expand {
     height: 500px;
-    z-index: 3;
   }
 
   .footer-bar {
     display: flex;
     justify-content: space-between;
     align-items: start;
-    scroll-snap-type: x mandatory;
     height: 40px;
 
     .fixed-btn {
