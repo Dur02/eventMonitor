@@ -15,7 +15,7 @@ export default [
       icon: renderIcon(NotificationsSharp),
     },
     redirect: { name: 'eventDisplay' },
-    component: () => import('../views/LayoutView.vue'),
+    component: () => import('../views/layout/LayoutView.vue'),
     children: [
       {
         path: 'display',
@@ -47,7 +47,7 @@ export default [
       icon: renderIcon(NavigateCircle),
     },
     redirect: { name: 'graphDisplay' },
-    component: () => import('../views/LayoutView.vue'),
+    component: () => import('../views/layout/LayoutView.vue'),
     children: [
       {
         path: 'display',

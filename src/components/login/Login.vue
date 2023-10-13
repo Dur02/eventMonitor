@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { ref, onMounted, } from 'vue'
-import type { FormProps, InputProps, CheckboxProps, FormRules, FormInst, FormValidationError, } from 'naive-ui'
-import { NForm, NFormItem, NInput, NIcon, NCheckbox, NButton, } from 'naive-ui'
+import type { FormProps, InputProps, CheckboxProps, FormRules, FormInst, FormValidationError } from 'naive-ui'
+import { NForm, NFormItem, NInput, NIcon, NCheckbox, NButton, NConfigProvider, lightTheme } from 'naive-ui'
 import { Person, LockOpen } from '@vicons/ionicons5'
 import { encode, decode } from 'js-base64'
 import Cookies from 'js-cookie'
@@ -100,73 +100,76 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="form-container">
-    <n-form
-      ref="formRef"
-      class="login-form"
-      size="large"
-      :model="model"
-      :rules="rules"
-      :show-label="false"
-      :theme-overrides="formThemeOverrides"
-    >
-      <n-form-item
-        path="username"
+  <!--  登录页设置自身的主题变量，避免被全局主题变量改变样式-->
+  <n-config-provider :theme="lightTheme">
+    <div class="form-container">
+      <n-form
+        ref="formRef"
+        class="login-form"
+        size="large"
+        :model="model"
+        :rules="rules"
+        :show-label="false"
+        :theme-overrides="formThemeOverrides"
       >
-        <n-input
-          class="form-input"
-          placeholder="请输入账号"
-          v-model:value="model.username"
-          @keydown.enter.prevent
-          :theme-overrides="inputThemeOverrides"
+        <n-form-item
+          path="username"
         >
-          <template #prefix>
-            <n-icon
-              :component="Person"
-            />
-          </template>
-        </n-input>
-      </n-form-item>
-      <n-form-item
-        path="password"
-      >
-        <n-input
-          class="form-input"
-          placeholder="请输入密码"
-          v-model:value="model.password"
-          type="password"
-          @keydown.enter.prevent
-          :theme-overrides="inputThemeOverrides"
+          <n-input
+            class="form-input"
+            placeholder="请输入账号"
+            v-model:value="model.username"
+            @keydown.enter.prevent
+            :theme-overrides="inputThemeOverrides"
+          >
+            <template #prefix>
+              <n-icon
+                :component="Person"
+              />
+            </template>
+          </n-input>
+        </n-form-item>
+        <n-form-item
+          path="password"
         >
-          <template #prefix>
-            <n-icon
-              :component="LockOpen"
-            />
-          </template>
-        </n-input>
-      </n-form-item>
-      <n-form-item
-        :show-feedback="false"
-      >
-        <n-checkbox
-          v-model:checked="model.rememberMe"
-          :theme-overrides="checkBoxThemeOverrides"
+          <n-input
+            class="form-input"
+            placeholder="请输入密码"
+            v-model:value="model.password"
+            type="password"
+            @keydown.enter.prevent
+            :theme-overrides="inputThemeOverrides"
+          >
+            <template #prefix>
+              <n-icon
+                :component="LockOpen"
+              />
+            </template>
+          </n-input>
+        </n-form-item>
+        <n-form-item
+          :show-feedback="false"
         >
-          记住我
-        </n-checkbox>
-      </n-form-item>
-      <n-form-item>
-        <n-button
-          type="info"
-          style="width: 100%;margin-top: 10px;"
-          :loading="isBtnLoading"
-          @click.prevent="handleLogin"
-        >
-          登录
-        </n-button>
-      </n-form-item>
-    </n-form>
-  </div>
+          <n-checkbox
+            v-model:checked="model.rememberMe"
+            :theme-overrides="checkBoxThemeOverrides"
+          >
+            记住我
+          </n-checkbox>
+        </n-form-item>
+        <n-form-item>
+          <n-button
+            type="info"
+            style="width: 100%;margin-top: 10px;"
+            :loading="isBtnLoading"
+            @click.prevent="handleLogin"
+          >
+            登录
+          </n-button>
+        </n-form-item>
+      </n-form>
+    </div>
+  </n-config-provider>
 </template>
 
 <style scoped lang="scss">

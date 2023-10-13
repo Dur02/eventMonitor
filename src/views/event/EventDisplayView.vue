@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import type { Ref, VNodeChild } from 'vue'
-import { ref, reactive, onMounted, watch, h, nextTick } from 'vue'
+import { ref, reactive, onMounted, watch, nextTick } from 'vue'
 import type {
   PaginationProps,
   DataTableInst,
   DataTableColumns,
   PaginationInfo,
+  SelectOption,
+  SelectGroupOption
 } from 'naive-ui'
-import { NDataTable } from 'naive-ui'
+import { NDataTable, NButton, NSpace, NIcon, NPopselect } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { getDisplayData } from '@/api/display'
 import { storeToRefs } from 'pinia';
-// import { storeToRefs } from 'pinia';
+import { List } from '@vicons/ionicons5'
+import { flow, map, find, filter, includes } from 'lodash/fp'
 
 interface rowDataType {
   column1: number,
@@ -19,17 +22,17 @@ interface rowDataType {
   column3: string
 }
 
-const columns: DataTableColumns<rowDataType> = [
+const allColumns: DataTableColumns<rowDataType> = [
   {
-    title: 'column1',
+    title: '测试1',
     key: 'column1',
   },
   {
-    title: 'column2',
+    title: '测试2',
     key: 'column2',
   },
   {
-    title: 'Column3',
+    title: '测试3',
     key: 'column3'
   }
 ]
@@ -38,9 +41,10 @@ const footStore = useFooterStore()
 const { selectedBtn, currentRoute } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
+const columnsRef: Ref<DataTableColumns<rowDataType>> = ref(allColumns)
+const selectedColumn: Ref<string[]> = ref(map(({ key }) => key)(allColumns))
 const dataRef: Ref<rowDataType[]> = ref([])
 const loadingRef: Ref<boolean> = ref(false)
-const columnsRef: Ref<DataTableColumns<rowDataType>> = ref(columns)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
   // pageCount: 1,
@@ -54,13 +58,23 @@ const paginationReactive: PaginationProps = reactive({
   }
 })
 
-const handlePageChange = (currentPage: number) => {
+const getSelectOption = (): Array<SelectOption | SelectGroupOption> => map(({ title, key }) => ({ label: title, value: key }))(allColumns)
+
+const handlePageChange = (currentPage: number): void => {
   if (!loadingRef.value) {
+    loadingRef.value = true
     paginationReactive.page = currentPage
     const { data, total } = getDisplayData(currentPage, paginationReactive.pageSize!, selectedBtn.value)
     dataRef.value = data
     paginationReactive.itemCount = total
     loadingRef.value = false
+  }
+}
+
+const handleSelect = (selectedArray: Array<string>) => {
+  if (selectedArray.length !== 0) {
+    selectedColumn.value = selectedArray
+    columnsRef.value = filter(({ key }) => includes(key)(selectedArray))(allColumns)
   }
 }
 
@@ -77,33 +91,54 @@ onMounted(() => {
 watch(
   () => selectedBtn.value,
   () => {
-    if (currentRoute.value === 'eventDisplay') {
-      if (!loadingRef.value) {
-        loadingRef.value = true
-        paginationReactive.page = 1
-        const { data, total } = getDisplayData(1, paginationReactive.pageSize!, selectedBtn.value)
-        dataRef.value = data
-        paginationReactive.itemCount = total
-        loadingRef.value = false
-        table.value!.scrollTo({ top: 0 })
-      }
+    if (!loadingRef.value && currentRoute.value === 'eventDisplay') {
+      loadingRef.value = true
+      paginationReactive.page = 1
+      const { data, total } = getDisplayData(1, paginationReactive.pageSize!, selectedBtn.value)
+      dataRef.value = data
+      paginationReactive.itemCount = total
+      loadingRef.value = false
+      table.value!.scrollTo({ top: 0 })
     }
-  }
+  },
 )
 </script>
 
 <template>
-  <n-data-table
-    remote
-    ref="table"
-    :columns="columnsRef"
-    :data="dataRef"
-    :loading="loadingRef"
-    :pagination="paginationReactive"
-    :row-key="(rowData: rowDataType) => rowData.column1"
-    max-height="calc(100vh - 250px)"
-    @update:page="handlePageChange"
-  />
+  <div>
+    <n-space justify="space-between" align="end" vertical>
+      <n-popselect
+        :value="selectedColumn"
+        :options="getSelectOption()"
+        multiple
+        @update:value="handleSelect"
+      >
+        <n-button
+          type="success"
+          size="small"
+          color="#6f6d85"
+          circle
+        >
+          <template #icon>
+            <n-icon>
+              <list />
+            </n-icon>
+          </template>
+        </n-button>
+      </n-popselect>
+      <n-data-table
+        remote
+        ref="table"
+        :columns="columnsRef"
+        :data="dataRef"
+        :loading="loadingRef"
+        :pagination="paginationReactive"
+        :row-key="(rowData: rowDataType) => rowData.column1"
+        max-height="calc(100vh - 280px)"
+        @update:page="handlePageChange"
+      />
+    </n-space>
+  </div>
 </template>
 
 <style scoped lang="scss">

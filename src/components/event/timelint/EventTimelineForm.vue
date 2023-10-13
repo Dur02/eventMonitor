@@ -6,9 +6,7 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  nextTick(() => {
-    // console.log(props.selectedBtn)
-  })
+  console.log('456')
 })
 </script>
 
@@ -19,6 +17,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .form-container {
   width: 100%;
-  height: 500px;
+  height: 400px;
 }
 </style>

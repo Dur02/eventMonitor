@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { NLayoutHeader, NSwitch } from 'naive-ui'
+import { NLayoutHeader, NSwitch, NIcon, NButton } from 'naive-ui'
+import { Sunny, Moon } from '@vicons/ionicons5'
 import CustomBreadCrumb from '@/components/layout/Breadcrumb.vue'
 import { useThemeStore } from '@/stores/theme'
 import { ref } from 'vue';
@@ -11,9 +12,9 @@ const { setIsLight } = themeStore
 
 const loading = ref(false)
 
-const handleUpdateValue = (a: boolean) => {
+const handleUpdateValue = (newValue: boolean) => {
   loading.value = true
-  setIsLight(a)
+  setIsLight(newValue)
   loading.value = false
 }
 </script>
@@ -25,18 +26,14 @@ const handleUpdateValue = (a: boolean) => {
     bordered
   >
     <custom-bread-crumb />
-    <n-switch
-      :loading="loading"
-      v-model:value="isLight"
-      @update:value="handleUpdateValue"
-    >
-      <template #checked>
-        亮色主题
+    <n-button text>
+      <template #icon>
+        <n-icon>
+          <sunny v-show="isLight" @click="handleUpdateValue(false)" />
+          <moon v-show="!isLight" @click="handleUpdateValue(true)" />
+        </n-icon>
       </template>
-      <template #unchecked>
-        暗色主题
-      </template>
-    </n-switch>
+    </n-button>
   </n-layout-header>
 </template>
 

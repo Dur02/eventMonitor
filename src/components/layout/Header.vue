@@ -50,6 +50,7 @@ const handleSelect = (key: string | number): void => {
     </N-h2>
     <n-space
       align="center"
+      class="avatar-container"
     >
       用户名
       <n-dropdown
@@ -57,12 +58,12 @@ const handleSelect = (key: string | number): void => {
         @select="handleSelect"
       >
         <n-avatar
-          size="small"
+          :size="28"
           round
         >
           <n-icon
             :component="Person"
-            size="20"
+            :size="20"
           />
         </n-avatar>
       </n-dropdown>
@@ -84,8 +85,13 @@ const handleSelect = (key: string | number): void => {
 
   .title {
     margin: 0;
-    line-height: 50px;
+    height: 35px;
     font-weight: bold;
+  }
+
+  .avatar-container {
+    position: relative;
+    top: 2px;
   }
 }
 </style>

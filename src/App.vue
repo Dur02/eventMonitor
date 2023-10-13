@@ -5,6 +5,7 @@ import {
   NLoadingBarProvider,
   NMessageProvider,
   NNotificationProvider,
+  NGlobalStyle,
   zhCN,
   dateZhCN,
   lightTheme,
@@ -29,6 +30,7 @@ const { isLight } = storeToRefs(themeStore)
         <n-message-provider>
           <n-notification-provider>
             <RouterView />
+            <n-global-style />
           </n-notification-provider>
         </n-message-provider>
       </n-loading-bar-provider>

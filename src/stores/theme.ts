@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 interface ThemeType {
   isLight: Ref<boolean>,
-  setIsLight: (newBool: boolean) => void
+  setIsLight: (newValue: boolean) => void
 }
 
 export const useThemeStore = defineStore(
@@ -11,8 +11,8 @@ export const useThemeStore = defineStore(
   (): ThemeType => {
     const isLight: Ref<boolean> = ref(true)
 
-    function setIsLight(newBool: boolean): void {
-      isLight.value = newBool
+    function setIsLight(newValue: boolean): void {
+      isLight.value = newValue
     }
 
     return {
