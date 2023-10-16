@@ -60,8 +60,8 @@ onMounted((): void => {
     :collapsed="isCollapse"
     @collapse="isCollapse = true"
     @expand="isCollapse = false"
-    :width="240"
-    show-trigger="bar"
+    :width="210"
+    show-trigger="arrow-circle"
     bordered
   >
     <n-menu

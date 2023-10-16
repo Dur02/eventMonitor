@@ -4,7 +4,7 @@ import { CaretUpCircle, CaretDownCircle, ArrowForward, ArrowBackSharp } from '@v
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
 import type { Ref } from 'vue'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, computed, onBeforeUnmount } from 'vue'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import CommonForm from '@/components/layout/CommonForm.vue'
@@ -15,181 +15,25 @@ const { footerBtn, selectedBtn } = storeToRefs(footerStore)
 const { setFooterBtn, setSelectedBtn, setCurrentRoute } = footerStore
 
 const scrollContainer: any = ref(null)
+const scrollWrapper: Ref<HTMLElement | null> = ref(null)
 const footerExpand: Ref<boolean> = ref(false)
+const changePageVisible = ref(false)
+const resizeObserver = new ResizeObserver(() => {
+  const containerWidth = scrollContainer.value?.scrollbarInstRef.containerRef.clientWidth
+  const contentWidth = scrollContainer.value?.scrollbarInstRef.contentRef.clientWidth
 
-// const btnArray1 = [
-//   {
-//     name: 'A关系'
-//   },
-//   {
-//     name: 'B关系'
-//   },
-//   {
-//     name: 'c关系'
-//   },
-//   {
-//     name: 'd关系'
-//   },
-//   {
-//     name: 'e关系'
-//   },
-//   {
-//     name: 'f关系'
-//   },
-//   {
-//     name: 'g关系'
-//   },
-//   {
-//     name: 'h关系'
-//   },
-//   {
-//     name: 'i关系'
-//   },
-//   {
-//     name: 'j关系'
-//   },
-//   {
-//     name: 'k关系'
-//   },
-//   {
-//     name: 'l关系'
-//   },
-//   {
-//     name: 'm关系'
-//   },
-//   {
-//     name: 'n关系'
-//   },
-//   {
-//     name: 'o关系'
-//   },
-//   {
-//     name: 'p关系'
-//   },
-//   {
-//     name: 'q关系'
-//   },
-//   {
-//     name: 'r关系'
-//   },
-//   {
-//     name: 's关系'
-//   },
-//   {
-//     name: 't关系'
-//   },
-//   {
-//     name: 'u关系'
-//   },
-//   {
-//     name: 'v关系'
-//   },
-//   {
-//     name: 'w关系'
-//   },
-//   {
-//     name: 'x关系'
-//   },
-//   {
-//     name: 'y关系'
-//   },
-//   {
-//     name: 'z关系'
-//   },
-// ]
+  changePageVisible.value = containerWidth < contentWidth;
+})
 
-// const btnArray2 = [
-//   {
-//     name: '1关系'
-//   },
-//   {
-//     name: '2关系'
-//   },
-//   {
-//     name: '3关系'
-//   },
-//   {
-//     name: '4关系'
-//   },
-//   {
-//     name: '5关系'
-//   },
-//   {
-//     name: '6关系'
-//   },
-//   {
-//     name: '7关系'
-//   },
-//   {
-//     name: '8关系'
-//   },
-//   {
-//     name: '9关系'
-//   },
-//   {
-//     name: '10关系'
-//   },
-//   {
-//     name: '11关系'
-//   },
-//   {
-//     name: '12关系'
-//   },
-//   {
-//     name: '13关系'
-//   },
-//   {
-//     name: '14关系'
-//   },
-//   {
-//     name: '15关系'
-//   },
-//   {
-//     name: '16关系'
-//   },
-//   {
-//     name: '17关系'
-//   },
-//   {
-//     name: '18关系'
-//   },
-//   {
-//     name: '19关系'
-//   },
-//   {
-//     name: '20关系'
-//   },
-//   {
-//     name: '21关系'
-//   },
-//   {
-//     name: '22关系'
-//   },
-//   {
-//     name: '23关系'
-//   },
-//   {
-//     name: '24关系'
-//   },
-//   {
-//     name: '25关系'
-//   },
-//   {
-//     name: '26关系'
-//   },
-// ]
+const getBtnVisible = () => {
+  return scrollContainer.value?.scrollbarInstRef.containerRef.clientWidth < scrollContainer.value?.scrollbarInstRef.contentRef.clientWidth
+}
 
-// const getFooterBtn = () => {
-//   switch (route.name) {
-//     case 'eventDisplay':
-//       return btnArray1
-//     case 'eventTimeline':
-//       return btnArray2
-//     default:
-//       return []
-//   }
-// }
-
+/**
+ * @description 若container是naive ui的滚动条，使用scrollBy的api进行滚动。如果container是div元素，设置scrollLeft进行滚动
+ * @author Dur02
+ * @date 2023/10/16
+ **/
 const handleScroll = (e: WheelEvent | undefined = undefined, isForward: boolean | undefined = undefined) => {
   if (e) {
     const eventDelta = -e.deltaY
@@ -201,10 +45,12 @@ const handleScroll = (e: WheelEvent | undefined = undefined, isForward: boolean 
 
     switch (isForward) {
       case true:
-        scrollContainer.value!.scrollBy({ left: containerWidth })
+        container!.scrollBy({ left: containerWidth })
+        // container!.scrollLeft = container.clientWidth
         break
       case false:
-        scrollContainer.value!.scrollBy({ left: -containerWidth })
+        container!.scrollBy({ left: -containerWidth })
+        // container!.scrollLeft = -container.clientWidth
         break
       default:
         break
@@ -235,7 +81,12 @@ const refreshBtn = () => {
 }
 
 onMounted(async () => {
+  resizeObserver.observe(scrollWrapper.value!)
   refreshBtn()
+})
+
+onBeforeUnmount(() => {
+  resizeObserver.unobserve(scrollWrapper.value!)
 })
 
 watch(
@@ -268,7 +119,7 @@ watch(
         </template>
       </n-button>
       <n-button
-        v-if="footerBtn.length !== 0"
+        v-if="changePageVisible"
         class="fixed-btn"
         type="warning"
         size="small"
@@ -280,6 +131,9 @@ watch(
           </n-icon>
         </template>
       </n-button>
+<!--      <div ref="scrollContainer" class="scroll-container" style="margin: 0 10px;overflow: hidden;">-->
+<!--        -->
+<!--      </div>-->
       <n-scrollbar
         class="scroll-container"
         ref="scrollContainer"
@@ -287,7 +141,7 @@ watch(
         style="margin: 0 10px;"
         @wheel.native.prevent="(e) => handleScroll(e, undefined)"
       >
-        <div class="scroll-wrapper">
+        <div class="scroll-wrapper" ref="scrollWrapper">
           <n-button
             class="footer-btn"
             v-for="item in footerBtn"
@@ -301,7 +155,7 @@ watch(
         </div>
       </n-scrollbar>
       <n-button
-        v-if="footerBtn.length !== 0"
+        v-if="changePageVisible"
         class="fixed-btn"
         type="warning"
         size="small"
@@ -325,7 +179,6 @@ watch(
     <common-form>
       <component
         :is="route.meta.footerForm"
-        :selectedBtn="selectedBtn"
       />
     </common-form>
   </n-layout-footer>

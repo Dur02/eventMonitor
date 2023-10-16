@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { onMounted, nextTick } from 'vue'
-
-const props = defineProps({
-  selectedBtn: String
-})
+import { onMounted } from 'vue'
 
 onMounted(() => {
   console.log('456')
@@ -11,7 +7,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <p>{{ selectedBtn }}</p>
+  <p>123456</p>
 </template>
 
 <style scoped lang="scss">
