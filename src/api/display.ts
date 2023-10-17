@@ -123,3 +123,182 @@ export function getDisplayBtn() {
     },
   ]
 }
+
+export function getSearchInitial(name: string) {
+  switch (name) {
+    case 'A关系': {
+      return {
+        date: [1183135260000, Date.now()],
+        dataSource: 'dataSource1',
+        weight: 'weight1',
+        statistics: 'statistics1',
+        role: {
+          role1: {
+            country: 'A',
+            organization: 'A',
+            religion1: 'A',
+            religion2: 'A',
+            race: 'A',
+            type1: 'A',
+            type2: 'A',
+            type3: 'A',
+            geographicFeature: null,
+            state: 'A',
+            fullyGeographic: 'A',
+            caseSensitive: true
+          },
+          role2: {
+            country: 'A',
+            organization: 'A',
+            religion1: 'A',
+            religion2: 'A',
+            race: 'A',
+            type1: 'A',
+            type2: 'A',
+            type3: 'A',
+            geographicFeature: null,
+            state: 'A',
+            fullyGeographic: 'A',
+            caseSensitive: true
+          }
+        },
+        event: {
+          type: {
+            class: 'A',
+            root: 'A',
+            base: 'A',
+            sub: 'A'
+          },
+          place: {
+            geographicFeature: null,
+            state: 'A',
+            fullyGeographic: 'A',
+            caseSensitive: true
+          },
+          other: {
+            sourceUrl: 'A',
+            emotion: [],
+            effect: [],
+            isRoot: null
+          }
+        }
+      }
+    }
+    case 'B关系': {
+      return {
+        date: [1697525381050, Date.now()],
+        dataSource: 'dataSource2',
+        weight: 'weight2',
+        statistics: 'statistics2',
+        role: {
+          role1: {
+            country: 'B',
+            organization: 'B',
+            religion1: 'B',
+            religion2: 'B',
+            race: 'B',
+            type1: 'B',
+            type2: 'B',
+            type3: 'B',
+            geographicFeature: null,
+            state: 'B',
+            fullyGeographic: 'B',
+            caseSensitive: true
+          },
+          role2: {
+            country: 'B',
+            organization: 'B',
+            religion1: 'B',
+            religion2: 'B',
+            race: 'B',
+            type1: 'B',
+            type2: 'B',
+            type3: 'B',
+            geographicFeature: null,
+            state: 'B',
+            fullyGeographic: 'B',
+            caseSensitive: true
+          }
+        },
+        event: {
+          type: {
+            class: 'B',
+            root: 'B',
+            base: 'B',
+            sub: 'B'
+          },
+          place: {
+            geographicFeature: null,
+            state: 'B',
+            fullyGeographic: 'B',
+            caseSensitive: true
+          },
+          other: {
+            sourceUrl: 'B',
+            emotion: [],
+            effect: [],
+            isRoot: null
+          }
+        }
+      }
+    }
+    default: {
+      return {
+        date: null,
+        dataSource: 'dataSource1',
+        weight: 'weight1',
+        statistics: 'statistics1',
+        role: {
+          role1: {
+            country: '',
+            organization: '',
+            religion1: '',
+            religion2: '',
+            race: '',
+            type1: '',
+            type2: '',
+            type3: '',
+            geographicFeature: null,
+            state: '',
+            fullyGeographic: '',
+            caseSensitive: true
+          },
+          role2: {
+            country: '',
+            organization: '',
+            religion1: '',
+            religion2: '',
+            race: '',
+            type1: '',
+            type2: '',
+            type3: '',
+            geographicFeature: null,
+            state: '',
+            fullyGeographic: '',
+            caseSensitive: true
+          }
+        },
+        event: {
+          type: {
+            class: '',
+            root: '',
+            base: '',
+            sub: ''
+          },
+          place: {
+            geographicFeature: null,
+            state: '',
+            fullyGeographic: '',
+            caseSensitive: true
+          },
+          other: {
+            sourceUrl: '',
+            emotion: [],
+            effect: [],
+            isRoot: null
+          }
+        }
+      }
+    }
+  }
+}

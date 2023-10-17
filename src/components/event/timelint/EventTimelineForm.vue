@@ -1,8 +1,20 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref } from 'vue'
+import type { FormInst } from 'naive-ui'
 
-onMounted(() => {
-  console.log('456')
+const formValue = ref({})
+const formRef = ref<FormInst | null>(null)
+
+defineExpose({
+  setFormValue: (newValue: any) => {
+    formValue.value = newValue
+  },
+  resetFormValue: () => {
+    formValue.value = {}
+  },
+  restoreValidation: () => {
+    formRef.value?.restoreValidation()
+  }
 })
 </script>
 

@@ -2,7 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import renderIcon from '@/utils/function/renderIcon'
 import { NavigateCircle, NotificationsSharp } from '@vicons/ionicons5'
 import { getTimelineBtn } from '@/api/timeline'
-import { getDisplayBtn } from '@/api/display'
+import { getDisplayBtn, getSearchInitial } from '@/api/display'
 import EventDisplayForm from '@/components/event/display/EventDisplayForm.vue'
 import EventTimelineForm from '@/components/event/timelint/EventTimelineForm.vue'
 
@@ -23,6 +23,7 @@ export default [
         meta: {
           breadcrumb: '事件展示',
           requestBtn: getDisplayBtn,
+          requestInitial: getSearchInitial,
           footerForm: EventDisplayForm
         },
         component: () => import('../views/event/EventDisplayView.vue')

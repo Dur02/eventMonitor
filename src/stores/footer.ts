@@ -10,9 +10,11 @@ interface FooterType {
   footerBtn: Ref<FooterBtnType[]>,
   selectedBtn: Ref<string>,
   currentRoute: Ref<string>,
+  initialData: Ref<any>,
   setFooterBtn: (newValue: FooterBtnType[]) => void,
   setSelectedBtn: (newValue: string) => void,
-  setCurrentRoute: (newValue: string) => void
+  setCurrentRoute: (newValue: string) => void,
+  setInitialData: (newValue: any) => void
 }
 
 export const useFooterStore = defineStore(
@@ -21,6 +23,7 @@ export const useFooterStore = defineStore(
     const footerBtn: Ref<FooterBtnType[]> = ref([])
     const selectedBtn: Ref<string> = ref('')
     const currentRoute: Ref<string> = ref('')
+    const initialData: Ref<any> = ref({})
 
     function setFooterBtn(newValue: FooterBtnType[]): void {
       footerBtn.value = newValue
@@ -34,13 +37,19 @@ export const useFooterStore = defineStore(
       currentRoute.value = newValue
     }
 
+    function setInitialData(newValue: any): void {
+      initialData.value = newValue
+    }
+
     return {
       footerBtn,
       selectedBtn,
       currentRoute,
+      initialData,
       setFooterBtn,
       setSelectedBtn,
-      setCurrentRoute
+      setCurrentRoute,
+      setInitialData
     }
   }
 )

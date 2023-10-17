@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { FormInst, FormProps, FormRules, CardProps } from 'naive-ui'
+import type { FormInst, FormProps, FormRules, CardProps, SelectOption, SelectGroupOption } from 'naive-ui'
 import {
   NForm,
   NFormItem,
   NFormItemGi,
   NInput,
+  NInputNumber,
   NButton,
   NCard,
   NScrollbar,
@@ -15,7 +16,9 @@ import {
   NRadio,
   NSpace,
   NGrid,
-  NGi
+  NGi,
+  NSelect,
+  NCheckbox
 } from 'naive-ui'
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
@@ -31,8 +34,7 @@ const formThemeOverrides: FormThemeOverrides = {
   blankHeightMedium: '10px'
 }
 
-const formRef = ref<FormInst | null>(null)
-const formValue = ref({
+const initialFormValue = {
   date: null,
   dataSource: 'dataSource1',
   weight: 'weight1',
@@ -47,9 +49,10 @@ const formValue = ref({
       type1: '',
       type2: '',
       type3: '',
-      geographicFeature: '',
+      geographicFeature: null,
       state: '',
-      fullyGeographic: ''
+      fullyGeographic: '',
+      caseSensitive: true
     },
     role2: {
       country: '',
@@ -60,9 +63,10 @@ const formValue = ref({
       type1: '',
       type2: '',
       type3: '',
-      geographicFeature: '',
+      geographicFeature: null,
       state: '',
-      fullyGeographic: ''
+      fullyGeographic: '',
+      caseSensitive: true
     }
   },
   event: {
@@ -73,23 +77,19 @@ const formValue = ref({
       sub: ''
     },
     place: {
-      geographicFeature: '',
+      geographicFeature: null,
       state: '',
-      fullyGeographic: ''
+      fullyGeographic: '',
+      caseSensitive: true
     },
     other: {
       sourceUrl: '',
-      emotion: '',
-      effect: '',
-      isRoot: ''
+      emotion: [],
+      effect: [],
+      isRoot: null
     }
-  },
-  user: {
-    name: '',
-    age: ''
-  },
-  phone: ''
-})
+  }
+}
 
 const rules: FormRules = {
   date: {
@@ -112,25 +112,37 @@ const rules: FormRules = {
     required: true,
     message: '请选择统计依据',
     trigger: ['input', 'blur']
-  },
-  user: {
-    name: {
-      required: true,
-      message: '请输入姓名',
-      trigger: 'blur'
-    },
-    age: {
-      required: true,
-      message: '请输入年龄',
-      trigger: ['input', 'blur']
-    }
-  },
-  phone: {
-    required: true,
-    message: '请输入电话号码',
-    trigger: ['input']
   }
 }
+
+const geoOptions: Array<SelectOption | SelectGroupOption> = [
+  {
+    label: 'Drive My Car',
+    value: 'geographicFeature1'
+  },
+  {
+    label: 'Norwegian Wood',
+    value: 'geographicFeature2'
+  },
+  {
+    label: 'Nowhere Man',
+    value: 'geographicFeature3'
+  }
+]
+
+const rootOptions: Array<SelectOption | SelectGroupOption> = [
+  {
+    label: '是',
+    value: 'true'
+  },
+  {
+    label: '否',
+    value: 'false'
+  }
+]
+
+const formRef = ref<FormInst | null>(null)
+const formValue = ref(initialFormValue)
 
 const handleValidateClick =  (e: MouseEvent) => {
   e.preventDefault()
@@ -141,6 +153,18 @@ const handleValidateClick =  (e: MouseEvent) => {
     }
   })
 }
+
+defineExpose({
+  setFormValue: (newValue: any) => {
+    formValue.value = newValue
+  },
+  resetFormValue: () => {
+    formValue.value = initialFormValue
+  },
+  restoreValidation: () => {
+    formRef.value?.restoreValidation()
+  }
+})
 </script>
 
 <template>
@@ -290,7 +314,7 @@ const handleValidateClick =  (e: MouseEvent) => {
                   <n-input v-model:value="formValue.role.role1.type3" />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.geographicFeature" />
+                  <n-select v-model:value="formValue.role.role1.geographicFeature" :options="geoOptions" />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
                   <n-input v-model:value="formValue.role.role1.state" />
@@ -298,8 +322,13 @@ const handleValidateClick =  (e: MouseEvent) => {
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
                 </n-gi>
-                <n-form-item-gi span="24 m:18" label="地理全称" label-width="80" label-align="center">
+                <n-form-item-gi span="18" label="地理全称" label-width="80" label-align="center">
                   <n-input v-model:value="formValue.role.role1.fullyGeographic" />
+                </n-form-item-gi>
+                <n-form-item-gi span="6">
+                  <n-checkbox v-model:checked="formValue.role.role1.caseSensitive">
+                    区分大小写
+                  </n-checkbox>
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>
@@ -330,7 +359,7 @@ const handleValidateClick =  (e: MouseEvent) => {
                   <n-input v-model:value="formValue.role.role2.type3" />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.geographicFeature" />
+                  <n-select v-model:value="formValue.role.role2.geographicFeature" :options="geoOptions" />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
                   <n-input v-model:value="formValue.role.role2.state" />
@@ -338,8 +367,13 @@ const handleValidateClick =  (e: MouseEvent) => {
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
                 </n-gi>
-                <n-form-item-gi span="24 m:18" label="地理全称" label-width="80" label-align="center">
+                <n-form-item-gi span="18" label="地理全称" label-width="80" label-align="center">
                   <n-input v-model:value="formValue.role.role2.fullyGeographic" />
+                </n-form-item-gi>
+                <n-form-item-gi span="6">
+                  <n-checkbox v-model:checked="formValue.role.role2.caseSensitive">
+                    区分大小写
+                  </n-checkbox>
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>
@@ -374,7 +408,7 @@ const handleValidateClick =  (e: MouseEvent) => {
             <n-form-item-gi :span="24" label="发生地" label-width="60" :show-feedback="false">
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.place.geographicFeature" />
+                  <n-select v-model:value="formValue.event.place.geographicFeature" :options="geoOptions" />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
                   <n-input v-model:value="formValue.event.place.state" />
@@ -382,8 +416,13 @@ const handleValidateClick =  (e: MouseEvent) => {
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
                 </n-gi>
-                <n-form-item-gi span="24 m:18" label="地理全称" label-width="80" label-align="center">
+                <n-form-item-gi span="18" label="地理全称" label-width="80" label-align="center">
                   <n-input v-model:value="formValue.event.place.fullyGeographic" />
+                </n-form-item-gi>
+                <n-form-item-gi span="6">
+                  <n-checkbox v-model:checked="formValue.event.place.caseSensitive">
+                    区分大小写
+                  </n-checkbox>
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>
@@ -393,13 +432,45 @@ const handleValidateClick =  (e: MouseEvent) => {
                   <n-input v-model:value="formValue.event.other.sourceUrl" />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="情感值" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.other.emotion" />
+                  <n-input-number
+                    v-model:value="formValue.event.other.emotion[0]"
+                    :show-button="false"
+                    :precision="0"
+                    :min="-100"
+                    :max="100"
+                    style="padding-right: 5px;"
+                  />
+                  至
+                  <n-input-number
+                    v-model:value="formValue.event.other.emotion[1]"
+                    :show-button="false"
+                    :precision="0"
+                    :min="-100"
+                    :max="100"
+                    style="padding-left: 5px;"
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="影响度" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.other.effect" />
+                  <n-input-number
+                    v-model:value="formValue.event.other.effect[0]"
+                    :show-button="false"
+                    :precision="0"
+                    :min="-10"
+                    :max="10"
+                    style="padding-right: 5px;"
+                  />
+                  至
+                  <n-input-number
+                    v-model:value="formValue.event.other.effect[1]"
+                    :show-button="false"
+                    :precision="0"
+                    :min="-10"
+                    :max="10"
+                    style="padding-left: 5px;"
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="是否根类" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.other.isRoot" />
+                  <n-select v-model:value="formValue.event.other.isRoot" :options="rootOptions" />
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>

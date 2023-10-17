@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref, VNodeChild } from 'vue'
-import { ref, reactive, onMounted, watch, nextTick } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import type {
   PaginationProps,
   DataTableInst,
@@ -14,7 +14,7 @@ import { useFooterStore } from '@/stores/footer'
 import { getDisplayData } from '@/api/display'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
-import { flow, map, find, filter, includes } from 'lodash/fp'
+import { map, filter, includes } from 'lodash/fp'
 
 interface rowDataType {
   column1: number,
@@ -91,7 +91,7 @@ onMounted(() => {
 watch(
   () => selectedBtn.value,
   () => {
-    if (!loadingRef.value && currentRoute.value === 'eventDisplay') {
+    if (!loadingRef.value && selectedBtn.value && currentRoute.value === 'eventDisplay') {
       loadingRef.value = true
       paginationReactive.page = 1
       const { data, total } = getDisplayData(1, paginationReactive.pageSize!, selectedBtn.value)

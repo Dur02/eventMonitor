@@ -4,7 +4,7 @@ import { CaretUpCircle, CaretDownCircle, ArrowForward, ArrowBackSharp } from '@v
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
 import type { Ref } from 'vue'
-import { onMounted, ref, watch, computed, onBeforeUnmount } from 'vue'
+import { onMounted, ref, watch, onBeforeUnmount } from 'vue'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import CommonForm from '@/components/layout/CommonForm.vue'
@@ -14,6 +14,7 @@ const footerStore = useFooterStore()
 const { footerBtn, selectedBtn } = storeToRefs(footerStore)
 const { setFooterBtn, setSelectedBtn, setCurrentRoute } = footerStore
 
+const footerForm: any = ref(null)
 const scrollContainer: any = ref(null)
 const scrollWrapper: Ref<HTMLElement | null> = ref(null)
 const footerExpand: Ref<boolean> = ref(false)
@@ -24,10 +25,6 @@ const resizeObserver = new ResizeObserver(() => {
 
   changePageVisible.value = containerWidth < contentWidth;
 })
-
-const getBtnVisible = () => {
-  return scrollContainer.value?.scrollbarInstRef.containerRef.clientWidth < scrollContainer.value?.scrollbarInstRef.contentRef.clientWidth
-}
 
 /**
  * @description 若container是naive ui的滚动条，使用scrollBy的api进行滚动。如果container是div元素，设置scrollLeft进行滚动
@@ -59,24 +56,41 @@ const handleScroll = (e: WheelEvent | undefined = undefined, isForward: boolean 
 }
 
 const changeSelectedTab = (name: string) => {
-  setSelectedBtn(name)
+  if (selectedBtn.value !== name) {
+    setSelectedBtn(name)
+    // 模拟点击按钮后请求对应的搜索表单初始值
+    const res = (route.meta.requestInitial as Function)(name)
+    footerForm.value?.setFormValue(res)
+  }
 }
 
 const changeExpand = () => {
   footerExpand.value = !footerExpand.value
+  if (!footerExpand.value) {
+    footerForm.value?.restoreValidation()
+  }
+}
+
+const handleSearchNow = () => {
+  setSelectedBtn('')
+  footerForm.value?.resetFormValue()
+  footerExpand.value = true
 }
 
 const refreshBtn = () => {
-  if (route.meta?.requestBtn) {
+  if (route.meta?.requestBtn && route.meta?.requestInitial) {
     // 模拟footer进行按钮组数据请求
-    const res = (route.meta.requestBtn as Function)()
-    setFooterBtn(res)
+    const btnRes = (route.meta.requestBtn as Function)()
+    setFooterBtn(btnRes)
     setSelectedBtn(footerBtn.value[0]?.name)
     setCurrentRoute(route.name as string)
+    const initialRes = (route.meta.requestInitial as Function)(footerBtn.value[0]?.name)
+    footerForm.value?.setFormValue(initialRes)
   } else {
     setFooterBtn([])
     setSelectedBtn('')
     setCurrentRoute('')
+    footerForm.value?.resetFormValue()
   }
 }
 
@@ -171,13 +185,14 @@ watch(
         class="fixed-btn"
         type="info"
         size="small"
-        @click="changeExpand"
+        @click="handleSearchNow"
       >
         即时查询
       </n-button>
     </div>
     <common-form>
       <component
+        ref="footerForm"
         :is="route.meta.footerForm"
       />
     </common-form>
