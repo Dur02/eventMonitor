@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { NButton, NIcon, NLayoutFooter, NScrollbar } from 'naive-ui'
-import { ArrowBackSharp, ArrowForward, CaretDownCircle, CaretUpCircle } from '@vicons/ionicons5'
+import { NButton, NLayoutFooter, NIcon, NScrollbar } from 'naive-ui'
+import { CaretUpCircle, CaretDownCircle, ArrowForward, ArrowBackSharp } from '@vicons/ionicons5'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
 import type { Ref } from 'vue'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch, onBeforeUnmount } from 'vue'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import CommonForm from '@/components/layout/CommonForm.vue'
@@ -12,19 +12,48 @@ import { getFooterBtn, getSearchInitial } from '@/api/footer'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const footerStore = useFooterStore()
-const { selectedBtn } = storeToRefs(footerStore)
-const { setSelectedBtn, setInitialData } = footerStore
+const { footerBtn, selectedBtn } = storeToRefs(footerStore)
+const { setFooterBtn, setSelectedBtn, setCurrentRoute, setInitialData, needToUpdate } = footerStore
 
-const footerBtn: Ref<any[]> = ref([])
-const currentPage: Ref<number> = ref(1)
 const footerForm: any = ref(null)
 const scrollContainer: any = ref(null)
 const scrollWrapper: Ref<HTMLElement | null> = ref(null)
 const footerExpand: Ref<boolean> = ref(false)
+const changePageVisible = ref(false)
+const resizeObserver = new ResizeObserver(() => {
+  const containerWidth = scrollContainer.value?.scrollbarInstRef.containerRef.clientWidth
+  const contentWidth = scrollContainer.value?.scrollbarInstRef.contentRef.clientWidth
 
-const handleScroll = (e: WheelEvent) => {
-  const eventDelta = -e.deltaY
-  scrollContainer.value!.scrollBy({ left: eventDelta < 0 ? 100 : -100 })
+  changePageVisible.value = containerWidth < contentWidth;
+})
+
+/**
+ * @description 若container是naive ui的滚动条，使用scrollBy的api进行滚动。如果container是div元素，设置scrollLeft进行滚动
+ * @author Dur02
+ * @date 2023/10/16
+ **/
+const handleScroll = (e: WheelEvent | undefined = undefined, isForward: boolean | undefined = undefined) => {
+  if (e) {
+    const eventDelta = -e.deltaY
+    scrollContainer.value!.scrollBy({ left: eventDelta < 0 ? 100 : -100 })
+  } else {
+    const container = scrollContainer.value
+    const containerWidth = container?.scrollbarInstRef.containerRef.offsetWidth
+    // const currentScroll = container?.scrollbarInstRef.containerRef.scrollLeft
+
+    switch (isForward) {
+      case true:
+        container!.scrollBy({ left: containerWidth })
+        // container!.scrollLeft = container.clientWidth
+        break
+      case false:
+        container!.scrollBy({ left: -containerWidth })
+        // container!.scrollLeft = -container.clientWidth
+        break
+      default:
+        break
+    }
+  }
 }
 
 const changeSelectedTab = (name: string) => {
@@ -47,27 +76,9 @@ const changeExpand = () => {
   }
 }
 
-const changePage = (isNext: boolean): void => {
-  switch (isNext) {
-    case true: {
-      footerBtn.value = getFooterBtn('number')
-      setSelectedBtn(footerBtn.value[0]?.name)
-      const initialRes = getSearchInitial(footerBtn.value[0]?.name)
-      setInitialData(initialRes)
-      break
-    }
-    default: {
-      footerBtn.value = getFooterBtn('letter')
-      setSelectedBtn(footerBtn.value[0]?.name)
-      const initialRes = getSearchInitial(footerBtn.value[0]?.name)
-      setInitialData(initialRes)
-      break
-    }
-  }
-}
-
 const handleSearchNow = () => {
   setSelectedBtn('')
+  setInitialData({})
   if (footerForm.value?.restoreValidation) {
     footerForm.value?.restoreValidation()
   }
@@ -75,19 +86,27 @@ const handleSearchNow = () => {
 }
 
 const reload = () => {
-  footerBtn.value = getFooterBtn(route.meta.type as string)
+  const btnRes = getFooterBtn(route.meta.type as string)
+  setFooterBtn(btnRes)
+  setCurrentRoute(route.name as string)
   setSelectedBtn(footerBtn.value[0]?.name)
   const initialRes = getSearchInitial(footerBtn.value[0]?.name)
   setInitialData(initialRes)
 }
 
+onMounted(async () => {
+  reload()
+  resizeObserver.observe(scrollWrapper.value!)
+})
+
+onBeforeUnmount(() => {
+  resizeObserver.unobserve(scrollWrapper.value!)
+})
+
 watch(
   () => route.name,
   () => {
     reload()
-  },
-  {
-    immediate: true
   }
 )
 </script>
@@ -114,10 +133,11 @@ watch(
         </template>
       </n-button>
       <n-button
+        v-if="changePageVisible"
         class="fixed-btn"
         type="warning"
         size="small"
-        @click="() => changePage(false)"
+        @click="() => handleScroll(undefined, false)"
       >
         <template #icon>
           <n-icon>
@@ -125,13 +145,17 @@ watch(
           </n-icon>
         </template>
       </n-button>
+      <!--      <div-->
+      <!--        ref="scrollContainer"-->
+      <!--        class="scroll-container"-->
+      <!--      >-->
+      <!--      </div>-->
       <n-scrollbar
         class="scroll-container"
         ref="scrollContainer"
-        style="margin: 0 10px;"
-        trigger="none"
-        @wheel.native.prevent="handleScroll"
         x-scrollable
+        style="margin: 0 10px;"
+        @wheel.native.prevent="(e) => handleScroll(e, undefined)"
       >
         <div class="scroll-wrapper" ref="scrollWrapper">
           <n-button
@@ -147,10 +171,11 @@ watch(
         </div>
       </n-scrollbar>
       <n-button
+        v-if="changePageVisible"
         class="fixed-btn"
         type="warning"
         size="small"
-        @click="() => changePage(true)"
+        @click="() => handleScroll(undefined, true)"
       >
         <template #icon>
           <n-icon>
@@ -178,7 +203,7 @@ watch(
 
 <style scoped lang="scss">
 .layout-footer {
-  height: 55px;
+  height: 50px;
   padding: 10px 24px;
   z-index: 3;
   transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);
@@ -194,7 +219,7 @@ watch(
     display: flex;
     justify-content: space-between;
     align-items: start;
-    height: 41px;
+    height: 40px;
 
     .fixed-btn {
       margin: 0 5px;

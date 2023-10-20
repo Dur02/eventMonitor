@@ -5,24 +5,33 @@ export const useSystemStore = defineStore(
   'system',
   (): SystemType => {
     const isLogin: Ref<boolean> = ref(false)
+    const isLight: Ref<boolean> = ref(true)
 
     function setIsLogin(param: boolean): void {
       isLogin.value = param
     }
 
+    function setIsLight(newValue: boolean): void {
+      isLight.value = newValue
+    }
+
     return {
       isLogin,
-      setIsLogin
+      isLight,
+      setIsLogin,
+      setIsLight
     }
   },
   {
     persist: {
-      storage: sessionStorage
+      storage: localStorage
     }
   }
 )
 
 interface SystemType {
   isLogin: Ref<boolean>,
-  setIsLogin: (param: boolean) => void
+  isLight: Ref<boolean>,
+  setIsLogin: (param: boolean) => void,
+  setIsLight: (newValue: boolean) => void
 }

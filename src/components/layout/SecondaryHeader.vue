@@ -2,13 +2,13 @@
 import { NLayoutHeader, NSwitch, NIcon, NButton } from 'naive-ui'
 import { Sunny, Moon } from '@vicons/ionicons5'
 import CustomBreadCrumb from '@/components/layout/Breadcrumb.vue'
-import { useThemeStore } from '@/stores/theme'
+import { useSystemStore } from '@/stores/system'
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia'
 
-const themeStore = useThemeStore()
-const { isLight } = storeToRefs(themeStore)
-const { setIsLight } = themeStore
+const systemStore = useSystemStore()
+const { isLight } = storeToRefs(systemStore)
+const { setIsLight } = systemStore
 
 const loading = ref(false)
 

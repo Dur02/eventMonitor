@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { Ref } from 'vue'
+import { reactive, ref, shallowRef, toRaw, toRef, unref, watch } from 'vue'
 import type { FormInst, FormProps, FormRules, CardProps, SelectOption, SelectGroupOption } from 'naive-ui'
 import {
   NForm,
@@ -22,6 +23,9 @@ import {
 } from 'naive-ui'
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
+import { useFooterStore } from '@/stores/footer'
+import { storeToRefs } from 'pinia';
+import deepCopy from '@/utils/function/deepcopy'
 
 type CardThemeOverrides = NonNullable<CardProps['themeOverrides']>
 type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
@@ -41,7 +45,7 @@ const initialFormValue = {
   statistics: 'statistics1',
   role: {
     role1: {
-      country: '',
+      country: '即时查询',
       organization: '',
       religion1: '',
       religion2: '',
@@ -141,26 +145,41 @@ const rootOptions: Array<SelectOption | SelectGroupOption> = [
   }
 ]
 
-const formRef = ref<FormInst | null>(null)
-const formValue = ref(initialFormValue)
+const footerStore = useFooterStore()
+const { selectedBtn, initialData } = storeToRefs(footerStore)
+const { setInitialData } = footerStore
+
+const formValue: Ref<any | null> = ref(null)
+const formRef: Ref<FormInst | null> = ref(null)
 
 const handleValidateClick =  (e: MouseEvent) => {
   e.preventDefault()
-  console.log(formValue.value)
+  console.log(formValue.value === initialData.value)
   formRef.value?.validate((errors) => {
     if (!errors) {
-      //
+
     }
   })
 }
 
+watch(
+  () => selectedBtn.value,
+  () => {
+    switch (Boolean(selectedBtn.value)) {
+      case true:
+        formValue.value = deepCopy(initialData.value)
+        break
+      default:
+        formValue.value = deepCopy(initialFormValue)
+        break
+    }
+  },
+  {
+    immediate: true
+  }
+)
+
 defineExpose({
-  setFormValue: (newValue: any) => {
-    formValue.value = newValue
-  },
-  resetFormValue: () => {
-    formValue.value = initialFormValue
-  },
   restoreValidation: () => {
     formRef.value?.restoreValidation()
   }
@@ -176,7 +195,10 @@ defineExpose({
       borderRadius: '3px'
     }"
   >
-    <n-card :bordered="false" :theme-overrides="cardThemeOverrides">
+    <n-card
+      :bordered="false"
+      :theme-overrides="cardThemeOverrides"
+    >
       <n-form
         ref="formRef"
         class="database-form"

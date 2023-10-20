@@ -6,6 +6,7 @@ import { NForm, NFormItem, NInput, NIcon, NCheckbox, NButton, NConfigProvider, l
 import { Person, LockOpen } from '@vicons/ionicons5'
 import { encode, decode } from 'js-base64'
 import Cookies from 'js-cookie'
+import { login } from '@/api/login'
 
 type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
 type InputThemeOverrides = NonNullable<InputProps['themeOverrides']>
@@ -52,12 +53,15 @@ const rules: FormRules = {
 // 登录处理
 const handleLogin = () => {
   isBtnLoading.value = true
-  formRef.value?.validate((errors: Array<FormValidationError> | undefined) => {
+  formRef.value?.validate(async (errors: Array<FormValidationError> | undefined) => {
     if (!errors) {
       // 验证成功进行登录
       try {
         const { username, password, rememberMe } = model.value
         // 登录请求
+
+        const res = await login({ username, password, verfycode: '123' })
+        console.log(res)
         if (rememberMe) {
           const encodeUserName = encode(username!)
           const encodePassword = encode(password!)

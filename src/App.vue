@@ -12,11 +12,11 @@ import {
   darkTheme
 } from 'naive-ui'
 import { RouterView } from 'vue-router'
-import { useThemeStore } from '@/stores/theme'
+import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
 
-const themeStore = useThemeStore()
-const { isLight } = storeToRefs(themeStore)
+const systemStore = useSystemStore()
+const { isLight } = storeToRefs(systemStore)
 </script>
 
 <template>

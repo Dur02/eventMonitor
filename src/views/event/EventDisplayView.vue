@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref, VNodeChild } from 'vue'
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, toValue } from 'vue'
 import type {
   PaginationProps,
   DataTableInst,
@@ -15,6 +15,7 @@ import { getDisplayData } from '@/api/display'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import { map, filter, includes } from 'lodash/fp'
+import { useRoute } from 'vue-router'
 
 interface rowDataType {
   column1: number,
@@ -37,8 +38,9 @@ const allColumns: DataTableColumns<rowDataType> = [
   }
 ]
 
+const route = useRoute()
 const footStore = useFooterStore()
-const { selectedBtn, currentRoute } = storeToRefs(footStore)
+const { selectedBtn, initialData } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
 const columnsRef: Ref<DataTableColumns<rowDataType>> = ref(allColumns)
@@ -64,7 +66,7 @@ const handlePageChange = (currentPage: number): void => {
   if (!loadingRef.value) {
     loadingRef.value = true
     paginationReactive.page = currentPage
-    const { data, total } = getDisplayData(currentPage, paginationReactive.pageSize!, selectedBtn.value)
+    const { data, total } = getDisplayData(paginationReactive.page!, paginationReactive.pageSize!, selectedBtn.value, initialData.value)
     dataRef.value = data
     paginationReactive.itemCount = total
     loadingRef.value = false
@@ -78,29 +80,23 @@ const handleSelect = (selectedArray: Array<string>) => {
   }
 }
 
-onMounted(() => {
-  if (!loadingRef.value && selectedBtn.value !== '') {
-    loadingRef.value = true
-    const { data, total } = getDisplayData(paginationReactive.page!, paginationReactive.pageSize!, selectedBtn.value)
-    dataRef.value = data
-    paginationReactive.itemCount = total
-    loadingRef.value = false
-  }
-})
-
 watch(
-  () => selectedBtn.value,
+  () => initialData.value,
   () => {
-    if (!loadingRef.value && selectedBtn.value && currentRoute.value === 'eventDisplay') {
-      loadingRef.value = true
-      paginationReactive.page = 1
-      const { data, total } = getDisplayData(1, paginationReactive.pageSize!, selectedBtn.value)
-      dataRef.value = data
-      paginationReactive.itemCount = total
-      loadingRef.value = false
-      table.value!.scrollTo({ top: 0 })
+    if (Object.keys(initialData.value).length !== 0 && selectedBtn.value && route.name === 'eventDisplay') {
+      if (!loadingRef.value) {
+        loadingRef.value = true
+        paginationReactive.page = 1
+        const { data, total } = getDisplayData(1, paginationReactive.pageSize!, selectedBtn.value, initialData.value)
+        dataRef.value = data
+        paginationReactive.itemCount = total
+        loadingRef.value = false
+      }
     }
   },
+  {
+    immediate: true
+  }
 )
 </script>
 

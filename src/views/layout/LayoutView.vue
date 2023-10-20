@@ -5,6 +5,21 @@ import CustomSider from '@/components/layout/Sider.vue'
 import CustomSecondaryHeader from '@/components/layout/SecondaryHeader.vue'
 import CustomContent from '@/components/layout/Content.vue'
 import CustomFooter from '@/components/layout/Footer.vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+const hasFooter = ref(false)
+const route = useRoute()
+
+watch(
+  () => route.name,
+  () => {
+    hasFooter.value = route.meta.hasFooter as boolean
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
@@ -24,7 +39,7 @@ import CustomFooter from '@/components/layout/Footer.vue'
         <n-layout>
           <custom-secondary-header />
           <custom-content />
-          <custom-footer />
+          <custom-footer v-if="hasFooter" />
         </n-layout>
       </n-layout>
     </n-layout>
