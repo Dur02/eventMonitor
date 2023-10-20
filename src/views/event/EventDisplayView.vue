@@ -16,6 +16,7 @@ import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import { map, filter, includes } from 'lodash/fp'
 import { useRoute } from 'vue-router'
+import { login } from '@/api/login';
 
 interface rowDataType {
   column1: number,
@@ -82,7 +83,7 @@ const handleSelect = (selectedArray: Array<string>) => {
 
 watch(
   () => initialData.value,
-  () => {
+  async () => {
     if (Object.keys(initialData.value).length !== 0 && selectedBtn.value && route.name === 'eventDisplay') {
       if (!loadingRef.value) {
         loadingRef.value = true

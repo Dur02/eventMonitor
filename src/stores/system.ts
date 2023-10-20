@@ -6,6 +6,7 @@ export const useSystemStore = defineStore(
   (): SystemType => {
     const isLogin: Ref<boolean> = ref(false)
     const isLight: Ref<boolean> = ref(true)
+    const token: Ref<string> = ref('')
 
     function setIsLogin(param: boolean): void {
       isLogin.value = param
@@ -15,11 +16,17 @@ export const useSystemStore = defineStore(
       isLight.value = newValue
     }
 
+    function setToken(newValue: string): void {
+      token.value = newValue
+    }
+
     return {
       isLogin,
       isLight,
+      token,
       setIsLogin,
-      setIsLight
+      setIsLight,
+      setToken
     }
   },
   {
@@ -32,6 +39,8 @@ export const useSystemStore = defineStore(
 interface SystemType {
   isLogin: Ref<boolean>,
   isLight: Ref<boolean>,
+  token: Ref<string>
   setIsLogin: (param: boolean) => void,
-  setIsLight: (newValue: boolean) => void
+  setIsLight: (newValue: boolean) => void,
+  setToken: (newValue: string) => void
 }

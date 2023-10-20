@@ -2,30 +2,26 @@
 import type { Ref } from 'vue'
 import { ref, onMounted, } from 'vue'
 import type { FormProps, InputProps, CheckboxProps, FormRules, FormInst, FormValidationError } from 'naive-ui'
-import { NForm, NFormItem, NInput, NIcon, NCheckbox, NButton, NConfigProvider, lightTheme } from 'naive-ui'
+import { NForm, NFormItem, NInput, NIcon, NImage, NCheckbox, NButton, NConfigProvider, lightTheme } from 'naive-ui'
 import { Person, LockOpen } from '@vicons/ionicons5'
 import { encode, decode } from 'js-base64'
 import Cookies from 'js-cookie'
-import { login } from '@/api/login'
+import { login, getCode } from '@/api/login'
+import { useSystemStore } from '@/stores/system'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
 type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
 type InputThemeOverrides = NonNullable<InputProps['themeOverrides']>
 type CheckBoxThemeOverrides = NonNullable<CheckboxProps['themeOverrides']>
 
 interface ModelType {
-  username: string | null
-  password: string | null
+  username: string
+  password: string
+  code: string,
+  uuid: string,
   rememberMe: boolean
 }
-
-const model = ref<ModelType>({
-  username: null,
-  password: null,
-  rememberMe: false
-})
-
-const formRef = ref<FormInst | null>(null)
-const isBtnLoading: Ref<boolean> = ref(false)
 
 const formThemeOverrides: FormThemeOverrides = {
   blankHeightMedium: '30px'
@@ -47,22 +43,38 @@ const rules: FormRules = {
   ],
   password: [
     { required: true, message: '请输入密码', trigger: ['input', 'blur'] }
+  ],
+  code: [
+    { required: true, message: '请输入验证码', trigger: ['input', 'blur'] }
   ]
 }
 
+const systemStore = useSystemStore()
+const { isLogin } = storeToRefs(systemStore)
+
+const router = useRouter()
+
+const formValue = ref<ModelType>({
+  username: '',
+  password: '',
+  code: '',
+  uuid: '',
+  rememberMe: false
+})
+const codeUrl = ref('')
+const formRef = ref<FormInst | null>(null)
+const isBtnLoading: Ref<boolean> = ref(false)
+
 // 登录处理
 const handleLogin = () => {
-  isBtnLoading.value = true
   formRef.value?.validate(async (errors: Array<FormValidationError> | undefined) => {
     if (!errors) {
       // 验证成功进行登录
-      try {
-        const { username, password, rememberMe } = model.value
-        // 登录请求
-
-        const res = await login({ username, password, verfycode: '123' })
-        console.log(res)
-        if (rememberMe) {
+      isBtnLoading.value = true
+      const { username, password, code, uuid, rememberMe } = formValue.value
+      // 记住账密
+      switch (rememberMe) {
+        case true: {
           const encodeUserName = encode(username!)
           const encodePassword = encode(password!)
           const localForm = {
@@ -70,12 +82,19 @@ const handleLogin = () => {
             p: encodePassword
           }
           Cookies.set('unp', JSON.stringify(localForm), { expires: 7 })
-        } else {
+          break
+        }
+        default: {
           Cookies.remove('unp')
         }
-      } catch (e) {
-        //
       }
+      const { data } = await login({ username, password, code, uuid })
+      if (data) {
+        await router.push('/event')
+      } else {
+        await getCodeImg()
+      }
+      isBtnLoading.value = false
     }
   })
   isBtnLoading.value = false
@@ -85,20 +104,32 @@ const handleLogin = () => {
 const queryLocalForm = (): void => {
   const localForm = Cookies.get('unp')
   if (localForm) {
-    model.value.rememberMe = true
+    formValue.value.rememberMe = true
     try {
       const { un, p } = JSON.parse(localForm)
-      model.value.username = decode(un)
-      model.value.password = decode(p)
+      formValue.value.username = decode(un)
+      formValue.value.password = decode(p)
     } catch (error) {
       // console.error('本地数据解析失败', error)
     }
   } else {
-    model.value.rememberMe = false
+    formValue.value.rememberMe = false
   }
 }
 
+const getCodeImg = async (): Promise<void> => {
+  const {
+    data: {
+      img,
+      uuid
+    }
+  } = await getCode();
+  codeUrl.value = 'data:image/gif;base64,' + img
+  formValue.value.uuid = uuid
+}
+
 onMounted(() => {
+  getCodeImg()
   queryLocalForm()
 })
 </script>
@@ -111,7 +142,7 @@ onMounted(() => {
         ref="formRef"
         class="login-form"
         size="large"
-        :model="model"
+        :model="formValue"
         :rules="rules"
         :show-label="false"
         :theme-overrides="formThemeOverrides"
@@ -122,7 +153,7 @@ onMounted(() => {
           <n-input
             class="form-input"
             placeholder="请输入账号"
-            v-model:value="model.username"
+            v-model:value="formValue.username"
             @keydown.enter.prevent
             :theme-overrides="inputThemeOverrides"
           >
@@ -139,7 +170,7 @@ onMounted(() => {
           <n-input
             class="form-input"
             placeholder="请输入密码"
-            v-model:value="model.password"
+            v-model:value="formValue.password"
             type="password"
             @keydown.enter.prevent
             :theme-overrides="inputThemeOverrides"
@@ -152,10 +183,34 @@ onMounted(() => {
           </n-input>
         </n-form-item>
         <n-form-item
+          path="code"
+        >
+          <n-input
+            class="form-input form-code-input"
+            placeholder="请输入验证码"
+            v-model:value="formValue.code"
+            @keydown.enter.prevent
+            :theme-overrides="inputThemeOverrides"
+          >
+            <template #prefix>
+              <n-icon
+                :component="LockOpen"
+              />
+            </template>
+          </n-input>
+          <n-image
+            class="form-code"
+            height="40"
+            :src="codeUrl"
+            preview-disabled
+            @click="getCodeImg"
+          />
+        </n-form-item>
+        <n-form-item
           :show-feedback="false"
         >
           <n-checkbox
-            v-model:checked="model.rememberMe"
+            v-model:checked="formValue.rememberMe"
             :theme-overrides="checkBoxThemeOverrides"
           >
             记住我
@@ -183,12 +238,20 @@ onMounted(() => {
   top: 40%;
   transform: translate(-50%, -50%);
   width: 20%;
-  min-width: 200px;
-  max-width: 400px;
+  min-width: 400px;
+  max-width: 500px;
 
   .login-form {
     .form-input {
       background: rgba(0,0,0,.1);
+    }
+
+    .form-code-input {
+      margin-right: 10px;
+    }
+
+    .form-code {
+      border-radius: 5px;
     }
   }
 }
