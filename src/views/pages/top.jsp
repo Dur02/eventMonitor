@@ -164,7 +164,7 @@ $(".black_btn").click(function(){
 	$(window.parent.frames["lefthtml"].document).find(".two_li_active").click();
 });
 function doLoginOut(){
-	location.href="../login/doLoginout";
+	location.href="../auth/doLoginout";
 }
 </script>
 </body>

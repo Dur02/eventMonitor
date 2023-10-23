@@ -8,7 +8,7 @@
 <link rel="stylesheet"  type="text/css" href="static/css/style.css">
 <link rel="stylesheet" href="static/win_alert/window.css"/><!-- 弹出提示框样式 -->
 <script src="static/js/jquery-1.9.1.min.js"></script>
-<script src="static/js/login.js"></script>
+<script src="static/js/auth.js"></script>
 <style>
 body {padding:0; margin:0;}
 #coverpage{ width: 100%; height: 100%; z-index: 9999; background: #000; overflow: hidden; position: absolute;}
@@ -18,7 +18,7 @@ body {padding:0; margin:0;}
 .window-panel .title{
 	line-height: 38px;
 }
-.login{
+.auth{
 	width:499px;
 	height:325px;
 	position:fixed;
@@ -133,14 +133,14 @@ $(function() {
 <body onkeydown="keyLogin();">
 <div id="coverpage">
   <div id="onepics"><div class="onepic_wrap"><img src="static/images/login_bg.png" class="wrap_pic"></div></div>
-  <div class="login">
+  <div class="auth">
     	<div class="shadow"></div>
     	<div class="login_box">
 	      	<ul>
 		  		<li><span class="username"></span><input class="inp" id="usr" type="text"/></li>
 		  		<li><span class="password"></span><input class="inp" id="pwd"  type="password"/></li>
 		  		<li><input class="checkbox" type="checkbox" id="remember"/><span class="rember">记住我</span></li>
-		  	    <li><input class="sub" type="button" value="登录" id="sub" onclick="Login.login();"></li>
+		  	    <li><input class="sub" type="button" value="登录" id="sub" onclick="Login.auth();"></li>
 	  	  	</ul>
   	  	</div>
   </div>

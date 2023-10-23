@@ -6,10 +6,10 @@ import { NForm, NFormItem, NInput, NIcon, NImage, NCheckbox, NButton, NConfigPro
 import { Person, LockOpen } from '@vicons/ionicons5'
 import { encode, decode } from 'js-base64'
 import Cookies from 'js-cookie'
-import { login, getCode } from '@/api/login'
-import { useSystemStore } from '@/stores/system'
-import { storeToRefs } from 'pinia'
+import { getCode } from '@/api/user'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia';
 
 type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
 type InputThemeOverrides = NonNullable<InputProps['themeOverrides']>
@@ -49,8 +49,8 @@ const rules: FormRules = {
   ]
 }
 
-const systemStore = useSystemStore()
-const { isLogin } = storeToRefs(systemStore)
+const userStore = useUserStore()
+const { login } = userStore
 
 const router = useRouter()
 
@@ -88,10 +88,10 @@ const handleLogin = () => {
           Cookies.remove('unp')
         }
       }
-      const { data } = await login({ username, password, code, uuid })
-      if (data) {
-        await router.push('/event')
-      } else {
+      try {
+        await login({ username, password, code, uuid })
+        await router.push({ path: '/event' })
+      } catch (e) {
         await getCodeImg()
       }
       isBtnLoading.value = false
@@ -123,7 +123,7 @@ const getCodeImg = async (): Promise<void> => {
       img,
       uuid
     }
-  } = await getCode();
+  } = await getCode()
   codeUrl.value = 'data:image/gif;base64,' + img
   formValue.value.uuid = uuid
 }
@@ -238,8 +238,8 @@ onMounted(() => {
   top: 40%;
   transform: translate(-50%, -50%);
   width: 20%;
-  min-width: 400px;
-  max-width: 500px;
+  min-width: 300px;
+  max-width: 400px;
 
   .login-form {
     .form-input {

@@ -16,7 +16,7 @@ import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import { map, filter, includes } from 'lodash/fp'
 import { useRoute } from 'vue-router'
-import { login } from '@/api/login';
+import { auth } from '@/api/user';
 
 interface rowDataType {
   column1: number,

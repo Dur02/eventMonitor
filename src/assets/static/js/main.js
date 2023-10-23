@@ -1,7 +1,7 @@
 //document.write("<script src='../static/js/lib/JQueryPKG.js'></script>");
 var Login={
 	loginout:function(){
-		/*$.PKG.Get(null, 'login/doLoginout', function(){
+		/*$.PKG.Get(null, 'auth/doLoginout', function(){
 			window.parent.location.href=$.PKG.BaseUrl;
 		});*/
 	},

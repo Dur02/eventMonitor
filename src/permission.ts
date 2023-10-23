@@ -1,58 +1,53 @@
-import router from './router';
-import { createDiscreteApi } from 'naive-ui';
+import router from './router'
+import { createDiscreteApi, darkTheme, lightTheme } from 'naive-ui'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+import { useSystemStore } from '@/stores/system'
+import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
-const whiteList = ['/login'];
+const whiteList = ['/login']
 
 const { loadingBar } = createDiscreteApi(
   ['loadingBar']
 )
 
-router.beforeEach(async (to, from, next) => {
-  loadingBar.start()
-  const hasToken = getToken()
+loadingBar.start()
 
-  if (getToken()) {
-    to.meta.title && useSettingsStore().setTitle(to.meta.title as string);
-    /* has token*/
-    if (to.path === '/login') {
-      next({ path: '/' })
+router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext): Promise<void> => {
+  const userStore = useUserStore()
+  const { roles } = storeToRefs(userStore)
+  const { getInfo, logout } = userStore
+
+  if (localStorage.getItem('token')) {
+    if (whiteList.indexOf(to.path) !== -1) {
+      next({ path: '/event' })
       loadingBar.finish()
     } else {
-      if (useUserStore().roles.length === 0) {
-        isRelogin.show = true;
+      if (roles.value.length === 0) {
         // 判断当前用户是否已拉取完user_info信息
-        const [err] = await tos(useUserStore().getInfo());
-        if (err) {
-          await useUserStore().logout();
-          ElMessage.error(err);
-          next({ path: '/' });
-        } else {
-          isRelogin.show = false;
-          const accessRoutes = await usePermissionStore().generateRoutes();
-          // 根据roles权限生成可访问的路由表
-          accessRoutes.forEach((route) => {
-            if (!isHttp(route.path)) {
-              router.addRoute(route); // 动态添加可访问路由表
-            }
-          });
-          next({ ...to, replace: true }); // hack方法 确保addRoutes已完成
+        try {
+          await getInfo()
+          next({ ...to, replace: true })
+        } catch (e) {
+          await logout()
+          next('/login')
         }
       } else {
-        next();
+        next()
       }
     }
   } else {
     // 没有token
     if (whiteList.indexOf(to.path) !== -1) {
       // 在免登录白名单，直接进入
-      next();
+      next()
     } else {
-      next(`/login?redirect=${to.fullPath}`); // 否则全部重定向到登录页
+      next(`/login`) // 否则全部重定向到登录页
       loadingBar.finish()
     }
   }
-});
+})
 
 router.afterEach(() => {
   loadingBar.finish()
-});
+})

@@ -11,7 +11,7 @@ var Login = {
             loginname: $('#usr').val(),
             password: $('#pwd').val()
         };
-        /*$.PKG.Post(dt, 'login/doLogin', function(data){
+        /*$.PKG.Post(dt, 'auth/doLogin', function(data){
             if(data.code == 1){
                 window.location.href=$.PKG.BaseUrl + "main/toShow";
             }else{

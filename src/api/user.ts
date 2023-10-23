@@ -1,5 +1,8 @@
 import request from './index'
+import type { LoginData, LoginResult } from '@/api/types'
+import type { AxiosPromise, AxiosResponse } from 'axios'
 
+// 登录
 export function login(
   {
     clientId = "e5cd7e4891bf95d1d19206ce24a7b32e",
@@ -17,26 +20,13 @@ export function login(
     source = "",
     socialCode = "",
     socialState = "",
-  }: {
-    clientId?: string,
-    grantType?: string,
-    tenantId?: string,
-    username: string,
-    password: string,
-    code: string,
-    uuid: string,
-    phonenumber?: string,
-    smsCode?: string,
-    email?: string,
-    emailCode?: string,
-    xcxCode?: string,
-    source?: string,
-    socialCode?: string,
-    socialState?: string,
-  }
-) {
+  }: LoginData
+): AxiosPromise<LoginResult> {
   return request({
     url: `/auth/login`,
+    headers: {
+      isToken: false
+    },
     method: 'post',
     data: {
       clientId,
@@ -58,9 +48,29 @@ export function login(
   })
 }
 
+// 获取验证码
 export function getCode() {
   return request({
     url: `/auth/code`,
+    headers: {
+      isToken: false
+    },
+    method: 'get'
+  })
+}
+
+// 注销
+export function logout() {
+  return request({
+    url: '/auth/logout',
+    method: 'post'
+  })
+}
+
+// 获取用户信息
+export function getUserInfo() {
+  return request({
+    url: `/system/user/getInfo`,
     method: 'get'
   })
 }

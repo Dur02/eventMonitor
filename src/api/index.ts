@@ -1,10 +1,10 @@
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
 import axios from 'axios'
+import { createDiscreteApi, lightTheme, darkTheme } from 'naive-ui'
+import { useUserStore } from '@/stores/user'
 import { useSystemStore } from '@/stores/system'
-import { storeToRefs } from 'pinia';
-
-const systemStore = useSystemStore()
-const { token } = storeToRefs(systemStore)
+import { storeToRefs } from 'pinia'
+import router from '@/router'
 
 const service: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
@@ -12,11 +12,18 @@ const service: AxiosInstance = axios.create({
   timeout: 5000
 })
 
+service.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
+service.defaults.headers['clientid'] = import.meta.env.VITE_APP_CLIENT_ID
+
 // request interceptor
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig<any>): InternalAxiosRequestConfig<any> => {
-    if (token.value) {
-      config.headers['Authorization'] = 'Bearer' + token.value
+    if (localStorage.getItem('token') && !((config.headers || {}).isToken === false)) {
+      config.headers['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+    }
+    // FormData数据去请求头Content-Type
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
     }
     return config
   },
@@ -28,28 +35,71 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   (res: AxiosResponse) => {
+    const userStore = useUserStore()
+    const { logout } = userStore
+    const systemStore = useSystemStore()
+    const { isLight } = storeToRefs(systemStore)
+
+    const { message, dialog } = createDiscreteApi(
+      ['message', 'dialog'],
+      {
+        configProviderProps: {
+          theme: isLight.value ? lightTheme : darkTheme
+        }
+      }
+    )
+
     // 未设置状态码则默认成功状态
     const code = res.data.code || 200;
     // 获取错误信息
     const msg = res.data.msg
     // 二进制数据则直接返回
     if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
-      return res.data;
+      return res.data
     }
 
     // 处理错误状态码
-
-    return res.data
+    if (code === 401) {
+      dialog.error({
+        title: '出错',
+        content: '登录状态已过期，需要重新登录',
+        positiveText: '确定',
+        onPositiveClick: async () => {
+          await logout()
+          await router.replace('/login')
+        },
+      })
+      return Promise.reject('无效的会话，或者会话已过期，请重新登录。');
+    } else if (code !== 200) {
+      message.error(msg)
+      return Promise.reject(new Error(msg))
+    } else {
+      return Promise.resolve(res.data)
+    }
   },
   async (error: AxiosError): Promise<AxiosError> => {
-    let { message } = error;
-    if (message == 'Network Error') {
-      message = '后端接口连接异常';
-    } else if (message.includes('timeout')) {
-      message = '系统接口请求超时';
-    } else if (message.includes('Request failed with status code')) {
-      message = '系统接口' + message.substr(message.length - 3) + '异常';
+    const systemStore = useSystemStore()
+    const { isLight } = storeToRefs(systemStore)
+
+    const { message } = createDiscreteApi(
+      ['message'],
+      {
+        configProviderProps: {
+          theme: isLight.value ? lightTheme : darkTheme
+        }
+      }
+    )
+
+    let { message: msg } = error;
+    if (msg == 'Network Error') {
+      msg = '后端接口连接异常'
+    } else if (msg.includes('timeout')) {
+      msg = '系统接口请求超时'
+    } else if (msg.includes('Request failed with status code')) {
+      msg = '系统接口' + msg.substr(msg.length - 3) + '异常'
     }
+
+    message.error(msg)
     // 错误消息弹出
     return Promise.reject(error)
   }

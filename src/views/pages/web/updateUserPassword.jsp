@@ -35,7 +35,7 @@
 		    	<label class="fr"><image src="<%=basePath %>/static/images/delete.png" onclick="close_s()" class="userdelete"></image></label>
 			</div>
 			<div class="upd_popup_m clearfix">
-			<form id="updUserPasswordForm" action="../login/updatePassword" method="post">
+			<form id="updUserPasswordForm" action="../auth/updatePassword" method="post">
 				<div class="tab3 clearfix" id="userInfodiv">
 					<!-- 用户管理 -->
 						<ul class="upd_table_ul clearfix">
@@ -81,7 +81,7 @@ function validateUpd1(){
 	  }else{
 		  $("#updspan").text("");
 		  $.ajax({
-				url: '<%=basePath %>/login/checkOldName',
+				url: '<%=basePath %>/auth/checkOldName',
 				type: 'POST',
 				data: {password:oldpwd},
 				async:false,
@@ -147,7 +147,7 @@ function savePass(){
 		return;
 	}
 	$.ajax({
-		url: '<%=basePath %>/login/updatePassword',
+		url: '<%=basePath %>/auth/updatePassword',
 		type: 'POST',
 		data: {password:password},
 		async:false,
@@ -155,7 +155,7 @@ function savePass(){
 			if(data == "success"){
 				//win.alertEx('密码修改成功，请重新登录');
 				$.ajax({
-					url: '<%=basePath %>/login/doLoginout',
+					url: '<%=basePath %>/auth/doLoginout',
 					type: 'GET',
 					success: function(data){
 						//跳转到项目根路径（登录页面）

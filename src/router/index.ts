@@ -1,12 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import type { RouteLocationNormalized } from 'vue-router'
-import { createDiscreteApi } from 'naive-ui'
 import menuRoutes from '@/router/menuRoutes'
-
-// https://www.naiveui.com/zh-CN/os-theme/components/discrete 脱离上下文使用API
-const { loadingBar } = createDiscreteApi(
-  ['loadingBar']
-)
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,16 +18,14 @@ const router = createRouter({
       path: '/:pathMatch(.*)',
       component: () => import('../components/error/404.vue')
     }
-  ]
-})
-
-router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized): boolean => {
-  loadingBar.start()
-  return true
-})
-
-router.afterEach((to: RouteLocationNormalized, from: RouteLocationNormalized): void => {
-  loadingBar.finish()
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { top: 0 };
+    }
+  }
 })
 
 export default router
