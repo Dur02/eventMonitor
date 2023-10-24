@@ -30,7 +30,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
           next({ ...to, replace: true })
         } catch (e) {
           await logout()
-          next('/login')
+          next({ path: '/login', replace: true })
         }
       } else {
         next()

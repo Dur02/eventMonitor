@@ -1,8 +1,8 @@
 import type { RouteRecordRaw } from 'vue-router'
 import renderIcon from '@/utils/function/renderIcon'
-import { NavigateCircle, NotificationsSharp } from '@vicons/ionicons5'
+import { NavigateCircle, NotificationsSharp, Settings } from '@vicons/ionicons5'
 import EventDisplayForm from '@/components/event/display/EventDisplayForm.vue'
-import EventTimelineForm from '@/components/event/timelint/EventTimelineForm.vue'
+import EventTimelineForm from '@/components/event/timeline/EventTimelineForm.vue'
 
 export default [
   {
@@ -63,6 +63,36 @@ export default [
         name: 'graphTimeline',
         meta: {
           breadcrumb: '图谱时间线',
+          hasFooter: true,
+        },
+        component: () => import('../views/graph/GraphTimelineView.vue')
+      },
+    ]
+  },
+  {
+    path: '/configure',
+    name: 'configure',
+    meta: {
+      breadcrumb: '配置管理',
+      icon: renderIcon(Settings),
+    },
+    redirect: { name: 'graphDisplay' },
+    component: () => import('../views/layout/LayoutView.vue'),
+    children: [
+      {
+        path: 'event',
+        name: 'eventConfigure',
+        meta: {
+          breadcrumb: '事件配置',
+          hasFooter: true,
+        },
+        component: () => import('../views/graph/GraphDisplayView.vue')
+      },
+      {
+        path: 'timeline',
+        name: 'timelineConfigure',
+        meta: {
+          breadcrumb: '图谱配置',
           hasFooter: true,
         },
         component: () => import('../views/graph/GraphTimelineView.vue')

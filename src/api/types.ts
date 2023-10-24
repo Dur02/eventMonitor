@@ -20,3 +20,12 @@ export type LoginResult = {
   access_token: string;
 }
 
+export type countryType = {
+  countryCode: string
+}
+
+export type EventCodeType = {
+  eventParentsCode: string,
+  eventQuadClass: string
+}
+

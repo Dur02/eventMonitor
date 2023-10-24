@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { reactive, ref, shallowRef, toRaw, toRef, unref, watch } from 'vue'
-import type { FormInst, FormProps, FormRules, CardProps, SelectOption, SelectGroupOption } from 'naive-ui'
+import { h, onMounted, ref, watch } from 'vue'
+import type { FormInst, FormProps, FormRules, CardProps, SelectOption, SelectGroupOption, TreeSelectOption } from 'naive-ui'
 import {
   NForm,
   NFormItem,
@@ -19,13 +19,17 @@ import {
   NGrid,
   NGi,
   NSelect,
-  NCheckbox
+  NCheckbox,
+  NTreeSelect
 } from 'naive-ui'
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
 import { useFooterStore } from '@/stores/footer'
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
+import { useEventStore } from '@/stores/event'
+import { getRegionCodeList, getEventCodeList } from '@/api/eventMonitor'
+import { map, join } from 'lodash/fp'
 
 type CardThemeOverrides = NonNullable<CardProps['themeOverrides']>
 type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
@@ -119,21 +123,6 @@ const rules: FormRules = {
   }
 }
 
-const geoOptions: Array<SelectOption | SelectGroupOption> = [
-  {
-    label: 'Drive My Car',
-    value: 'geographicFeature1'
-  },
-  {
-    label: 'Norwegian Wood',
-    value: 'geographicFeature2'
-  },
-  {
-    label: 'Nowhere Man',
-    value: 'geographicFeature3'
-  }
-]
-
 const rootOptions: Array<SelectOption | SelectGroupOption> = [
   {
     label: '是',
@@ -147,20 +136,57 @@ const rootOptions: Array<SelectOption | SelectGroupOption> = [
 
 const footerStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footerStore)
-const { setInitialData } = footerStore
+
+const eventStore = useEventStore()
+const { actorCountryCodeList, actorTypeCode, ethnicCode, geoCountryCodeList, knownGroupCode, quadClass, religionCode } = storeToRefs(eventStore)
+const { getAllEventCodeList } = eventStore
 
 const formValue: Ref<any | null> = ref(null)
 const formRef: Ref<FormInst | null> = ref(null)
 
+// const renderOption = ({ node, option }: { node: VNode; option: SelectOption }) => {
+//   return h(NTooltip, null, {
+//     trigger: () => node,
+//     default: () => option.label
+//   })
+// }
+
+const handleRegionLoad = (option: TreeSelectOption): Promise<void> => {
+  return new Promise<void>(async (resolve) => {
+    const { data } = await getRegionCodeList({ countryCode: option.key as string })
+    option.children = map(({ regionCode, regionNameZh, regionName }) => ({
+      label: `${regionNameZh}(${regionName})`,
+      key: `${regionCode}`,
+      isLeaf: true
+    }))(data)
+    resolve()
+  })
+}
+
+const handleClassLoad = async (value: number[]) => {
+  console.log(value)
+  console.log(join(',')(value))
+  const res = await getEventCodeList({ eventParentsCode: join(',')(value), eventQuadClass: join(',')(value) })
+  console.log(res)
+}
+
 const handleValidateClick =  (e: MouseEvent) => {
   e.preventDefault()
-  console.log(formValue.value === initialData.value)
+  console.log(formValue.value)
   formRef.value?.validate((errors) => {
     if (!errors) {
 
     }
   })
 }
+
+onMounted(async () => {
+  try {
+    await getAllEventCodeList()
+  } catch (e) {
+
+  }
+})
 
 watch(
   () => selectedBtn.value,
@@ -171,6 +197,10 @@ watch(
         break
       default:
         formValue.value = deepCopy(initialFormValue)
+        const end = new Date()
+        const start = new Date()
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+        formValue.value.date = [start, end]
         break
     }
   },
@@ -192,7 +222,7 @@ defineExpose({
     :style="{
       maxHeight: '440px',
       border: '1px solid var(--n-border-color)',
-      borderRadius: '3px'
+      borderRadius: '3px',
     }"
   >
     <n-card
@@ -312,34 +342,108 @@ defineExpose({
             <n-form-item-gi :span="24" label="角色1" label-width="60" :show-feedback="false">
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
                 <n-form-item-gi span="24 m:6" label="国家(地区)" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.country" />
+                  <n-select
+                    v-model:value="formValue.role.role1.country"
+                    :options="actorCountryCodeList"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="组织" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.organization" />
+                  <n-select
+                    v-model:value="formValue.role.role1.organization"
+                    :options="knownGroupCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="宗教1" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.religion1" />
+                  <n-select
+                    v-model:value="formValue.role.role1.religion1"
+                    :options="religionCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="宗教2" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.religion2" />
+                  <n-select
+                    v-model:value="formValue.role.role1.religion2"
+                    :options="religionCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="种族" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.race" />
+                  <n-select
+                    v-model:value="formValue.role.role1.race"
+                    :options="ethnicCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="种类1" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.type1" />
+                  <n-select
+                    v-model:value="formValue.role.role1.type1"
+                    :options="actorTypeCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="种类2" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.type2" />
+                  <n-select
+                    v-model:value="formValue.role.role1.type2"
+                    :options="actorTypeCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="种类3" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.type3" />
+                  <n-select
+                    v-model:value="formValue.role.role1.type3"
+                    :options="actorTypeCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
-                  <n-select v-model:value="formValue.role.role1.geographicFeature" :options="geoOptions" />
+                  <n-select
+                    v-model:value="formValue.role.role1.geographicFeature"
+                    :options="geoCountryCodeList"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role1.state" />
+                  <n-tree-select
+                    v-model:value="formValue.role.role1.state"
+                    :options="geoCountryCodeList"
+                    multiple
+                    max-tag-count="responsive"
+                    check-strategy="all"
+                    :on-load="handleRegionLoad"
+                    show-path
+                    checkable
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
@@ -357,34 +461,108 @@ defineExpose({
             <n-form-item-gi :span="24" label="角色2" label-width="60" :show-feedback="false">
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
                 <n-form-item-gi span="24 m:6" label="国家(地区)" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.country" />
+                  <n-select
+                    v-model:value="formValue.role.role2.country"
+                    :options="actorCountryCodeList"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="组织" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.organization" />
+                  <n-select
+                    v-model:value="formValue.role.role2.organization"
+                    :options="knownGroupCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="宗教1" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.religion1" />
+                  <n-select
+                    v-model:value="formValue.role.role2.religion1"
+                    :options="religionCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="宗教2" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.religion2" />
+                  <n-select
+                    v-model:value="formValue.role.role2.religion2"
+                    :options="religionCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="种族" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.race" />
+                  <n-select
+                    v-model:value="formValue.role.role2.race"
+                    :options="ethnicCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="种类1" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.type1" />
+                  <n-select
+                    v-model:value="formValue.role.role2.type1"
+                    :options="actorTypeCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="种类2" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.type2" />
+                  <n-select
+                    v-model:value="formValue.role.role2.type2"
+                    :options="actorTypeCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="种类3" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.type3" />
+                  <n-select
+                    v-model:value="formValue.role.role2.type3"
+                    :options="actorTypeCode"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
-                  <n-select v-model:value="formValue.role.role2.geographicFeature" :options="geoOptions" />
+                  <n-select
+                    v-model:value="formValue.role.role2.geographicFeature"
+                    :options="geoCountryCodeList"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.role.role2.state" />
+                  <n-tree-select
+                    v-model:value="formValue.role.role2.state"
+                    :options="geoCountryCodeList"
+                    multiple
+                    max-tag-count="responsive"
+                    check-strategy="all"
+                    :on-load="handleRegionLoad"
+                    show-path
+                    checkable
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
@@ -414,7 +592,15 @@ defineExpose({
             <n-form-item-gi :span="24" label="类型" label-width="60" :show-feedback="false">
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
                 <n-form-item-gi span="24 m:6" label="大类" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.type.class" />
+                  <n-select
+                    v-model:value="formValue.event.type.class"
+                    :options="quadClass"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                    @update:value="handleClassLoad"
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="根类" label-width="80" label-align="center">
                   <n-input v-model:value="formValue.event.type.root" />
@@ -430,10 +616,28 @@ defineExpose({
             <n-form-item-gi :span="24" label="发生地" label-width="60" :show-feedback="false">
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
-                  <n-select v-model:value="formValue.event.place.geographicFeature" :options="geoOptions" />
+                  <n-select
+                    v-model:value="formValue.event.place.geographicFeature"
+                    :options="geoCountryCodeList"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.place.state" />
+                  <n-tree-select
+                    v-model:value="formValue.event.place.state"
+                    :options="geoCountryCodeList"
+                    multiple
+                    max-tag-count="responsive"
+                    check-strategy="all"
+                    :on-load="handleRegionLoad"
+                    show-path
+                    checkable
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
