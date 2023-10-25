@@ -178,7 +178,7 @@ watch(
 
 <style scoped lang="scss">
 .layout-footer {
-  height: 55px;
+  height: 52px;
   padding: 10px 24px;
   z-index: 3;
   transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { h, onMounted, ref, watch } from 'vue'
-import type { FormInst, FormProps, FormRules, CardProps, SelectOption, SelectGroupOption, TreeSelectOption } from 'naive-ui'
+import { onMounted, ref, watch } from 'vue'
+import type { FormInst, SelectOption, SelectGroupOption, TreeSelectOption } from 'naive-ui'
 import {
   NForm,
   NFormItem,
@@ -22,127 +22,31 @@ import {
   NCheckbox,
   NTreeSelect
 } from 'naive-ui'
-import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
+import { Calendar, Grid, Calculator, People, DocumentText, Save, Folder } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
+import { useRoute } from 'vue-router'
 import { useFooterStore } from '@/stores/footer'
+import { useEventStore } from '@/stores/event'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
-import { useEventStore } from '@/stores/event'
+import { cardThemeOverrides, formThemeOverrides, initialFormValue, rules, rootOptions } from '@/utils/constant/eventDisplayForm'
 import { getRegionCodeList, getEventCodeList } from '@/api/eventMonitor'
-import { map, join } from 'lodash/fp'
-
-type CardThemeOverrides = NonNullable<CardProps['themeOverrides']>
-type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
-
-const cardThemeOverrides: CardThemeOverrides = {
-  paddingMedium: '15px 20px'
-}
-
-const formThemeOverrides: FormThemeOverrides = {
-  blankHeightMedium: '10px'
-}
-
-const initialFormValue = {
-  date: null,
-  dataSource: 'dataSource1',
-  weight: 'weight1',
-  statistics: 'statistics1',
-  role: {
-    role1: {
-      country: '即时查询',
-      organization: '',
-      religion1: '',
-      religion2: '',
-      race: '',
-      type1: '',
-      type2: '',
-      type3: '',
-      geographicFeature: null,
-      state: '',
-      fullyGeographic: '',
-      caseSensitive: true
-    },
-    role2: {
-      country: '',
-      organization: '',
-      religion1: '',
-      religion2: '',
-      race: '',
-      type1: '',
-      type2: '',
-      type3: '',
-      geographicFeature: null,
-      state: '',
-      fullyGeographic: '',
-      caseSensitive: true
-    }
-  },
-  event: {
-    type: {
-      class: '',
-      root: '',
-      base: '',
-      sub: ''
-    },
-    place: {
-      geographicFeature: null,
-      state: '',
-      fullyGeographic: '',
-      caseSensitive: true
-    },
-    other: {
-      sourceUrl: '',
-      emotion: [],
-      effect: [],
-      isRoot: null
-    }
-  }
-}
-
-const rules: FormRules = {
-  date: {
-    type: 'array',
-    required: true,
-    message: '请选择日期',
-    trigger: ['change', 'blur']
-  },
-  dataSource: {
-    required: true,
-    message: '请选择数据源',
-    trigger: ['input', 'blur']
-  },
-  weight: {
-    required: true,
-    message: '请选择权重依据',
-    trigger: ['input', 'blur']
-  },
-  statistics: {
-    required: true,
-    message: '请选择统计依据',
-    trigger: ['input', 'blur']
-  }
-}
-
-const rootOptions: Array<SelectOption | SelectGroupOption> = [
-  {
-    label: '是',
-    value: 'true'
-  },
-  {
-    label: '否',
-    value: 'false'
-  }
-]
+import { map, join, includes, filter } from 'lodash/fp'
 
 const footerStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footerStore)
 
 const eventStore = useEventStore()
-const { actorCountryCodeList, actorTypeCode, ethnicCode, geoCountryCodeList, knownGroupCode, quadClass, religionCode } = storeToRefs(eventStore)
+const { actorCountryCodeList, actorTypeCode, ethnicCode, eventCodeList, geoCountryCodeList, knownGroupCode, quadClass, religionCode } = storeToRefs(eventStore)
 const { getAllEventCodeList } = eventStore
+
+const route = useRoute()
 
 const formValue: Ref<any | null> = ref(null)
 const formRef: Ref<FormInst | null> = ref(null)
+const rootOption: Ref<Array<SelectOption | SelectGroupOption>> = ref(eventCodeList.value)
+const baseOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
+const subOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 
 // const renderOption = ({ node, option }: { node: VNode; option: SelectOption }) => {
 //   return h(NTooltip, null, {
@@ -163,16 +67,85 @@ const handleRegionLoad = (option: TreeSelectOption): Promise<void> => {
   })
 }
 
-const handleClassLoad = async (value: number[]) => {
-  console.log(value)
-  console.log(join(',')(value))
-  const res = await getEventCodeList({ eventParentsCode: join(',')(value), eventQuadClass: join(',')(value) })
-  console.log(res)
+const handleClassUpdate = (value: number[]) => {
+  formValue.value.event.type.root = ''
+  formValue.value.event.type.base = ''
+  formValue.value.event.type.sub = ''
+  switch (value.length) {
+    case 0: {
+      rootOption.value = eventCodeList.value
+      baseOption.value = []
+      subOption.value = []
+      break
+    }
+    default: {
+      rootOption.value = filter((item: any) => includes(item.eventQuadClass as number)(value))(deepCopy(eventCodeList.value))
+      baseOption.value = []
+      subOption.value = []
+      break
+    }
+  }
+}
+
+const handleRootUpdate = async (value: string[]) => {
+  formValue.value.event.type.base = ''
+  formValue.value.event.type.sub = ''
+  switch (value.length) {
+    case 0: {
+      baseOption.value = []
+      subOption.value = []
+      break
+    }
+    default: {
+      const { data } = await getEventCodeList({ eventParentsCode: join(',')(value) })
+      baseOption.value = map(({ eventNameZh, eventNameEn, eventCode, eventRootCode }) => ({
+        label: `${eventNameZh}(${eventNameEn})`,
+        value: `${eventCode}`,
+        eventRootCode
+      }))(data)
+      subOption.value = []
+      break
+    }
+  }
+}
+
+const handleBaseUpdate = async (value: string[]) => {
+  formValue.value.event.type.sub = ''
+  switch (value.length) {
+    case 0: {
+      subOption.value = []
+      break
+    }
+    default: {
+      const { data } = await getEventCodeList({ eventParentsCode: join(',')(value) })
+      subOption.value = map(({ eventNameZh, eventNameEn, eventCode, eventBaseCode }) => ({
+        label: `${eventNameZh}(${eventNameEn})`,
+        value: `${eventCode}`,
+        eventBaseCode
+      }))(data)
+      break
+    }
+  }
 }
 
 const handleValidateClick =  (e: MouseEvent) => {
   e.preventDefault()
   console.log(formValue.value)
+  // const test = {
+  //   country: flow(
+  //     filter((item) => find(propEq('key', item))(deepcopy(geoCountryCodeList.value))),
+  //     join(',')
+  //   )(deepcopy(formValue.value.role.role1.state)),
+  //   state: flow(
+  //     map((item: any) => item.children),
+  //     flatten,
+  //     compact,
+  //     filter(({ key }) => includes(key)(deepcopy(formValue.value.role.role1.state))),
+  //     map((item) => item.key),
+  //     join(',')
+  //   )(deepcopy(geoCountryCodeList.value))
+  // }
+  // console.log(test)
   formRef.value?.validate((errors) => {
     if (!errors) {
 
@@ -283,7 +256,7 @@ defineExpose({
             </n-space>
           </n-radio-group>
         </n-form-item>
-        <n-form-item path="weight">
+        <n-form-item v-if="route.name !== 'eventDisplay'" path="weight">
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -309,7 +282,7 @@ defineExpose({
             </n-space>
           </n-radio-group>
         </n-form-item>
-        <n-form-item path="statistics">
+        <n-form-item v-if="route.name !== 'eventDisplay'" path="statistics">
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -420,6 +393,17 @@ defineExpose({
                     filterable
                     clearable
                   />
+                </n-form-item-gi>
+                <n-gi span="24 m:18" style="margin-left: 80px;">
+                  <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
+                </n-gi>
+                <n-form-item-gi span="18" label="角色全称" label-width="80" label-align="center">
+                  <n-input v-model:value="formValue.event.place.fullyGeographic" />
+                </n-form-item-gi>
+                <n-form-item-gi span="6">
+                  <n-checkbox v-model:checked="formValue.role.role1.caseSensitive">
+                    区分大小写
+                  </n-checkbox>
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
                   <n-select
@@ -540,6 +524,17 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
+                <n-gi span="24 m:18" style="margin-left: 80px;">
+                  <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
+                </n-gi>
+                <n-form-item-gi span="18" label="角色全称" label-width="80" label-align="center">
+                  <n-input v-model:value="formValue.event.place.fullyGeographic" />
+                </n-form-item-gi>
+                <n-form-item-gi span="6">
+                  <n-checkbox v-model:checked="formValue.role.role2.caseSensitive">
+                    区分大小写
+                  </n-checkbox>
+                </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
                   <n-select
                     v-model:value="formValue.role.role2.geographicFeature"
@@ -579,7 +574,7 @@ defineExpose({
             </n-form-item-gi>
           </n-grid>
         </n-form-item>
-        <n-form-item>
+        <n-form-item :show-feedback="false">
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -599,17 +594,40 @@ defineExpose({
                     max-tag-count="responsive"
                     filterable
                     clearable
-                    @update:value="handleClassLoad"
+                    @update:value="handleClassUpdate"
                   />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="根类" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.type.root" />
+                  <n-select
+                    v-model:value="formValue.event.type.root"
+                    :options="rootOption"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                    @update:value="handleRootUpdate"
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="基类" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.type.base" />
+                  <n-select
+                    v-model:value="formValue.event.type.base"
+                    :options="baseOption"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                    @update:value="handleBaseUpdate"
+                  />
                 </n-form-item-gi>
                 <n-form-item-gi span="24 m:6" label="子类" label-width="80" label-align="center">
-                  <n-input v-model:value="formValue.event.type.sub" />
+                  <n-select
+                    v-model:value="formValue.event.type.sub"
+                    :options="subOption"
+                    multiple
+                    max-tag-count="responsive"
+                    filterable
+                    clearable
+                  />
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>
@@ -701,6 +719,37 @@ defineExpose({
               </n-grid>
             </n-form-item-gi>
           </n-grid>
+        </n-form-item>
+        <n-form-item>
+          <template #label>
+            <div class="icon-label">
+              <n-icon class="icon" size="20">
+                <save />
+              </n-icon>
+              <span>是否保存</span>
+            </div>
+          </template>
+          <n-radio-group v-model:value="formValue.dataSource">
+            <n-space>
+              <n-radio :value="true">
+                是
+              </n-radio>
+              <n-radio :value="false">
+                否
+              </n-radio>
+            </n-space>
+          </n-radio-group>
+        </n-form-item>
+        <n-form-item>
+          <template #label>
+            <div class="icon-label">
+              <n-icon class="icon" size="20">
+                <folder />
+              </n-icon>
+              <span>配置名称</span>
+            </div>
+          </template>
+          <n-input v-model:value="formValue.event.place.fullyGeographic" style="max-width: 300px;" />
         </n-form-item>
         <n-form-item class="btn-container" :show-feedback="false">
           <n-space class="space-box">

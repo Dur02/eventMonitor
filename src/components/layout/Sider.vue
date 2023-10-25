@@ -6,7 +6,9 @@ import { NLayoutSider, NMenu } from 'naive-ui'
 import type { RouteLocationNormalizedLoaded, Router, RouteRecordRaw } from 'vue-router'
 import { useRoute, useRouter } from 'vue-router'
 import menuRoutes from '@/router/menuRoutes'
+import { useSystemStore } from '@/stores/system'
 import { map } from 'lodash/fp'
+import { storeToRefs } from 'pinia';
 
 interface routeType {
   key: string,
@@ -15,12 +17,14 @@ interface routeType {
   children: routeType[] | undefined
 }
 
+const systemStore = useSystemStore()
+const { isCollapse } = storeToRefs(systemStore)
+
 const route: RouteLocationNormalizedLoaded = useRoute()
 const router: Router = useRouter()
 
 const menuInstRef: Ref<MenuInst | null> = ref(null)
 const selectedMenu: Ref<string> = ref('')
-const isCollapse: Ref<boolean> = ref(false)
 const menuOptions: Ref<routeType[]> = ref([])
 
 const handleSelectedChange = (key: string): void => {
@@ -37,11 +41,7 @@ onMounted((): void => {
     }))(param)
   }
 
-  /**
-    * @description 通过menuRoutes生成菜单栏
-    * @author Dur02
-    * @date 2023/9/27
-  **/
+  // 通过menuRoutes生成菜单栏
   menuOptions.value = mapChildren(menuRoutes)
   selectedMenu.value = route.name as string
 
@@ -58,10 +58,8 @@ onMounted((): void => {
     collapse-mode="width"
     :collapsed-width="64"
     :collapsed="isCollapse"
-    @collapse="isCollapse = true"
-    @expand="isCollapse = false"
     :width="210"
-    show-trigger="arrow-circle"
+    :show-trigger="false"
     bordered
   >
     <n-menu

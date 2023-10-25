@@ -25,7 +25,7 @@ export type countryType = {
 }
 
 export type EventCodeType = {
-  eventParentsCode: string,
-  eventQuadClass: string
+  eventParentsCode?: string,
+  eventQuadClass?: string
 }
 

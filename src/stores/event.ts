@@ -9,6 +9,7 @@ export const useEventStore = defineStore('event', () => {
   const actorCountryCodeList: Ref<SelectOption[]> = ref([])
   const actorTypeCode: Ref<SelectOption[]> = ref([])
   const ethnicCode: Ref<SelectOption[]>  = ref([])
+  const eventCodeList: Ref<SelectOption[]>  = ref([])
   const geoCountryCodeList: Ref<TreeSelectOption[]> = ref([])
   const knownGroupCode: Ref<SelectOption[]>  = ref([])
   const quadClass: Ref<SelectOption[]>   = ref([])
@@ -32,6 +33,12 @@ export const useEventStore = defineStore('event', () => {
         label: `${chname}(${label})`,
         value: `${code}`
       }))(data.ethnicCode)
+
+      eventCodeList.value = map(({ eventNameZh, eventNameEn, eventCode, eventQuadClass }) => ({
+        label: `${eventNameZh}(${eventNameEn})`,
+        value: `${eventCode}`,
+        eventQuadClass
+      }))(data.eventCodeList)
 
       geoCountryCodeList.value = map(({ countryChineseName, countryName, countryCode }) => ({
         label: `${countryChineseName}(${countryName})`,
@@ -61,6 +68,7 @@ export const useEventStore = defineStore('event', () => {
     actorCountryCodeList,
     actorTypeCode,
     ethnicCode,
+    eventCodeList,
     geoCountryCodeList,
     knownGroupCode,
     quadClass,
