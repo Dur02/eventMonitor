@@ -64,10 +64,10 @@ service.interceptors.response.use(
         title: '出错',
         content: '登录状态已过期，需要重新登录',
         positiveText: '确定',
-        // onPositiveClick: async () => {
-        //   // await logout()
-        //   await router.replace('/login')
-        // },
+        onPositiveClick: async () => {
+          await logout()
+          await router.replace('/login')
+        },
       })
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。');
     } else if (code !== 200) {

@@ -17,6 +17,7 @@ import { List } from '@vicons/ionicons5'
 import { map, filter, includes } from 'lodash/fp'
 import { useRoute } from 'vue-router'
 import { auth } from '@/api/user';
+import { getEventList } from '@/api/event';
 
 interface rowDataType {
   column1: number,
@@ -88,6 +89,7 @@ watch(
       if (!loadingRef.value) {
         loadingRef.value = true
         paginationReactive.page = 1
+        const res = await getEventList({ pageNum: 1, pageSize: paginationReactive.pageSize as number })
         const { data, total } = getDisplayData(1, paginationReactive.pageSize!, selectedBtn.value, initialData.value)
         dataRef.value = data
         paginationReactive.itemCount = total

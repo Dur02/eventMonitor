@@ -30,21 +30,33 @@ import { useEventStore } from '@/stores/event'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
 import { cardThemeOverrides, formThemeOverrides, initialFormValue, rules, rootOptions } from '@/utils/constant/eventDisplayForm'
-import { getRegionCodeList, getEventCodeList } from '@/api/eventMonitor'
+import { getRegionCodeList } from '@/api/event'
 import { map, join, includes, filter } from 'lodash/fp'
 
 const footerStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footerStore)
 
 const eventStore = useEventStore()
-const { actorCountryCodeList, actorTypeCode, ethnicCode, eventCodeList, geoCountryCodeList, knownGroupCode, quadClass, religionCode } = storeToRefs(eventStore)
+const {
+  actorCountryCodeList,
+  actorTypeCode,
+  baseCodeList,
+  ethnicCode,
+  eventCodeList,
+  geoCountryCodeList,
+  knownGroupCode,
+  quadClass,
+  religionCode,
+  rootCodeList
+} = storeToRefs(eventStore)
 const { getAllEventCodeList } = eventStore
 
 const route = useRoute()
 
+const disabled = ref(false)
 const formValue: Ref<any | null> = ref(null)
 const formRef: Ref<FormInst | null> = ref(null)
-const rootOption: Ref<Array<SelectOption | SelectGroupOption>> = ref(eventCodeList.value)
+const rootOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 const baseOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 const subOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 
@@ -60,7 +72,7 @@ const handleRegionLoad = (option: TreeSelectOption): Promise<void> => {
     const { data } = await getRegionCodeList({ countryCode: option.key as string })
     option.children = map(({ regionCode, regionNameZh, regionName }) => ({
       label: `${regionNameZh}(${regionName})`,
-      key: `${regionCode}`,
+      key: regionCode,
       isLeaf: true
     }))(data)
     resolve()
@@ -73,13 +85,13 @@ const handleClassUpdate = (value: number[]) => {
   formValue.value.event.type.sub = ''
   switch (value.length) {
     case 0: {
-      rootOption.value = eventCodeList.value
+      rootOption.value = rootCodeList.value
       baseOption.value = []
       subOption.value = []
       break
     }
     default: {
-      rootOption.value = filter((item: any) => includes(item.eventQuadClass as number)(value))(deepCopy(eventCodeList.value))
+      rootOption.value = filter((item: any) => includes(item.eventQuadClass as number)(value))(deepCopy(rootCodeList.value))
       baseOption.value = []
       subOption.value = []
       break
@@ -97,12 +109,7 @@ const handleRootUpdate = async (value: string[]) => {
       break
     }
     default: {
-      const { data } = await getEventCodeList({ eventParentsCode: join(',')(value) })
-      baseOption.value = map(({ eventNameZh, eventNameEn, eventCode, eventRootCode }) => ({
-        label: `${eventNameZh}(${eventNameEn})`,
-        value: `${eventCode}`,
-        eventRootCode
-      }))(data)
+      baseOption.value = filter((item: any) => includes(item.eventRootCode as string)(value))(deepCopy(baseCodeList.value))
       subOption.value = []
       break
     }
@@ -117,12 +124,7 @@ const handleBaseUpdate = async (value: string[]) => {
       break
     }
     default: {
-      const { data } = await getEventCodeList({ eventParentsCode: join(',')(value) })
-      subOption.value = map(({ eventNameZh, eventNameEn, eventCode, eventBaseCode }) => ({
-        label: `${eventNameZh}(${eventNameEn})`,
-        value: `${eventCode}`,
-        eventBaseCode
-      }))(data)
+      subOption.value = filter((item: any) => includes(item.eventBaseCode as string)(value))(deepCopy(eventCodeList.value))
       break
     }
   }
@@ -154,11 +156,8 @@ const handleValidateClick =  (e: MouseEvent) => {
 }
 
 onMounted(async () => {
-  try {
-    await getAllEventCodeList()
-  } catch (e) {
-
-  }
+  await getAllEventCodeList()
+  rootOption.value = rootCodeList.value
 })
 
 watch(
@@ -166,9 +165,11 @@ watch(
   () => {
     switch (Boolean(selectedBtn.value)) {
       case true:
+        disabled.value = true
         formValue.value = deepCopy(initialData.value)
         break
       default:
+        disabled.value = false
         formValue.value = deepCopy(initialFormValue)
         const end = new Date()
         const start = new Date()
@@ -205,6 +206,7 @@ defineExpose({
       <n-form
         ref="formRef"
         class="database-form"
+        :disabled="disabled"
         :label-width="110"
         :model="formValue"
         :rules="rules"
@@ -215,7 +217,7 @@ defineExpose({
         :show-require-mark="false"
       >
         <p style="margin: 0 0 5px 110px;">当前数据库时间范围: 2011-01-04 至 2023-08-01</p>
-        <n-form-item path="date">
+        <n-form-item path="date" label-style="font-weight: 600;">
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -233,7 +235,7 @@ defineExpose({
             clearable
           />
         </n-form-item>
-        <n-form-item path="dataSource">
+        <n-form-item path="dataSource" label-style="font-weight: 600;">
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -256,7 +258,11 @@ defineExpose({
             </n-space>
           </n-radio-group>
         </n-form-item>
-        <n-form-item v-if="route.name !== 'eventDisplay'" path="weight">
+        <n-form-item
+          v-if="route.name !== 'eventDisplay'"
+          path="weight"
+          label-style="font-weight: 600;"
+        >
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -282,7 +288,11 @@ defineExpose({
             </n-space>
           </n-radio-group>
         </n-form-item>
-        <n-form-item v-if="route.name !== 'eventDisplay'" path="statistics">
+        <n-form-item
+          v-if="route.name !== 'eventDisplay'"
+          path="statistics"
+          label-style="font-weight: 600;"
+        >
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -302,7 +312,7 @@ defineExpose({
             </n-space>
           </n-radio-group>
         </n-form-item>
-        <n-form-item :show-feedback="false">
+        <n-form-item :show-feedback="false" label-style="font-weight: 600;">
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -312,9 +322,15 @@ defineExpose({
             </div>
           </template>
           <n-grid :cols="24">
-            <n-form-item-gi :span="24" label="角色1" label-width="60" :show-feedback="false">
+            <n-form-item-gi
+              :span="24"
+              label="角色1"
+              label-width="60"
+              label-style="font-weight: 600;"
+              :show-feedback="false"
+            >
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-                <n-form-item-gi span="24 m:6" label="国家(地区)" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="国家(地区)" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.country"
                     :options="actorCountryCodeList"
@@ -324,7 +340,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="组织" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="组织" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.organization"
                     :options="knownGroupCode"
@@ -334,7 +350,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="宗教1" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="宗教1" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.religion1"
                     :options="religionCode"
@@ -344,7 +360,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="宗教2" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="宗教2" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.religion2"
                     :options="religionCode"
@@ -354,7 +370,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="种族" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="种族" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.race"
                     :options="ethnicCode"
@@ -364,7 +380,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="种类1" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="种类1" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.type1"
                     :options="actorTypeCode"
@@ -374,7 +390,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="种类2" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="种类2" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.type2"
                     :options="actorTypeCode"
@@ -384,7 +400,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="种类3" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="种类3" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.type3"
                     :options="actorTypeCode"
@@ -397,7 +413,7 @@ defineExpose({
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
                 </n-gi>
-                <n-form-item-gi span="18" label="角色全称" label-width="80" label-align="center">
+                <n-form-item-gi span="18" label="角色全称" label-width="80">
                   <n-input v-model:value="formValue.event.place.fullyGeographic" />
                 </n-form-item-gi>
                 <n-form-item-gi span="6">
@@ -405,7 +421,7 @@ defineExpose({
                     区分大小写
                   </n-checkbox>
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.geographicFeature"
                     :options="geoCountryCodeList"
@@ -415,7 +431,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80">
                   <n-tree-select
                     v-model:value="formValue.role.role1.state"
                     :options="geoCountryCodeList"
@@ -432,7 +448,7 @@ defineExpose({
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
                 </n-gi>
-                <n-form-item-gi span="18" label="地理全称" label-width="80" label-align="center">
+                <n-form-item-gi span="18" label="地理全称" label-width="80">
                   <n-input v-model:value="formValue.role.role1.fullyGeographic" />
                 </n-form-item-gi>
                 <n-form-item-gi span="6">
@@ -442,9 +458,15 @@ defineExpose({
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>
-            <n-form-item-gi :span="24" label="角色2" label-width="60" :show-feedback="false">
+            <n-form-item-gi
+              :span="24"
+              label="角色2"
+              label-width="60"
+              label-style="font-weight: 600;"
+              :show-feedback="false"
+            >
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-                <n-form-item-gi span="24 m:6" label="国家(地区)" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="国家(地区)" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.country"
                     :options="actorCountryCodeList"
@@ -454,7 +476,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="组织" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="组织" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.organization"
                     :options="knownGroupCode"
@@ -464,7 +486,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="宗教1" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="宗教1" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.religion1"
                     :options="religionCode"
@@ -474,7 +496,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="宗教2" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="宗教2" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.religion2"
                     :options="religionCode"
@@ -484,7 +506,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="种族" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="种族" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.race"
                     :options="ethnicCode"
@@ -494,7 +516,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="种类1" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="种类1" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.type1"
                     :options="actorTypeCode"
@@ -504,7 +526,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="种类2" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="种类2" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.type2"
                     :options="actorTypeCode"
@@ -514,7 +536,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="种类3" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="种类3" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.type3"
                     :options="actorTypeCode"
@@ -527,7 +549,7 @@ defineExpose({
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
                 </n-gi>
-                <n-form-item-gi span="18" label="角色全称" label-width="80" label-align="center">
+                <n-form-item-gi span="18" label="角色全称" label-width="80">
                   <n-input v-model:value="formValue.event.place.fullyGeographic" />
                 </n-form-item-gi>
                 <n-form-item-gi span="6">
@@ -535,7 +557,7 @@ defineExpose({
                     区分大小写
                   </n-checkbox>
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.geographicFeature"
                     :options="geoCountryCodeList"
@@ -545,7 +567,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80">
                   <n-tree-select
                     v-model:value="formValue.role.role2.state"
                     :options="geoCountryCodeList"
@@ -562,7 +584,7 @@ defineExpose({
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
                 </n-gi>
-                <n-form-item-gi span="18" label="地理全称" label-width="80" label-align="center">
+                <n-form-item-gi span="18" label="地理全称" label-width="80">
                   <n-input v-model:value="formValue.role.role2.fullyGeographic" />
                 </n-form-item-gi>
                 <n-form-item-gi span="6">
@@ -574,7 +596,7 @@ defineExpose({
             </n-form-item-gi>
           </n-grid>
         </n-form-item>
-        <n-form-item :show-feedback="false">
+        <n-form-item :show-feedback="false" label-style="font-weight: 600;">
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -584,9 +606,9 @@ defineExpose({
             </div>
           </template>
           <n-grid :cols="24">
-            <n-form-item-gi :span="24" label="类型" label-width="60" :show-feedback="false">
+            <n-form-item-gi :span="24" label="类型" label-width="60" label-style="font-weight: 600;" :show-feedback="false">
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-                <n-form-item-gi span="24 m:6" label="大类" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="大类" label-width="80">
                   <n-select
                     v-model:value="formValue.event.type.class"
                     :options="quadClass"
@@ -597,7 +619,7 @@ defineExpose({
                     @update:value="handleClassUpdate"
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="根类" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="根类" label-width="80">
                   <n-select
                     v-model:value="formValue.event.type.root"
                     :options="rootOption"
@@ -608,7 +630,7 @@ defineExpose({
                     @update:value="handleRootUpdate"
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="基类" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="基类" label-width="80">
                   <n-select
                     v-model:value="formValue.event.type.base"
                     :options="baseOption"
@@ -619,7 +641,7 @@ defineExpose({
                     @update:value="handleBaseUpdate"
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="子类" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="子类" label-width="80">
                   <n-select
                     v-model:value="formValue.event.type.sub"
                     :options="subOption"
@@ -631,9 +653,9 @@ defineExpose({
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>
-            <n-form-item-gi :span="24" label="发生地" label-width="60" :show-feedback="false">
+            <n-form-item-gi :span="24" label="发生地" label-width="60" label-style="font-weight: 600;" :show-feedback="false">
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-                <n-form-item-gi span="24 m:6" label="地理类型" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
                   <n-select
                     v-model:value="formValue.event.place.geographicFeature"
                     :options="geoCountryCodeList"
@@ -643,7 +665,7 @@ defineExpose({
                     clearable
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80">
                   <n-tree-select
                     v-model:value="formValue.event.place.state"
                     :options="geoCountryCodeList"
@@ -660,7 +682,7 @@ defineExpose({
                 <n-gi span="24 m:18" style="margin-left: 80px;">
                   <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
                 </n-gi>
-                <n-form-item-gi span="18" label="地理全称" label-width="80" label-align="center">
+                <n-form-item-gi span="18" label="地理全称" label-width="80">
                   <n-input v-model:value="formValue.event.place.fullyGeographic" />
                 </n-form-item-gi>
                 <n-form-item-gi span="6">
@@ -670,12 +692,12 @@ defineExpose({
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>
-            <n-form-item-gi :span="24" label="其他" label-width="60" :show-feedback="false">
+            <n-form-item-gi :span="24" label="其他" label-width="60" label-style="font-weight: 600;" :show-feedback="false">
               <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-                <n-form-item-gi span="24 m:6" label="源url" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="源url" label-width="80">
                   <n-input v-model:value="formValue.event.other.sourceUrl" />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="情感值" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="情感值" label-width="80">
                   <n-input-number
                     v-model:value="formValue.event.other.emotion[0]"
                     :show-button="false"
@@ -694,7 +716,7 @@ defineExpose({
                     style="padding-left: 5px;"
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="影响度" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="影响度" label-width="80">
                   <n-input-number
                     v-model:value="formValue.event.other.effect[0]"
                     :show-button="false"
@@ -713,14 +735,17 @@ defineExpose({
                     style="padding-left: 5px;"
                   />
                 </n-form-item-gi>
-                <n-form-item-gi span="24 m:6" label="是否根类" label-width="80" label-align="center">
+                <n-form-item-gi span="24 m:6" label="是否根类" label-width="80">
                   <n-select v-model:value="formValue.event.other.isRoot" :options="rootOptions" />
                 </n-form-item-gi>
               </n-grid>
             </n-form-item-gi>
           </n-grid>
         </n-form-item>
-        <n-form-item>
+        <n-form-item
+          v-if="!selectedBtn"
+          label-style="font-weight: 600;"
+        >
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -740,7 +765,10 @@ defineExpose({
             </n-space>
           </n-radio-group>
         </n-form-item>
-        <n-form-item>
+        <n-form-item
+          v-if="!selectedBtn"
+          label-style="font-weight: 600;"
+        >
           <template #label>
             <div class="icon-label">
               <n-icon class="icon" size="20">
@@ -751,7 +779,11 @@ defineExpose({
           </template>
           <n-input v-model:value="formValue.event.place.fullyGeographic" style="max-width: 300px;" />
         </n-form-item>
-        <n-form-item class="btn-container" :show-feedback="false">
+        <n-form-item
+          class="btn-container"
+          :show-feedback="false"
+          v-if="!selectedBtn"
+        >
           <n-space class="space-box">
             <n-button type="success" attr-type="button" @click="handleValidateClick">
               保存

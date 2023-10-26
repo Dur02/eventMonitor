@@ -20,7 +20,7 @@ export type LoginResult = {
   access_token: string;
 }
 
-export type countryType = {
+export type CountryType = {
   countryCode: string
 }
 
@@ -29,3 +29,7 @@ export type EventCodeType = {
   eventQuadClass?: string
 }
 
+export type EventListType = {
+  pageNum: number,
+  pageSize: number
+}
