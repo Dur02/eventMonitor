@@ -1,6 +1,6 @@
 import { type Ref, ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { LoginData } from '@/api/types'
+import type { LoginData } from '@/types/api/event/types'
 import { login as LoginApi, getUserInfo, logout as logoutApi } from '@/api/user'
 
 export const useUserStore = defineStore('user', () => {

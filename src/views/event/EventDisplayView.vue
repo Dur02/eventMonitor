@@ -11,34 +11,13 @@ import type {
 } from 'naive-ui'
 import { NDataTable, NButton, NSpace, NIcon, NPopselect } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
-import { getDisplayData } from '@/api/display'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import { map, filter, includes } from 'lodash/fp'
 import { useRoute } from 'vue-router'
-import { auth } from '@/api/user';
-import { getEventList } from '@/api/event';
-
-interface rowDataType {
-  column1: number,
-  column2: number,
-  column3: string
-}
-
-const allColumns: DataTableColumns<rowDataType> = [
-  {
-    title: '测试1',
-    key: 'column1',
-  },
-  {
-    title: '测试2',
-    key: 'column2',
-  },
-  {
-    title: '测试3',
-    key: 'column3'
-  }
-]
+import { getEventList } from '@/api/event'
+import type { rowDataType } from '@/types/components/event/display/types'
+import { allColumns } from '@/utils/constant/eventDisplay'
 
 const route = useRoute()
 const footStore = useFooterStore()
@@ -64,21 +43,21 @@ const paginationReactive: PaginationProps = reactive({
 
 const getSelectOption = (): Array<SelectOption | SelectGroupOption> => map(({ title, key }) => ({ label: title, value: key }))(allColumns)
 
-const handlePageChange = (currentPage: number): void => {
-  if (!loadingRef.value) {
-    loadingRef.value = true
-    paginationReactive.page = currentPage
-    const { data, total } = getDisplayData(paginationReactive.page!, paginationReactive.pageSize!, selectedBtn.value, initialData.value)
-    dataRef.value = data
-    paginationReactive.itemCount = total
-    loadingRef.value = false
-  }
-}
-
 const handleSelect = (selectedArray: Array<string>) => {
   if (selectedArray.length !== 0) {
     selectedColumn.value = selectedArray
     columnsRef.value = filter(({ key }) => includes(key)(selectedArray))(allColumns)
+  }
+}
+
+const handlePageChange = async (currentPage: number): void => {
+  if (!loadingRef.value) {
+    loadingRef.value = true
+    paginationReactive.page = currentPage
+    const { rows, total } = await getEventList({ pageNum: paginationReactive.page, pageSize: paginationReactive.pageSize as number })
+    dataRef.value = rows
+    paginationReactive.itemCount = total
+    loadingRef.value = false
   }
 }
 
@@ -89,9 +68,8 @@ watch(
       if (!loadingRef.value) {
         loadingRef.value = true
         paginationReactive.page = 1
-        const res = await getEventList({ pageNum: 1, pageSize: paginationReactive.pageSize as number })
-        const { data, total } = getDisplayData(1, paginationReactive.pageSize!, selectedBtn.value, initialData.value)
-        dataRef.value = data
+        const { rows, total } = await getEventList({ pageNum: 1, pageSize: paginationReactive.pageSize as number })
+        dataRef.value = rows
         paginationReactive.itemCount = total
         loadingRef.value = false
       }
@@ -107,6 +85,7 @@ watch(
   <div>
     <n-space justify="space-between" align="end" vertical>
       <n-popselect
+        scrollable
         :value="selectedColumn"
         :options="getSelectOption()"
         multiple
@@ -127,12 +106,16 @@ watch(
       </n-popselect>
       <n-data-table
         remote
+        border
+        :scroll-x="5000"
+        size="small"
+        :single-line="false"
         ref="table"
         :columns="columnsRef"
         :data="dataRef"
         :loading="loadingRef"
         :pagination="paginationReactive"
-        :row-key="(rowData: rowDataType) => rowData.column1"
+        :row-key="(rowData: rowDataType) => rowData.globaleventid"
         max-height="calc(100vh - 280px)"
         @update:page="handlePageChange"
       />

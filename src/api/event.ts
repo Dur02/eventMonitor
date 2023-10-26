@@ -1,5 +1,5 @@
 import request from './index'
-import type { CountryType, EventCodeType, EventListType } from '@/api/types'
+import type { CountryType, EventCodeType, EventListResultType, EventListType } from '@/types/api/event/types'
 
 // 通过国家编码获取地区编码信息
 export function getRegionCodeList({ countryCode }: CountryType) {
@@ -26,7 +26,6 @@ export function getEventCodeList(
   })
 }
 
-
 // 事件配置编码列表
 export function getAllEventCodeList() {
   return request({
@@ -35,12 +34,13 @@ export function getAllEventCodeList() {
   })
 }
 
+// 查询事件信息列表
 export function getEventList(
   {
     pageNum,
     pageSize
   }: EventListType
-) {
+): Promise<EventListResultType> {
   return request({
     url: '/eventMonitor/event/list',
     method: 'get',

@@ -19,17 +19,3 @@ export type LoginData = {
 export type LoginResult = {
   access_token: string;
 }
-
-export type CountryType = {
-  countryCode: string
-}
-
-export type EventCodeType = {
-  eventParentsCode?: string,
-  eventQuadClass?: string
-}
-
-export type EventListType = {
-  pageNum: number,
-  pageSize: number
-}

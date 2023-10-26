@@ -1,6 +1,6 @@
 import request from './index'
-import type { LoginData, LoginResult } from '@/api/types'
-import type { AxiosPromise, AxiosResponse } from 'axios'
+import type { LoginData, LoginResult } from '@/types/api/user/types'
+import type { AxiosPromise } from 'axios'
 
 // 登录
 export function login(
