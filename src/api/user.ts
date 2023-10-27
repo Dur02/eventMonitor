@@ -5,7 +5,7 @@ import type { AxiosPromise } from 'axios'
 // 登录
 export function login(
   {
-    clientId = "e5cd7e4891bf95d1d19206ce24a7b32e",
+    clientId = import.meta.env.VITE_APP_CLIENT_ID,
     grantType = "password",
     tenantId = "000000",
     username,

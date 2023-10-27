@@ -4,8 +4,8 @@ import { NAvatar, NDropdown, NH2, NIcon, NLayoutHeader, NSpace, NText } from 'na
 import { LogOutOutline, Pencil, Person } from '@vicons/ionicons5'
 import ChangePassword from '@/components/modal/ChangePassword.vue'
 import renderIcon from '@/utils/function/renderIcon'
-
-const showModal = ref<boolean>(false)
+import router from '@/router'
+import { useUserStore } from '@/stores/user'
 
 const options = [
   {
@@ -20,11 +20,16 @@ const options = [
   }
 ]
 
+const userStore = useUserStore()
+const { logout } = userStore
+
+const showModal = ref<boolean>(false)
+
 const updateShowModal = (bool: boolean): void => {
   showModal.value = bool
 }
 
-const handleSelect = (key: string | number): void => {
+const handleSelect = async (key: string | number): void => {
   switch (key) {
     case 'changePassword':
       // 打开修改密码Dialog
@@ -32,6 +37,8 @@ const handleSelect = (key: string | number): void => {
       break
     default:
       // 退出登录
+      await logout()
+      await router.replace('/login')
       break
   }
 }

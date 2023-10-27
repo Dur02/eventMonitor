@@ -76,7 +76,7 @@ export default [
       breadcrumb: '配置管理',
       icon: renderIcon(Settings),
     },
-    redirect: { name: 'graphDisplay' },
+    redirect: { name: 'eventConfigure' },
     component: () => import('../views/layout/LayoutView.vue'),
     children: [
       {
@@ -84,18 +84,18 @@ export default [
         name: 'eventConfigure',
         meta: {
           breadcrumb: '事件配置',
-          hasFooter: true,
+          hasFooter: false,
         },
-        component: () => import('../views/graph/GraphDisplayView.vue')
+        component: () => import('../views/config/EventConfigView.vue')
       },
       {
-        path: 'timeline',
-        name: 'timelineConfigure',
+        path: 'graph',
+        name: 'graphConfigure',
         meta: {
           breadcrumb: '图谱配置',
-          hasFooter: true,
+          hasFooter: false,
         },
-        component: () => import('../views/graph/GraphTimelineView.vue')
+        component: () => import('../views/config/GraphConfigView.vue')
       },
     ]
   }

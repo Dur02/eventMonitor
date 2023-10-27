@@ -30,7 +30,7 @@ import { useEventStore } from '@/stores/event'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
 import { cardThemeOverrides, formThemeOverrides, initialFormValue, rules, rootOptions } from '@/utils/constant/eventDisplayForm'
-import { getRegionCodeList } from '@/api/event'
+import { getRegionCodeList } from '@/api/codeDict'
 import { map, join, includes, filter } from 'lodash/fp'
 
 const footerStore = useFooterStore()

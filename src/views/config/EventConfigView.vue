@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import EventDisplay from '@/components/event/display/EventDisplay.vue'
+import EventConfig from '@/components/config/EventConfig.vue'
 
 </script>
 
 <template>
-  <event-display />
+  <event-config />
 </template>
 
 <style scoped lang="scss">

@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import EventDisplay from '@/components/event/display/EventDisplay.vue'
-
 </script>
 
 <template>
-  <event-display />
+  <p>abcdefghijk</p>
 </template>
 
 <style scoped lang="scss">
-
+.display-container {
+  width: 100%;
+  height: 400px;
+}
 </style>

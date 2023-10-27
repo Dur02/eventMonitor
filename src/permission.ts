@@ -1,8 +1,7 @@
 import router from './router'
-import { createDiscreteApi, darkTheme, lightTheme } from 'naive-ui'
+import { createDiscreteApi } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { useSystemStore } from '@/stores/system'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
 const whiteList = ['/login']
@@ -16,7 +15,7 @@ loadingBar.start()
 router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext): Promise<void> => {
   const userStore = useUserStore()
   const { roles } = storeToRefs(userStore)
-  const { getInfo, logout } = userStore
+  const { getInfo } = userStore
 
   if (localStorage.getItem('token')) {
     if (whiteList.indexOf(to.path) !== -1) {
@@ -25,13 +24,8 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
     } else {
       if (roles.value.length === 0) {
         // 判断当前用户是否已拉取完user_info信息
-        try {
-          await getInfo()
-          next({ ...to, replace: true })
-        } catch (e) {
-          await logout()
-          next({ path: '/login', replace: true })
-        }
+        await getInfo()
+        next({ ...to, replace: true })
       } else {
         next()
       }

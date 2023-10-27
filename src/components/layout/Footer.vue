@@ -9,7 +9,7 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import CommonForm from '@/components/layout/CommonForm.vue'
 import { getFooterBtn, getSearchInitial } from '@/api/footer'
-import { getEventConfigList } from '@/api/event';
+import { getEventConfigList } from '@/api/codeDict';
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const footerStore = useFooterStore()

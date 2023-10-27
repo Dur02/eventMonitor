@@ -8,18 +8,7 @@ import CustomFooter from '@/components/layout/Footer.vue'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
-const hasFooter = ref(false)
 const route = useRoute()
-
-watch(
-  () => route.name,
-  () => {
-    hasFooter.value = route.meta.hasFooter as boolean
-  },
-  {
-    immediate: true
-  }
-)
 </script>
 
 <template>
@@ -39,7 +28,7 @@ watch(
         <n-layout>
           <custom-secondary-header />
           <custom-content />
-          <custom-footer v-if="hasFooter" />
+          <custom-footer v-if="route.meta.hasFooter" />
         </n-layout>
       </n-layout>
     </n-layout>

@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { SelectOption, TreeSelectOption  } from 'naive-ui'
-import { getAllEventCodeList as getAllEventCodeListApi } from '@/api/event'
+import { getAllEventCodeList as getAllEventCodeListApi } from '@/api/codeDict'
 import { map } from 'lodash/fp';
 
 export const useEventStore = defineStore('event', () => {
