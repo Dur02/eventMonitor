@@ -1,3 +1,5 @@
+import type { eventRowsType } from '@/types/components/event/display/types'
+
 export type CountryType = {
   countryCode: string
 }
@@ -9,10 +11,11 @@ export type EventCodeType = {
 
 export type EventListType = {
   pageNum: number,
-  pageSize: number
+  pageSize: number,
+  // param:
 }
 
 export type EventListResultType = {
-  rows: any,
+  rows: eventRowsType[],
   total: number
 }

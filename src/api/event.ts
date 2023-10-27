@@ -38,7 +38,7 @@ export function getAllEventCodeList() {
 export function getEventList(
   {
     pageNum,
-    pageSize
+    pageSize,
   }: EventListType
 ): Promise<EventListResultType> {
   return request({
@@ -50,3 +50,19 @@ export function getEventList(
     }
   })
 }
+
+// export function getEventConfigList(
+//   {
+//     pageNum,
+//     pageSize
+//   }
+// ) {
+//   return request({
+//       url: '/eventMonitor/eventConfiguration/list',
+//     method: 'get',
+//     params: {
+//       pageNum,
+//       pageSize
+//     }
+//   })
+// }

@@ -44,6 +44,7 @@ const {
   ethnicCode,
   eventCodeList,
   geoCountryCodeList,
+  geoTypeList,
   knownGroupCode,
   quadClass,
   religionCode,
@@ -424,7 +425,7 @@ defineExpose({
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role1.geographicFeature"
-                    :options="geoCountryCodeList"
+                    :options="geoTypeList"
                     multiple
                     max-tag-count="responsive"
                     filterable
@@ -560,7 +561,7 @@ defineExpose({
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
                   <n-select
                     v-model:value="formValue.role.role2.geographicFeature"
-                    :options="geoCountryCodeList"
+                    :options="geoTypeList"
                     multiple
                     max-tag-count="responsive"
                     filterable
@@ -658,7 +659,7 @@ defineExpose({
                 <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
                   <n-select
                     v-model:value="formValue.event.place.geographicFeature"
-                    :options="geoCountryCodeList"
+                    :options="geoTypeList"
                     multiple
                     max-tag-count="responsive"
                     filterable

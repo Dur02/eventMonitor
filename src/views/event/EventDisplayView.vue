@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref, VNodeChild } from 'vue'
-import { ref, reactive, onMounted, watch, toValue } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import type {
   PaginationProps,
   DataTableInst,
@@ -13,20 +13,22 @@ import { NDataTable, NButton, NSpace, NIcon, NPopselect } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
-import { map, filter, includes } from 'lodash/fp'
 import { useRoute } from 'vue-router'
 import { getEventList } from '@/api/event'
-import type { rowDataType } from '@/types/components/event/display/types'
-import { allColumns } from '@/utils/constant/eventDisplay'
+import type { eventRowsType } from '@/types/components/event/display/types'
+import { allColumns } from '@/utils/constant/eventDisplayView'
+import { map, filter, includes } from 'lodash/fp'
+
+const mapWithIndex = map.convert({ cap: false })
 
 const route = useRoute()
 const footStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
-const columnsRef: Ref<DataTableColumns<rowDataType>> = ref(allColumns)
+const columnsRef: Ref<DataTableColumns<eventRowsType>> = ref(allColumns)
 const selectedColumn: Ref<string[]> = ref(map(({ key }) => key)(allColumns))
-const dataRef: Ref<rowDataType[]> = ref([])
+const dataRef: Ref<eventRowsType[]> = ref([])
 const loadingRef: Ref<boolean> = ref(false)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
@@ -54,8 +56,8 @@ const handlePageChange = async (currentPage: number): void => {
   if (!loadingRef.value) {
     loadingRef.value = true
     paginationReactive.page = currentPage
-    const { rows, total } = await getEventList({ pageNum: paginationReactive.page, pageSize: paginationReactive.pageSize as number })
-    dataRef.value = rows
+    const { rows, total } = await getEventList({ pageNum: currentPage, pageSize: paginationReactive.pageSize! })
+    dataRef.value = mapWithIndex((item: eventRowsType, index: number) => ({ ...item, numbers: index + (currentPage - 1 ) * paginationReactive.pageSize! }))(rows)
     paginationReactive.itemCount = total
     loadingRef.value = false
   }
@@ -68,8 +70,8 @@ watch(
       if (!loadingRef.value) {
         loadingRef.value = true
         paginationReactive.page = 1
-        const { rows, total } = await getEventList({ pageNum: 1, pageSize: paginationReactive.pageSize as number })
-        dataRef.value = rows
+        const { rows, total } = await getEventList({ pageNum: 1, pageSize: paginationReactive.pageSize! })
+        dataRef.value = mapWithIndex((item: eventRowsType, index: number) => ({ ...item, numbers: index + 1}))(rows)
         paginationReactive.itemCount = total
         loadingRef.value = false
       }
@@ -107,7 +109,7 @@ watch(
       <n-data-table
         remote
         border
-        :scroll-x="5000"
+        :scroll-x="7000"
         size="small"
         :single-line="false"
         ref="table"
@@ -115,7 +117,7 @@ watch(
         :data="dataRef"
         :loading="loadingRef"
         :pagination="paginationReactive"
-        :row-key="(rowData: rowDataType) => rowData.globaleventid"
+        :row-key="(rowData: eventRowsType) => rowData.globaleventid"
         max-height="calc(100vh - 280px)"
         @update:page="handlePageChange"
       />

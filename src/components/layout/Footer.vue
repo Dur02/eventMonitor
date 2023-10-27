@@ -9,6 +9,7 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import CommonForm from '@/components/layout/CommonForm.vue'
 import { getFooterBtn, getSearchInitial } from '@/api/footer'
+import { getEventConfigList } from '@/api/event';
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const footerStore = useFooterStore()
@@ -74,7 +75,9 @@ const handleSearchNow = () => {
   footerExpand.value = true
 }
 
-const reload = () => {
+const reload = async () => {
+  // const res = await getEventConfigList({ pageSize: 10, pageNum: 1 })
+  // console.log(res)
   footerBtn.value = getFooterBtn(route.meta.type as string)
   setSelectedBtn(footerBtn.value[0]?.name)
   const initialRes = getSearchInitial(footerBtn.value[0]?.name)
@@ -83,8 +86,8 @@ const reload = () => {
 
 watch(
   () => route.name,
-  () => {
-    reload()
+  async () => {
+    await reload()
   },
   {
     immediate: true
