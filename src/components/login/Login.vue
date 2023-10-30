@@ -118,14 +118,18 @@ const queryLocalForm = (): void => {
 }
 
 const getCodeImg = async (): Promise<void> => {
-  const {
-    data: {
-      img,
-      uuid
-    }
-  } = await getCode()
-  codeUrl.value = 'data:image/gif;base64,' + img
-  formValue.value.uuid = uuid
+  try {
+    const {
+      data: {
+        img,
+        uuid
+      }
+    } = await getCode()
+    codeUrl.value = 'data:image/gif;base64,' + img
+    formValue.value.uuid = uuid
+  } catch (e) {
+    //
+  }
 }
 
 onMounted(() => {

@@ -8,8 +8,12 @@ export const useConfigStore = defineStore('config', () => {
   const eventConfigTypeList: Ref<SelectOption[]> = ref([])
 
   const getAllEventConfigType = async () => {
-    const { data } = await getConfigCodeList({ configType: 1 })
-    eventConfigTypeList.value = data
+    try {
+      const { data } = await getConfigCodeList({ configType: 1 })
+      eventConfigTypeList.value = data
+    } catch (e) {
+      //
+    }
   }
 
   return {

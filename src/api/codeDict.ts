@@ -9,7 +9,7 @@ export function getRegionCodeList({ countryCode }: CountryType) {
   })
 }
 
-// 查询事件编码
+// 根据大类和父类的id获取目标的可选项，用于事件配置的基类和子类选项获取，可多选（已废弃）
 export function getEventCodeList(
   {
     eventParentsCode,
@@ -26,7 +26,7 @@ export function getEventCodeList(
   })
 }
 
-// 事件配置编码列表
+// 获取事件配置的全部选择器的选项
 export function getAllEventCodeList() {
   return request({
     url: '/eventMonitor/eventCodeDict/allCodeList',
@@ -34,7 +34,7 @@ export function getAllEventCodeList() {
   })
 }
 
-// 获取事件配置管理详细信息
+// 获取各种配置需要使用的选项
 export function getConfigCodeList(
   {
     configType,

@@ -23,7 +23,6 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
       loadingBar.finish()
     } else {
       if (roles.value.length === 0) {
-        // 判断当前用户是否已拉取完user_info信息
         await getInfo()
         next({ ...to, replace: true })
       } else {

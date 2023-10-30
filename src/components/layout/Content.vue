@@ -19,6 +19,7 @@ watch(
 
 <template>
   <n-layout-content
+    id="config-drawer-target"
     class="layout-content"
     position="absolute"
     :native-scrollbar="false"

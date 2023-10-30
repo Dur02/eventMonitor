@@ -52,29 +52,33 @@ const handleSelect = (selectedArray: Array<string>) => {
   }
 }
 
-const handlePageChange = async (currentPage: number): void => {
+const reloadTableData = async (page: number) => {
   if (!loadingRef.value) {
     loadingRef.value = true
-    paginationReactive.page = currentPage
-    const { rows, total } = await getEventList({ pageNum: currentPage, pageSize: paginationReactive.pageSize! })
-    dataRef.value = mapWithIndex((item: eventRowsType, index: number) => ({ ...item, numbers: index + (currentPage - 1 ) * paginationReactive.pageSize! }))(rows)
-    paginationReactive.itemCount = total
+    paginationReactive.page = page
+    try {
+      const { rows, total } = await getEventList({ pageNum: page, pageSize: paginationReactive.pageSize! })
+      dataRef.value = mapWithIndex((item: eventRowsType, index: number) => ({
+        ...item,
+        numbers: index + (page - 1) * paginationReactive.pageSize! + 1
+      }))(rows)
+      paginationReactive.itemCount = total
+    } catch (e) {
+      //
+    }
     loadingRef.value = false
   }
+}
+
+const handlePageChange = async (currentPage: number): Promise<void> => {
+  await reloadTableData(currentPage)
 }
 
 watch(
   () => initialData.value,
   async () => {
     if (Object.keys(initialData.value).length !== 0 && selectedBtn.value && route.name === 'eventDisplay') {
-      if (!loadingRef.value) {
-        loadingRef.value = true
-        paginationReactive.page = 1
-        const { rows, total } = await getEventList({ pageNum: 1, pageSize: paginationReactive.pageSize! })
-        dataRef.value = mapWithIndex((item: eventRowsType, index: number) => ({ ...item, numbers: index + 1}))(rows)
-        paginationReactive.itemCount = total
-        loadingRef.value = false
-      }
+      await reloadTableData(1)
     }
   },
   {
@@ -120,6 +124,7 @@ watch(
         :row-key="(rowData: eventRowsType) => rowData.globaleventid"
         max-height="calc(100vh - 295px)"
         @update:page="handlePageChange"
+        virtual-scroll
       />
     </n-space>
   </div>

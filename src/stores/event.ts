@@ -24,71 +24,75 @@ export const useEventStore = defineStore('event', () => {
 
   const getAllEventCodeList = async () => {
     if (actorTypeCode.value.length === 0) {
-      const { data } = await getAllEventCodeListApi()
+      try {
+        const { data } = await getAllEventCodeListApi()
 
-      actorCountryCodeList.value = map(({ countryChineseName, countryName, countryCode }) => ({
-        label: `${countryChineseName}(${countryName})`,
-        value: countryCode,
-        labelZh: countryChineseName
-      }))(data.actorCountryCodeList)
+        actorCountryCodeList.value = map(({ countryChineseName, countryName, countryCode }) => ({
+          label: `${countryChineseName}(${countryName})`,
+          value: countryCode,
+          labelZh: countryChineseName
+        }))(data.actorCountryCodeList)
 
-      actorTypeCode.value = map(({ typeNameZh, typeNameEn, typeCode }) => ({
-        label: `${typeNameZh}(${typeNameEn})`,
-        value: typeCode,
-        labelZh: typeNameZh
-      }))(data.actorTypeCode)
+        actorTypeCode.value = map(({ typeNameZh, typeNameEn, typeCode }) => ({
+          label: `${typeNameZh}(${typeNameEn})`,
+          value: typeCode,
+          labelZh: typeNameZh
+        }))(data.actorTypeCode)
 
-      baseCodeList.value = map(({ eventNameZh, eventNameEn, eventCode, eventRootCode }) => ({
-        label: `${eventNameZh}(${eventNameEn})`,
-        value: eventCode,
-        labelZh: eventNameZh,
-        eventRootCode
-      }))(data.baseCodeList)
+        baseCodeList.value = map(({ eventNameZh, eventNameEn, eventCode, eventRootCode }) => ({
+          label: `${eventNameZh}(${eventNameEn})`,
+          value: eventCode,
+          labelZh: eventNameZh,
+          eventRootCode
+        }))(data.baseCodeList)
 
-      ethnicCode.value = map(({ chname, label, code }) => ({
-        label: `${chname}(${label})`,
-        value: code,
-        labelZh: chname,
-      }))(data.ethnicCode)
+        ethnicCode.value = map(({ chname, label, code }) => ({
+          label: `${chname}(${label})`,
+          value: code,
+          labelZh: chname,
+        }))(data.ethnicCode)
 
-      eventCodeList.value = map(({ eventNameZh, eventNameEn, eventCode, eventBaseCode }) => ({
-        label: `${eventNameZh}(${eventNameEn})`,
-        value: eventCode,
-        labelZh: eventNameZh,
-        eventBaseCode
-      }))(data.eventCodeList)
+        eventCodeList.value = map(({ eventNameZh, eventNameEn, eventCode, eventBaseCode }) => ({
+          label: `${eventNameZh}(${eventNameEn})`,
+          value: eventCode,
+          labelZh: eventNameZh,
+          eventBaseCode
+        }))(data.eventCodeList)
 
-      geoCountryCodeList.value = map(({ countryChineseName, countryName, countryCode }) => ({
-        label: `${countryChineseName}(${countryName})`,
-        key: countryCode,
-        isLeaf: false,
-        labelZh: countryChineseName
-      }))(data.geoCountryCodeList)
+        geoCountryCodeList.value = map(({ countryChineseName, countryName, countryCode }) => ({
+          label: `${countryChineseName}(${countryName})`,
+          key: countryCode,
+          isLeaf: false,
+          labelZh: countryChineseName
+        }))(data.geoCountryCodeList)
 
-      knownGroupCode.value = map(({ chname, label, code }) => ({
-        label: `${chname}(${label})`,
-        value: code,
-        labelZh: chname
-      }))(data.knownGroupCode)
+        knownGroupCode.value = map(({ chname, label, code }) => ({
+          label: `${chname}(${label})`,
+          value: code,
+          labelZh: chname
+        }))(data.knownGroupCode)
 
-      quadClass.value = map(({ quadNameZh, quadNameEn, quadCode }) => ({
-        label: `${quadNameZh}(${quadNameEn})`,
-        value: quadCode,
-        labelZh: quadNameZh
-      }))(data.quadClass)
+        quadClass.value = map(({ quadNameZh, quadNameEn, quadCode }) => ({
+          label: `${quadNameZh}(${quadNameEn})`,
+          value: quadCode,
+          labelZh: quadNameZh
+        }))(data.quadClass)
 
-      religionCode.value = map(({ chname, label, code }) => ({
-        label: `${chname}(${label})`,
-        value: code,
-        labelZh: chname
-      }))(data.religionCode)
+        religionCode.value = map(({ chname, label, code }) => ({
+          label: `${chname}(${label})`,
+          value: code,
+          labelZh: chname
+        }))(data.religionCode)
 
-      rootCodeList.value = map(({ eventNameZh, eventNameEn, eventCode, eventQuadClass }) => ({
-        label: `${eventNameZh}(${eventNameEn})`,
-        value: eventCode,
-        labelZh: eventNameZh,
-        eventQuadClass
-      }))(data.rootCodeList)
+        rootCodeList.value = map(({ eventNameZh, eventNameEn, eventCode, eventQuadClass }) => ({
+          label: `${eventNameZh}(${eventNameEn})`,
+          value: eventCode,
+          labelZh: eventNameZh,
+          eventQuadClass
+        }))(data.rootCodeList)
+      } catch (e) {
+        //
+      }
     }
     return Promise.resolve()
   }

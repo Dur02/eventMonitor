@@ -69,14 +69,18 @@ const subOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 // }
 
 const handleRegionLoad = (option: TreeSelectOption): Promise<void> => {
-  return new Promise<void>(async (resolve) => {
-    const { data } = await getRegionCodeList({ countryCode: option.key as string })
-    option.children = map(({ regionCode, regionNameZh, regionName }) => ({
-      label: `${regionNameZh}(${regionName})`,
-      key: regionCode,
-      isLeaf: true
-    }))(data)
-    resolve()
+  return new Promise<void>(async (resolve, reject) => {
+    try {
+      const { data } = await getRegionCodeList({ countryCode: option.key as string })
+      option.children = map(({ regionCode, regionNameZh, regionName }) => ({
+        label: `${regionNameZh}(${regionName})`,
+        key: regionCode,
+        isLeaf: true
+      }))(data)
+      resolve()
+    } catch (e) {
+      reject()
+    }
   })
 }
 
