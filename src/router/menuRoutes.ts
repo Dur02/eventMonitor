@@ -24,7 +24,7 @@ export default [
           type: 'letter',
           footerForm: EventDisplayForm
         },
-        component: () => import('../views/event/EventDisplayView.vue')
+        component: () => import('../views/event/display/EventDisplayView.vue')
       },
       {
         path: 'timeline',
@@ -35,7 +35,7 @@ export default [
           type: 'number',
           footerForm: EventTimelineForm
         },
-        component: () => import('../views/event/EventTimelineView.vue')
+        component: () => import('../views/event/timeline/EventTimelineView.vue')
       },
     ]
   },
@@ -56,7 +56,7 @@ export default [
           breadcrumb: '图谱展示',
           hasFooter: true,
         },
-        component: () => import('../views/graph/GraphDisplayView.vue')
+        component: () => import('../views/graph/display/GraphDisplayView.vue')
       },
       {
         path: 'timeline',
@@ -65,7 +65,7 @@ export default [
           breadcrumb: '图谱时间线',
           hasFooter: true,
         },
-        component: () => import('../views/graph/GraphTimelineView.vue')
+        component: () => import('../views/graph/timeline/GraphTimelineView.vue')
       },
     ]
   },
@@ -86,7 +86,7 @@ export default [
           breadcrumb: '事件配置',
           hasFooter: false,
         },
-        component: () => import('../views/config/EventConfigView.vue')
+        component: () => import('../views/config/event/EventConfigView.vue')
       },
       {
         path: 'graph',
@@ -95,7 +95,7 @@ export default [
           breadcrumb: '图谱配置',
           hasFooter: false,
         },
-        component: () => import('../views/config/GraphConfigView.vue')
+        component: () => import('../views/config/graph/GraphConfigView.vue')
       },
     ]
   }

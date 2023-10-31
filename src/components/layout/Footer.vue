@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import type { LayoutFooterProps } from 'naive-ui'
 import { NButton, NIcon, NLayoutFooter, NScrollbar } from 'naive-ui'
 import { ArrowBackSharp, ArrowForward, CaretDownCircle, CaretUpCircle } from '@vicons/ionicons5'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
 import type { Ref } from 'vue'
 import { ref, watch } from 'vue'
+import { useSystemStore } from '@/stores/system'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
+import { layoutFooterLightThemeOverrides, layoutFooterDarkThemeOverrides } from '@/utils/constant/layout/footer'
 import CommonForm from '@/components/layout/CommonForm.vue'
 import { getFooterBtn, getSearchInitial } from '@/api/footer'
 
@@ -14,6 +17,8 @@ const route: RouteLocationNormalizedLoaded = useRoute()
 const footerStore = useFooterStore()
 const { selectedBtn } = storeToRefs(footerStore)
 const { setSelectedBtn, setInitialData } = footerStore
+const systemStore = useSystemStore()
+const { isLight } = storeToRefs(systemStore)
 
 const footerBtn: Ref<any[]> = ref([])
 const currentPage: Ref<number> = ref(1)
@@ -98,6 +103,7 @@ watch(
     :class="footerExpand ? 'expand' : ''"
     position="absolute"
     bordered
+    :theme-overrides="isLight ? layoutFooterLightThemeOverrides : layoutFooterDarkThemeOverrides"
   >
     <div class="footer-bar">
       <n-button
@@ -181,10 +187,10 @@ watch(
   height: 52px;
   padding: 10px 24px;
   z-index: 3;
-  transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);
-  -moz-transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Firefox 4 */
-  -webkit-transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Safari and Chrome */
-  -o-transition: height 1s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Opera */
+  transition: height .2s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);
+  -moz-transition: height .2s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Firefox 4 */
+  -webkit-transition: height .2s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Safari and Chrome */
+  -o-transition: height .2s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);  /* Opera */
 
   &.expand {
     height: 500px;

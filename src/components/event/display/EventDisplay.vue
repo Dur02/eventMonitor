@@ -16,7 +16,7 @@ import { List } from '@vicons/ionicons5'
 import { useRoute } from 'vue-router'
 import { getEventList } from '@/api/event'
 import type { eventRowsType } from '@/types/components/event/display/types'
-import { allColumns } from '@/utils/constant/eventDisplayView'
+import { allColumns } from '@/utils/constant/event/display/eventDisplayView'
 import { map, filter, includes } from 'lodash/fp'
 
 const mapWithIndex = map.convert({ cap: false })
@@ -113,6 +113,7 @@ watch(
       <n-data-table
         remote
         border
+        striped
         :scroll-x="7000"
         size="small"
         :single-line="false"

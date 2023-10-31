@@ -29,17 +29,9 @@ import { useFooterStore } from '@/stores/footer'
 import { useEventStore } from '@/stores/event'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
-import {
-  cardThemeOverrides,
-  formThemeOverrides,
-  initialFormValue,
-  rules,
-  rootOptions,
-  cardLightThemeOverrides, cardDarkThemeOverrides
-} from '@/utils/constant/event/display/eventDisplayForm'
+import { cardThemeOverrides, formThemeOverrides, initialFormValue, rules, rootOptions } from '@/utils/constant/event/display/eventDisplayForm'
 import { getRegionCodeList } from '@/api/codeDict'
-import { map, includes, filter } from 'lodash/fp'
-import { useSystemStore } from '@/stores/system'
+import { map, join, includes, filter } from 'lodash/fp'
 
 const footerStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footerStore)
@@ -798,7 +790,10 @@ defineExpose({
           v-if="!selectedBtn"
         >
           <n-space class="space-box">
-            <n-button type="info" @click="handleValidateClick">
+            <n-button type="success" attr-type="button" @click="handleValidateClick">
+              保存
+            </n-button>
+            <n-button type="info" attr-type="button" @click="handleValidateClick">
               提交
             </n-button>
           </n-space>

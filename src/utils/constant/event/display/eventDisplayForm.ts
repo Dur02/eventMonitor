@@ -4,7 +4,7 @@ type CardThemeOverrides = NonNullable<CardProps['themeOverrides']>
 type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
 
 export const cardThemeOverrides: CardThemeOverrides = {
-  paddingMedium: '15px 20px'
+  paddingMedium: '15px 20px',
 }
 
 export const formThemeOverrides: FormThemeOverrides = {

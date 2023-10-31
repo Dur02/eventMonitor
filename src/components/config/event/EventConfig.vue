@@ -2,10 +2,19 @@
 import type { Ref, VNodeChild } from 'vue'
 import { onMounted, reactive, ref } from 'vue'
 import type { FormInst, PaginationInfo, PaginationProps } from 'naive-ui'
-import { NButton, NDataTable, NForm, NFormItem, NInput, NSelect, NSpin, NDrawer, NDrawerContent } from 'naive-ui'
+import {
+  NButton,
+  NDataTable,
+  NForm,
+  NFormItem,
+  NInput,
+  NSelect,
+  NSpin
+} from 'naive-ui'
 import { useConfigStore } from '@/stores/config'
 import { storeToRefs } from 'pinia'
-import { configStatus } from '@/utils/constant/eventConfig'
+import { configStatus } from '@/utils/constant/config/event/eventConfig'
+import EventConfigDrawer from '@/components/drawer/eventConfigDrawer.vue'
 import { getEventConfigList } from '@/api/config'
 import { join, map } from 'lodash/fp'
 
@@ -18,10 +27,14 @@ const { getAllEventConfigType } = configStore
 const formRef: Ref<FormInst | null> = ref(null)
 const tableLoading: Ref<boolean> = ref(false)
 const dataRef = ref([])
-const isDrawerShow = ref(false)
+const drawerShow = ref(false)
+const drawerInfo = ref({
+  title: '',
+  btnText: ''
+})
 
 // 保存搜索表单的值
-const formValue = ref({
+const searchFormValue = ref({
   configName: '',
   configType: [],
   runStatus: [],
@@ -29,7 +42,7 @@ const formValue = ref({
 })
 
 // 最后一次点击查询按钮后保存的值，避免在搜索表单修改后不点击查询按钮进行换页等操作
-const searchValue = ref({
+const lastSearchValue = ref({
   configName: '',
   configType: '',
   runStatus: '',
@@ -55,7 +68,7 @@ const reloadTableData = async (page: number) => {
     paginationReactive.page = page
     try {
       const { rows, total } = await getEventConfigList({
-        ...searchValue.value,
+        ...lastSearchValue.value,
         pageNum: page,
         pageSize: paginationReactive.pageSize!
       })
@@ -73,8 +86,8 @@ const reloadTableData = async (page: number) => {
 
 const handleSearch = async (e: MouseEvent) => {
   e.preventDefault()
-  const { configName, configType, runStatus, createBy } = formValue.value
-  searchValue.value = {
+  const { configName, configType, runStatus, createBy } = searchFormValue.value
+  lastSearchValue.value = {
     configName: configName,
     configType: join(',')(configType),
     runStatus: join(',')(runStatus),
@@ -87,15 +100,27 @@ const handlePageChange = async (currentPage: number): Promise<void> => {
   await reloadTableData(currentPage)
 }
 
+const handleOpenCreate = () => {
+  drawerShow.value = true
+  drawerInfo.value.title = '创建配置'
+  drawerInfo.value.btnText = '创建'
+}
+
+const updateDrawerShow = (bool: boolean): void => {
+  drawerShow.value = bool
+  drawerInfo.value.title = ''
+  drawerInfo.value.btnText = ''
+}
+
 onMounted(async () => {
-  tableLoading.value = true
   try {
+    tableLoading.value = true
     await getAllEventConfigType()
+    tableLoading.value = false
     await reloadTableData(1)
   } catch (e) {
-    //
+    tableLoading.value = false
   }
-  tableLoading.value = false
 })
 </script>
 
@@ -112,13 +137,13 @@ onMounted(async () => {
     >
       <n-form-item label="配置名称">
         <n-input
-          v-model:value="formValue.configName"
+          v-model:value="searchFormValue.configName"
           clearable
         />
       </n-form-item>
       <n-form-item label="类型筛选">
         <n-select
-          v-model:value="formValue.configType"
+          v-model:value="searchFormValue.configType"
           :options="eventConfigTypeList"
           multiple
           max-tag-count="responsive"
@@ -128,7 +153,7 @@ onMounted(async () => {
       </n-form-item>
       <n-form-item label="配置状态">
         <n-select
-          v-model:value="formValue.runStatus"
+          v-model:value="searchFormValue.runStatus"
           :options="configStatus"
           multiple
           max-tag-count="responsive"
@@ -138,7 +163,7 @@ onMounted(async () => {
       </n-form-item>
       <n-form-item label="创建人" label-width="60">
         <n-input
-          v-model:value="formValue.createBy"
+          v-model:value="searchFormValue.createBy"
           clearable
         />
       </n-form-item>
@@ -152,8 +177,8 @@ onMounted(async () => {
       </n-form-item>
       <n-form-item>
         <n-button
-          size="small"
           type="info"
+          @click="handleOpenCreate"
         >
           新增配置
         </n-button>
@@ -172,24 +197,11 @@ onMounted(async () => {
       border
       @update:page="handlePageChange"
     />
-    <n-button @click="isDrawerShow = !isDrawerShow">
-      左
-    </n-button>
-    <n-drawer
-      v-model:show="isDrawerShow"
-      :width="200"
-      :height="200"
-      placement="bottom"
-      :trap-focus="false"
-      :block-scroll="false"
-      to="#config-drawer-target"
-      :show-mask="false"
-      :mask-closable="false"
-    >
-      <n-drawer-content title="斯通纳">
-        《斯通纳》是美国作家约翰·威廉姆斯在 1965 年出版的小说。
-      </n-drawer-content>
-    </n-drawer>
+    <event-config-drawer
+      :drawerInfo="drawerInfo"
+      :drawerShow="drawerShow"
+      @DrawerClose="updateDrawerShow"
+    />
   </n-spin>
 </template>
 

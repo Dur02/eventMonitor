@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EventConfig from '@/components/config/EventConfig.vue'
+import EventConfig from '@/components/config/event/EventConfig.vue'
 
 </script>
 
