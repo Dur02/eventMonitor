@@ -1,24 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { NAvatar, NDropdown, NH2, NIcon, NLayoutHeader, NSpace, NText } from 'naive-ui'
-import { LogOutOutline, Pencil, Person } from '@vicons/ionicons5'
+import { Person } from '@vicons/ionicons5'
 import ChangePassword from '@/components/modal/ChangePassword.vue'
-import renderIcon from '@/utils/function/renderIcon'
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
-
-const options = [
-  {
-    label: '修改密码',
-    key: 'changePassword',
-    icon: renderIcon(Pencil)
-  },
-  {
-    label: '退出登录',
-    key: 'logout',
-    icon: renderIcon(LogOutOutline)
-  }
-]
+import { options } from '@/utils/constant/layout/header'
 
 const userStore = useUserStore()
 const { logout } = userStore

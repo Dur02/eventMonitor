@@ -1,5 +1,5 @@
 import request from './index'
-import type { EventListResultType, EventListType } from '@/types/api/event/types'
+import type { EventListResultType, EventListType } from '@/types/api/event'
 
 // 查询事件信息列表
 export function getEventList(

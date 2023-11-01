@@ -1,7 +1,5 @@
-import type { CardProps, FormProps, FormRules, SelectGroupOption, SelectOption } from 'naive-ui'
-
-type CardThemeOverrides = NonNullable<CardProps['themeOverrides']>
-type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
+import type { FormRules, SelectGroupOption, SelectOption } from 'naive-ui'
+import type { CardThemeOverrides, FormThemeOverrides } from '@/types/themeOverrides'
 
 export const cardThemeOverrides: CardThemeOverrides = {
   paddingMedium: '15px 20px',

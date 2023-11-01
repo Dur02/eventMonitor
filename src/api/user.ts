@@ -1,5 +1,5 @@
 import request from './index'
-import type { LoginData, LoginResult } from '@/types/api/user/types'
+import type { LoginData, LoginResult } from '@/types/api/user'
 import type { AxiosPromise } from 'axios'
 
 // 登录

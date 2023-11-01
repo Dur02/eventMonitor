@@ -2,31 +2,7 @@
 import { ref } from 'vue'
 import { NModal, NForm, NFormItem, NInput, NButton, NCol, NRow, useMessage } from 'naive-ui'
 import type { FormInst, FormItemInst, FormItemRule, FormRules } from 'naive-ui'
-
-interface ModelType {
-  password: string | null
-  reenteredPassword: string | null
-}
-
-const props = defineProps<{
-  showModal: boolean
-}>()
-
-// const emits = defineEmits<{
-//   ModalClose: [showModal: boolean]
-// }>()
-
-const emits = defineEmits(['ModalClose'])
-
-
-const model = ref<ModelType>({
-  password: null,
-  reenteredPassword: null
-})
-
-const formRef = ref<FormInst | null>(null)
-const rPasswordFormItemRef = ref<FormItemInst | null>(null)
-const message = useMessage()
+import type { ModelType } from '@/types/components/modal/changePassword'
 
 function validatePasswordStartWith (
   rule: FormItemRule,
@@ -68,6 +44,24 @@ const rules: FormRules = {
     }
   ]
 }
+
+defineProps<{
+  showModal: boolean
+}>()
+
+// const emits = defineEmits<{
+//   ModalClose: [showModal: boolean]
+// }>()
+const emits = defineEmits(['ModalClose'])
+
+const model = ref<ModelType>({
+  password: null,
+  reenteredPassword: null
+})
+
+const formRef = ref<FormInst | null>(null)
+const rPasswordFormItemRef = ref<FormItemInst | null>(null)
+const message = useMessage()
 
 const handleModalClose = (value: boolean): void => {
   emits("ModalClose", value)

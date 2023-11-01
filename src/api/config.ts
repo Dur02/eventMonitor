@@ -1,5 +1,5 @@
 import request from './index'
-import type { ConfigListResultType, ConfigListType } from '@/types/api/config/types'
+import type { ConfigListResultType, ConfigListType } from '@/types/api/config'
 
 // 查询事件配置管理列表
 export function getEventConfigList(
@@ -7,7 +7,7 @@ export function getEventConfigList(
     configName,
     configType,
     runStatus,
-    createBy,
+    createByName,
     pageNum,
     pageSize
   }: ConfigListType
@@ -19,7 +19,7 @@ export function getEventConfigList(
       configName,
       configType,
       runStatus,
-      createBy,
+      createByName,
       pageNum,
       pageSize
     }

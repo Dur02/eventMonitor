@@ -1,4 +1,4 @@
-const initialFormValue = {
+export const initialFormValue = {
   sqldate: null,
   dataSource: 'dataSource1',
   weightBasis: 'weight1',
@@ -35,7 +35,7 @@ const initialFormValue = {
   eventrootcode: [],
   eventbasecode: [],
   eventcode: [],
-  actiongeoType: null,
+  actiongeoType: [],
   actiongeoCountrycodeAndAdm1code: [],
   actiongeoFullname: '',
   actiongeoFullnameCaseSensitive: true,

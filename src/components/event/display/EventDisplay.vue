@@ -15,7 +15,7 @@ import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import { useRoute } from 'vue-router'
 import { getEventList } from '@/api/event'
-import type { eventRowsType } from '@/types/components/event/display/types'
+import type { eventRowsType } from '@/types/components/event/display'
 import { allColumns } from '@/utils/constant/event/display/eventDisplayView'
 import { map, filter, includes } from 'lodash/fp'
 

@@ -13,10 +13,12 @@ import {
 } from 'naive-ui'
 import { useConfigStore } from '@/stores/config'
 import { storeToRefs } from 'pinia'
-import { configStatus } from '@/utils/constant/config/event/eventConfig'
+import { allColumns, configStatus } from '@/utils/constant/config/event/eventConfig'
 import EventConfigDrawer from '@/components/drawer/eventConfigDrawer.vue'
 import { getEventConfigList } from '@/api/config'
-import { join, map } from 'lodash/fp'
+import { map } from 'lodash/fp'
+import { initialFormValue } from '@/utils/constant/config/event/eventConfig'
+import { eventRowsType } from '@/types/components/event/display';
 
 const mapWithIndex = map.convert({ cap: false })
 
@@ -27,6 +29,7 @@ const { getAllEventConfigType } = configStore
 const formRef: Ref<FormInst | null> = ref(null)
 const tableLoading: Ref<boolean> = ref(false)
 const dataRef = ref([])
+const initialValue = ref(initialFormValue)
 const drawerShow = ref(false)
 const drawerInfo = ref({
   title: '',
@@ -35,18 +38,18 @@ const drawerInfo = ref({
 
 // 保存搜索表单的值
 const searchFormValue = ref({
-  configName: '',
-  configType: [],
-  runStatus: [],
-  createBy: ''
+  createByName: undefined,
+  configType: undefined,
+  runStatus: undefined,
+  createBy: undefined
 })
 
 // 最后一次点击查询按钮后保存的值，避免在搜索表单修改后不点击查询按钮进行换页等操作
 const lastSearchValue = ref({
-  configName: '',
-  configType: '',
-  runStatus: '',
-  createBy: ''
+  createByName: undefined,
+  configType: undefined,
+  runStatus: undefined,
+  createBy: undefined
 })
 
 const paginationReactive: PaginationProps = reactive({
@@ -86,11 +89,11 @@ const reloadTableData = async (page: number) => {
 
 const handleSearch = async (e: MouseEvent) => {
   e.preventDefault()
-  const { configName, configType, runStatus, createBy } = searchFormValue.value
+  const { createByName, configType, runStatus, createBy } = searchFormValue.value
   lastSearchValue.value = {
-    configName: configName,
-    configType: join(',')(configType),
-    runStatus: join(',')(runStatus),
+    createByName,
+    configType,
+    runStatus,
     createBy,
   }
   await reloadTableData(1)
@@ -104,12 +107,14 @@ const handleOpenCreate = () => {
   drawerShow.value = true
   drawerInfo.value.title = '创建配置'
   drawerInfo.value.btnText = '创建'
+  initialValue.value = initialFormValue
 }
 
 const updateDrawerShow = (bool: boolean): void => {
   drawerShow.value = bool
   drawerInfo.value.title = ''
   drawerInfo.value.btnText = ''
+  initialValue.value = initialFormValue
 }
 
 onMounted(async () => {
@@ -137,7 +142,7 @@ onMounted(async () => {
     >
       <n-form-item label="配置名称">
         <n-input
-          v-model:value="searchFormValue.configName"
+          v-model:value="searchFormValue.createByName"
           clearable
         />
       </n-form-item>
@@ -145,8 +150,7 @@ onMounted(async () => {
         <n-select
           v-model:value="searchFormValue.configType"
           :options="eventConfigTypeList"
-          multiple
-          max-tag-count="responsive"
+          placeholder="请选择"
           clearable
           style="width: 180px;"
         />
@@ -155,8 +159,7 @@ onMounted(async () => {
         <n-select
           v-model:value="searchFormValue.runStatus"
           :options="configStatus"
-          multiple
-          max-tag-count="responsive"
+          placeholder="请选择"
           clearable
           style="width: 180px;"
         />
@@ -188,9 +191,10 @@ onMounted(async () => {
       ref="table"
       class="table"
       size="small"
-      :columns="[]"
+      :columns="allColumns"
       :data="dataRef"
       :pagination="paginationReactive"
+      :row-key="(rowData) => rowData.id"
       max-height="calc(100vh - 295px)"
       :single-line="false"
       remote
@@ -200,6 +204,7 @@ onMounted(async () => {
     <event-config-drawer
       :drawerInfo="drawerInfo"
       :drawerShow="drawerShow"
+      :initialValue="initialValue"
       @DrawerClose="updateDrawerShow"
     />
   </n-spin>

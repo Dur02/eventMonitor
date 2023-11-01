@@ -3,12 +3,7 @@ import {
   NDrawer,
   NDrawerContent,
   NCard,
-  NScrollbar,
-  NRadio,
-  NFormItemGi,
-  NDatePicker,
-  NSelect,
-  NInputNumber, NSpace, NCheckbox, NButton, NRadioGroup, NFormItem, NTreeSelect, NIcon, NGi, NForm, NGrid, NInput
+  NScrollbar
 } from 'naive-ui'
 import {
   cardDarkThemeOverrides,
@@ -17,21 +12,20 @@ import {
   drawerLightThemeOverrides
 } from '@/utils/constant/config/event/eventConfig'
 import { useSystemStore } from '@/stores/system'
-import { storeToRefs } from 'pinia';
-import { watch } from 'vue';
-import { formThemeOverrides, rootOptions, rules } from '@/utils/constant/event/display/eventDisplayForm';
-import { Calculator, Calendar, DocumentText, Folder, Grid, People, Save } from '@vicons/ionicons5';
-import { IosApps } from '@vicons/ionicons4';
+import { storeToRefs } from 'pinia'
+import EventForm from '@/components/form/EventForm.vue'
+import type { eventFormInitialValueType } from '@/types/components/config/event'
 
 const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
 
-const props = defineProps<{
+defineProps<{
   drawerInfo: {
     title: string,
     btnText: string
   },
-  drawerShow: boolean
+  drawerShow: boolean,
+  initialValue: eventFormInitialValueType
 }>()
 
 const emits = defineEmits(['DrawerClose'])
@@ -39,13 +33,6 @@ const emits = defineEmits(['DrawerClose'])
 const handleDrawerClose = (value: boolean): void => {
   emits("DrawerClose", value)
 }
-
-watch(
-  () => props.drawerInfo,
-  () => {
-    console.log(props.drawerInfo)
-  }
-)
 </script>
 
 <template>
@@ -75,7 +62,7 @@ watch(
         class="scroll-box"
         :style="{
           maxHeight: '440px',
-          border: '1px solid rgb(239, 239, 245)',
+          border: 'var(--n-header-border-bottom)',
           borderRadius: '3px',
         }"
       >
@@ -83,7 +70,9 @@ watch(
           :bordered="false"
           :theme-overrides="isLight ? cardLightThemeOverrides : cardDarkThemeOverrides"
         >
-          <p>{{ drawerInfo.btnText }}</p>
+          <event-form
+            :initial-value="initialValue"
+          />
         </n-card>
       </n-scrollbar>
     </n-drawer-content>
@@ -91,5 +80,4 @@ watch(
 </template>
 
 <style scoped lang="scss">
-
 </style>

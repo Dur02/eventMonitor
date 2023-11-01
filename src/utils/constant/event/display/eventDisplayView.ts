@@ -1,5 +1,5 @@
 import type { DataTableColumns, EllipsisProps } from 'naive-ui'
-import type { eventRowsType } from '@/types/components/event/display/types'
+import type { eventRowsType } from '@/types/components/event/display'
 import { useEventStore } from '@/stores/event'
 import { storeToRefs } from 'pinia'
 import { flow, find, propEq, prop, includes } from 'lodash/fp'
@@ -25,7 +25,7 @@ const findValueInTarget = (value: string | number, target: any) => flow(
 )(target)
 
 const align = 'center'
-
+const ellipsisComponent = 'performant-ellipsis'
 const ellipsis: EllipsisProps = {
   tooltip: true,
   lineClamp: 1,
@@ -42,7 +42,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     key: 'globaleventid',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '日期',
@@ -60,7 +60,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ quadclass }) => findValueInTarget(quadclass, quadClass.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '根事件',
@@ -68,7 +68,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ eventrootcode }) => findValueInTarget(eventrootcode, rootCodeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '基事件',
@@ -76,7 +76,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ eventbasecode }) => findValueInTarget(eventbasecode, baseCodeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '事件编码',
@@ -84,7 +84,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ eventcode }) => findValueInTarget(eventcode, eventCodeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '是否根类',
@@ -117,14 +117,14 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     key: 'actor1code',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一实名',
     key: 'actor1name',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一国家',
@@ -132,7 +132,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor1countrycode }) => findValueInTarget(actor1countrycode, actorCountryCodeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一组织',
@@ -140,7 +140,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor1knowngroupcode }) => findValueInTarget(actor1knowngroupcode, knownGroupCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一种族',
@@ -148,7 +148,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor1ethniccode }) => findValueInTarget(actor1ethniccode, ethnicCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一宗教1',
@@ -156,7 +156,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor1religion1code }) => findValueInTarget(actor1religion1code, religionCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一宗教2',
@@ -164,7 +164,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor1religion2code }) => findValueInTarget(actor1religion2code, religionCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一种类1',
@@ -172,7 +172,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor1type1code }) => findValueInTarget(actor1type1code, actorTypeCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一种类2',
@@ -180,7 +180,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor1type2code }) => findValueInTarget(actor1type2code, actorTypeCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一种类3',
@@ -188,7 +188,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor1type3code }) => findValueInTarget(actor1type3code, actorTypeCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一地理种类',
@@ -199,7 +199,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     )(geoTypeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一地理国家',
@@ -210,21 +210,21 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     )(geoCountryCodeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一地理省份编码',
     key: 'actor1geoAdm1code',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一地理全名',
     key: 'actor1geoFullname',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色一经度',
@@ -241,21 +241,21 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     key: 'actor1geoFeatureid',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二编码',
     key: 'actor2code',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二实名',
     key: 'actor2name',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二国家',
@@ -263,7 +263,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor2countrycode }) => findValueInTarget(actor2countrycode, actorCountryCodeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二组织',
@@ -271,7 +271,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor2knowngroupcode }) => findValueInTarget(actor2knowngroupcode, knownGroupCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二种族',
@@ -279,7 +279,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor2ethniccode }) => findValueInTarget(actor2ethniccode, ethnicCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二宗教1',
@@ -287,7 +287,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor2religion1code }) => findValueInTarget(actor2religion1code, religionCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二宗教2',
@@ -295,7 +295,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor2religion2code }) => findValueInTarget(actor2religion2code, religionCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二种类1',
@@ -303,7 +303,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor2type1code }) => findValueInTarget(actor2type1code, actorTypeCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二种类2',
@@ -311,7 +311,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor2type2code }) => findValueInTarget(actor2type2code, actorTypeCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二种类3',
@@ -319,7 +319,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     render: ({ actor2type3code }) => findValueInTarget(actor2type3code, actorTypeCode.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二地理种类',
@@ -330,7 +330,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     )(geoTypeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二地理国家',
@@ -341,21 +341,21 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     )(geoCountryCodeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二地理省份编码',
     key: 'actor2geoAdm1code',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二地理全名',
     key: 'actor2geoFullname',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '角色二经度',
@@ -372,7 +372,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     key: 'actor2geoFeatureid',
     ellipsis,
     // align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '事件发生地国家(编码)',
@@ -383,21 +383,21 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     )(geoCountryCodeList.value),
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '事件发生地州省（编码）',
     key: 'actiongeoAdm1code',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '事件发生地地理全名',
     key: 'actiongeoFullname',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '事件发生地经度',
@@ -414,7 +414,7 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     key: 'actiongeoFeatureid',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   },
   {
     title: '入库时间',
@@ -426,6 +426,6 @@ export const allColumns: DataTableColumns<eventRowsType> = [
     key: 'sourceurl',
     ellipsis,
     align,
-    ellipsisComponent: 'performant-ellipsis'
+    ellipsisComponent
   }
 ]

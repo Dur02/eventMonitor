@@ -9,13 +9,7 @@ import menuRoutes from '@/router/menuRoutes'
 import { useSystemStore } from '@/stores/system'
 import { map } from 'lodash/fp'
 import { storeToRefs } from 'pinia';
-
-interface routeType {
-  key: string,
-  label: string | null,
-  icon: Function | null,
-  children: routeType[] | undefined
-}
+import type { routeType } from '@/types/components/layout/sider'
 
 const systemStore = useSystemStore()
 const { isCollapse } = storeToRefs(systemStore)

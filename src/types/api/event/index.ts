@@ -1,4 +1,4 @@
-import type { eventRowsType } from '@/types/components/event/display/types'
+import type { eventRowsType } from '@/types/components/event/display'
 
 export type EventListType = {
   pageNum: number,

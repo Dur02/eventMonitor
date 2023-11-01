@@ -34,12 +34,10 @@ import {
   formThemeOverrides,
   initialFormValue,
   rules,
-  rootOptions,
-  cardLightThemeOverrides, cardDarkThemeOverrides
+  rootOptions
 } from '@/utils/constant/event/display/eventDisplayForm'
 import { getRegionCodeList } from '@/api/codeDict'
 import { map, includes, filter } from 'lodash/fp'
-import { useSystemStore } from '@/stores/system'
 
 const footerStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footerStore)
@@ -205,7 +203,6 @@ defineExpose({
 
 <template>
   <n-scrollbar
-    class="scroll-box"
     :style="{
       maxHeight: '440px',
       border: '1px solid var(--n-border-color)',

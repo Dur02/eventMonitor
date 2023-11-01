@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { ref, onMounted, } from 'vue'
-import type { FormProps, InputProps, CheckboxProps, FormRules, FormInst, FormValidationError } from 'naive-ui'
+import type { FormInst, FormValidationError } from 'naive-ui'
 import { NForm, NFormItem, NInput, NIcon, NImage, NCheckbox, NButton, NConfigProvider, lightTheme } from 'naive-ui'
 import { Person, LockOpen } from '@vicons/ionicons5'
 import { encode, decode } from 'js-base64'
@@ -9,45 +9,8 @@ import Cookies from 'js-cookie'
 import { getCode } from '@/api/user'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { storeToRefs } from 'pinia';
-
-type FormThemeOverrides = NonNullable<FormProps['themeOverrides']>
-type InputThemeOverrides = NonNullable<InputProps['themeOverrides']>
-type CheckBoxThemeOverrides = NonNullable<CheckboxProps['themeOverrides']>
-
-interface ModelType {
-  username: string
-  password: string
-  code: string,
-  uuid: string,
-  rememberMe: boolean
-}
-
-const formThemeOverrides: FormThemeOverrides = {
-  blankHeightMedium: '30px'
-}
-
-const inputThemeOverrides: InputThemeOverrides = {
-  colorFocus: 'rgba(0, 0, 0, 0.1)',
-  colorFocusError: 'rgba(0, 0, 0, 0.1)',
-  textColor: 'rgba(255, 255, 255, 1)'
-}
-
-const checkBoxThemeOverrides: CheckBoxThemeOverrides = {
-  textColor: 'rgba(255, 255, 255, 1)'
-}
-
-const rules: FormRules = {
-  username: [
-    { required: true, message: '请输入账号', trigger: ['input', 'blur'] }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: ['input', 'blur'] }
-  ],
-  code: [
-    { required: true, message: '请输入验证码', trigger: ['input', 'blur'] }
-  ]
-}
+import { checkBoxThemeOverrides, inputThemeOverrides, formThemeOverrides, rules } from '@/utils/constant/login/login'
+import type { ModelType } from '@/types/components/login'
 
 const userStore = useUserStore()
 const { login } = userStore

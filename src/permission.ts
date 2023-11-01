@@ -3,6 +3,7 @@ import { createDiscreteApi } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+import { replace } from 'lodash';
 
 const whiteList = ['/login']
 
@@ -23,8 +24,12 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
       loadingBar.finish()
     } else {
       if (roles.value.length === 0) {
-        await getInfo()
-        next({ ...to, replace: true })
+        try {
+          await getInfo()
+          next({ ...to, replace: true })
+        } catch (e) {
+          next('/login')
+        }
       } else {
         next()
       }
@@ -35,7 +40,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
       // 在免登录白名单，直接进入
       next()
     } else {
-      next(`/login`) // 否则全部重定向到登录页
+      next({ path: `/login` }) // 否则全部重定向到登录页
       loadingBar.finish()
     }
   }
