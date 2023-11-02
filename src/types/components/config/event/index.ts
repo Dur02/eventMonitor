@@ -1,4 +1,4 @@
-export interface eventFormInitialValueType {
+export interface eventConfigFormInitialValueType {
   sqldate: [number, number] | null,
   dataSource: string,
   weightBasis: string,
@@ -45,11 +45,20 @@ export interface eventFormInitialValueType {
   isrootevent: string
 }
 
-export interface eventFormProps {
-  initialValue: eventFormInitialValueType
+export interface eventConfigFormProps {
+  initialValue: eventConfigFormInitialValueType
 }
 
 export type eventConfigRowsType = {
+  numbers: number,
   orderPriority: number,
-  isShow: number
+  isShow: number,
+  configName: string,
+  configType: string,
+  createByName: string,
+  purview: number,
+  createTime: string,
+  remark: string,
+  runStatus: number,
+  id: number
 }

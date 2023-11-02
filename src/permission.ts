@@ -3,7 +3,6 @@ import { createDiscreteApi } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import { replace } from 'lodash';
 
 const whiteList = ['/login']
 
@@ -16,7 +15,7 @@ loadingBar.start()
 router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext): Promise<void> => {
   const userStore = useUserStore()
   const { roles } = storeToRefs(userStore)
-  const { getInfo } = userStore
+  const { getInfo, logout } = userStore
 
   if (localStorage.getItem('token')) {
     if (whiteList.indexOf(to.path) !== -1) {
@@ -28,7 +27,8 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
           await getInfo()
           next({ ...to, replace: true })
         } catch (e) {
-          next('/login')
+          await logout()
+          await router.replace('/login')
         }
       } else {
         next()

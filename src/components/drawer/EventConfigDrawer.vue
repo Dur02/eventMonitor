@@ -13,8 +13,8 @@ import {
 } from '@/utils/constant/config/event/eventConfig'
 import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
-import EventForm from '@/components/form/EventForm.vue'
-import type { eventFormInitialValueType } from '@/types/components/config/event'
+import EventConfigForm from '@/components/form/EventConfigForm.vue'
+import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
 
 const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
@@ -25,13 +25,17 @@ defineProps<{
     btnText: string
   },
   drawerShow: boolean,
-  initialValue: eventFormInitialValueType
+  initialValue: eventConfigFormInitialValueType
 }>()
 
-const emits = defineEmits(['DrawerClose'])
+const emits = defineEmits(['DrawerClose', 'AfterLeave'])
 
 const handleDrawerClose = (value: boolean): void => {
   emits("DrawerClose", value)
+}
+
+const handleResetValue = (): void => {
+  emits('AfterLeave')
 }
 </script>
 
@@ -47,6 +51,7 @@ const handleDrawerClose = (value: boolean): void => {
     :mask-closable="false"
     :theme-overrides="isLight ? drawerLightThemeOverrides : drawerDarkThemeOverrides"
     @update:show="handleDrawerClose"
+    @after-leave="handleResetValue"
   >
     <n-drawer-content
       closable
@@ -70,7 +75,7 @@ const handleDrawerClose = (value: boolean): void => {
           :bordered="false"
           :theme-overrides="isLight ? cardLightThemeOverrides : cardDarkThemeOverrides"
         >
-          <event-form
+          <event-config-form
             :initial-value="initialValue"
           />
         </n-card>

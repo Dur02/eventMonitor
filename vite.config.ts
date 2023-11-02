@@ -1,8 +1,6 @@
-import { UserConfig, ConfigEnv, loadEnv, defineConfig } from 'vite';
-
-import createPlugins from './plugins';
-
-import path from 'path';
+import { UserConfig, ConfigEnv, loadEnv, defineConfig } from 'vite'
+import createPlugins from './plugins'
+import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {

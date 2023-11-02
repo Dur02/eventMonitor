@@ -1,4 +1,4 @@
-import type { eventRowsType } from '@/types/components/event/display'
+import type { eventDisplayRowsType } from '@/types/components/event/display'
 
 export type EventListType = {
   pageNum: number,
@@ -6,6 +6,6 @@ export type EventListType = {
 }
 
 export type EventListResultType = {
-  rows: eventRowsType[],
+  rows: eventDisplayRowsType[],
   total: number
 }

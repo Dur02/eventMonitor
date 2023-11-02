@@ -1,4 +1,4 @@
-export type eventRowsType = {
+export type eventDisplayRowsType = {
   numbers: number,
   globaleventid: number,
   sqldate: string,

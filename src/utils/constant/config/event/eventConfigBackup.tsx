@@ -1,13 +1,13 @@
 import type { FormRules, SelectGroupOption, SelectOption, DataTableColumns, EllipsisProps } from 'naive-ui'
 import type { eventConfigRowsType, eventConfigFormInitialValueType } from '@/types/components/config/event'
 import type { CardThemeOverrides, FormThemeOverrides, DrawerThemeOverrides } from '@/types/themeOverrides'
-import { h } from 'vue'
 import { NButton, NIcon, NSpace, NTag } from 'naive-ui'
-import { storeToRefs } from 'pinia'
-import { Eye, EyeOff, PlayCircleOutline, PencilSharp, Download, Trash, Duplicate, PauseCircle } from '@vicons/ionicons5'
+import { Eye, EyeOff, PlayCircleOutline, Download, Duplicate, Trash, PauseCircle } from '@vicons/ionicons5'
+import { CalendarEdit20Filled } from '@vicons/fluent'
+import { h } from 'vue'
 import { useConfigStore } from '@/stores/config'
+import { storeToRefs } from 'pinia'
 import { find, flow, prop, propEq } from 'lodash/fp'
-import { CalendarEdit20Filled } from '@vicons/fluent';
 
 const configStore = useConfigStore()
 const { eventConfigTypeList } = storeToRefs(configStore)
@@ -72,17 +72,15 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
     key: 'orderPriority',
     width: 100,
     align,
-    render: ({ orderPriority }) => {
+    render({ orderPriority }) {
       const type = getTagColor(orderPriority)
-      return h(
-        NTag,
-        {
-          bordered: false,
-          type
-        },
-        {
-          default: () => orderPriority
-        }
+      return (
+        <NTag
+          bordered={ false }
+          type={ type }
+        >
+          {{ default: () => orderPriority  }}
+        </NTag>
       )
     }
   },
@@ -91,28 +89,24 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
     key: 'isShow',
     width: 80,
     align,
-    render: ({ isShow, id }) => h(
-      NButton,
-      {
-        text: true,
-        style: {
-          fontSize: '20px'
-        },
-        onClick: () => {
-          console.log(isShow)
-          console.log(id)
-        }
-      },
-      {
-        default: () => h(
-          NIcon,
-          {
-            component: isShow ? Eye : EyeOff,
-          },
-          {}
-        )
-      }
-    )
+    render({ isShow }) {
+      return (
+        <NButton
+          text={ true }
+          style={{
+            fontSize: '24px'
+          }}
+        >
+          {{ default: () => (
+              <NIcon
+                component={ isShow ? Eye : EyeOff }
+              >
+                {{ default: () => {} }}
+              </NIcon>
+          )}}
+        </NButton>
+      )
+    }
   },
   {
     title: '配置名称',
@@ -167,11 +161,11 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
   {
     title: '状态',
     key: 'runStatus',
-    width: 100,
+    width: 150,
     align,
     ellipsisComponent,
     ellipsis,
-    render: ({ runStatus }) => {
+    render({ runStatus }) {
       const getRunStatusType = (runStatus: number): 'default' | 'primary' | 'success' | 'info' | 'warning' | 'error' => {
         switch (runStatus) {
           case 0: return 'info'
@@ -183,155 +177,125 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
       }
       const getRunStatusText = (runStatus: number): string => {
         switch (runStatus) {
-          case 0: return '待执行'
-          case 1: return '执行中'
-          case 2: return '执行成功'
-          case 3: return '执行失败'
+          case 0: return '待执行查询'
+          case 1: return '执行查询中'
+          case 2: return '执行查询完成'
+          case 3: return '执行查询失败'
           default: return '排队中'
         }
       }
-      return h(
-        NButton,
-        {
-          text: true,
-          tag: 'span',
-          type: getRunStatusType(runStatus)
-        },
-        {
-          default: () => getRunStatusText(runStatus)
-        }
+      return (
+        <NButton
+          text={true}
+          tag="span"
+          type={getRunStatusType(runStatus)}
+        >
+          {{ default: () => getRunStatusText(runStatus) }}
+        </NButton>
       )
     }
   },
   {
     title: '操作',
     key: 'numbers',
-    width: 200,
+    width: 250,
     fixed: 'right',
     align,
-    render: ({ id }) => {
-      return h(
-        NSpace,
-        { justify: 'center' },
-        { default: () => [
-          h(
-            NButton,
-            {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: PlayCircleOutline,
-              },
-              {}
-            )}
-          ),
-          h(
-            NButton,
-            {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: CalendarEdit20Filled,
-              },
-              {}
-            )}
-          ),
-          h(
-            NButton,
-            {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: Download,
-              },
-              {}
-            )}
-          ),
-          h(
-            NButton,
-            {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: Trash,
-              },
-              {}
-            )}
-          ),
-          h(
-            NButton,
-            {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: Duplicate,
-              },
-              {}
-            )}
-          ),
-          h(
-            NButton,
-            {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: PauseCircle,
-              },
-              {}
-            )}
-          )
-        ]}
+    render({ id }) {
+      return (
+        <NSpace
+          justify='center'
+        >
+          {{ default: () => [
+            <NButton
+              text={ true }
+              style={{
+                fontSize: '24px'
+              }}
+            >
+              {{ default: () => (
+                 <NIcon
+                   component={ PlayCircleOutline }
+                 >
+                   {{ default: () => {} }}
+                 </NIcon>
+              )}}
+            </NButton>,
+            <NButton
+              text={ true }
+              style={{
+                fontSize: '24px'
+              }}
+            >
+              {{ default: () => (
+                <NIcon
+                  component={ CalendarEdit20Filled }
+                >
+                  {{ default: () => {} }}
+                </NIcon>
+                )}}
+            </NButton>,
+            <NButton
+              text={ true }
+              style={{
+                fontSize: '24px'
+              }}
+            >
+              {{ default: () => (
+                <NIcon
+                  component={ Download }
+                >
+                  {{ default: () => {} }}
+                </NIcon>
+              )}}
+            </NButton>,
+            <NButton
+              text={ true }
+              style={{
+                fontSize: '24px'
+              }}
+            >
+              {{ default: () => (
+                <NIcon
+                  component={ Trash }
+                >
+                  {{ default: () => {} }}
+                </NIcon>
+              )}}
+            </NButton>,
+            <NButton
+              text={ true }
+              style={{
+                fontSize: '24px'
+              }}
+            >
+              {{ default: () => (
+                <NIcon
+                  component={ Duplicate }
+                >
+                  {{ default: () => {} }}
+                </NIcon>
+              )}}
+            </NButton>,
+            <NButton
+              text={ true }
+              style={{
+                fontSize: '24px'
+              }}
+            >
+              {{ default: () => (
+                <NIcon
+                  component={ PauseCircle }
+                >
+                  {{ default: () => {} }}
+                </NIcon>
+              )}}
+            </NButton>
+          ]}}
+        </NSpace>
       )
     }
-  },
+  }
 ]
 
 export const configStatus = [

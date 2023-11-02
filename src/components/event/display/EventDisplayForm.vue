@@ -36,7 +36,7 @@ import {
   rules,
   rootOptions
 } from '@/utils/constant/event/display/eventDisplayForm'
-import { getRegionCodeList } from '@/api/codeDict'
+import { getRegionCodeList } from '@/api/eventCodeDict'
 import { map, includes, filter } from 'lodash/fp'
 
 const footerStore = useFooterStore()

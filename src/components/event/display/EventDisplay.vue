@@ -15,7 +15,7 @@ import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import { useRoute } from 'vue-router'
 import { getEventList } from '@/api/event'
-import type { eventRowsType } from '@/types/components/event/display'
+import type { eventDisplayRowsType } from '@/types/components/event/display'
 import { allColumns } from '@/utils/constant/event/display/eventDisplayView'
 import { map, filter, includes } from 'lodash/fp'
 
@@ -26,9 +26,9 @@ const footStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
-const columnsRef: Ref<DataTableColumns<eventRowsType>> = ref(allColumns)
+const columnsRef: Ref<DataTableColumns<eventDisplayRowsType>> = ref(allColumns)
 const selectedColumn: Ref<string[]> = ref(map(({ key }) => key)(allColumns))
-const dataRef: Ref<eventRowsType[]> = ref([])
+const dataRef: Ref<eventDisplayRowsType[]> = ref([])
 const loadingRef: Ref<boolean> = ref(false)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
@@ -58,7 +58,7 @@ const reloadTableData = async (page: number) => {
     paginationReactive.page = page
     try {
       const { rows, total } = await getEventList({ pageNum: page, pageSize: paginationReactive.pageSize! })
-      dataRef.value = mapWithIndex((item: eventRowsType, index: number) => ({
+      dataRef.value = mapWithIndex((item: eventDisplayRowsType, index: number) => ({
         ...item,
         numbers: index + (page - 1) * paginationReactive.pageSize! + 1
       }))(rows)
@@ -122,7 +122,7 @@ watch(
         :data="dataRef"
         :loading="loadingRef"
         :pagination="paginationReactive"
-        :row-key="(rowData: eventRowsType) => rowData.globaleventid"
+        :row-key="(rowData: eventDisplayRowsType) => rowData.globaleventid"
         max-height="calc(100vh - 295px)"
         @update:page="handlePageChange"
         virtual-scroll

@@ -24,12 +24,12 @@ import { IosApps } from '@vicons/ionicons4'
 import { formThemeOverrides, rootOptions, rules } from '@/utils/constant/config/event/eventConfig'
 import { useEventStore } from '@/stores/event'
 import { storeToRefs } from 'pinia'
-import { getRegionCodeList } from '@/api/codeDict'
+import { getRegionCodeList } from '@/api/eventCodeDict'
 import { filter, includes, map } from 'lodash/fp'
 import deepCopy from '@/utils/function/deepcopy'
-import type { eventFormInitialValueType, eventFormProps } from '@/types/components/config/event'
+import type { eventConfigFormInitialValueType, eventConfigFormProps } from '@/types/components/config/event'
 
-const props = defineProps<eventFormProps>()
+const props = defineProps<eventConfigFormProps>()
 
 const eventStore = useEventStore()
 const {
@@ -47,7 +47,7 @@ const {
 } = storeToRefs(eventStore)
 const { getAllEventCodeList } = eventStore
 
-const formValue: Ref<eventFormInitialValueType> = ref(deepCopy(props.initialValue) as eventFormInitialValueType)
+const formValue: Ref<eventConfigFormInitialValueType> = ref(deepCopy(props.initialValue) as eventConfigFormInitialValueType)
 const formRef: Ref<FormInst | null> = ref(null)
 const rootOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 const baseOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])

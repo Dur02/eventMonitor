@@ -1,5 +1,5 @@
 import type { DataTableColumns, EllipsisProps } from 'naive-ui'
-import type { eventRowsType } from '@/types/components/event/display'
+import type { eventDisplayRowsType } from '@/types/components/event/display'
 import { useEventStore } from '@/stores/event'
 import { storeToRefs } from 'pinia'
 import { flow, find, propEq, prop, includes } from 'lodash/fp'
@@ -31,7 +31,7 @@ const ellipsis: EllipsisProps = {
   lineClamp: 1,
 }
 
-export const allColumns: DataTableColumns<eventRowsType> = [
+export const allColumns: DataTableColumns<eventDisplayRowsType> = [
   {
     title: '序号',
     key: 'numbers',

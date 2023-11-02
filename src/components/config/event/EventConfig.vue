@@ -14,11 +14,10 @@ import {
 import { useConfigStore } from '@/stores/config'
 import { storeToRefs } from 'pinia'
 import { allColumns, configStatus } from '@/utils/constant/config/event/eventConfig'
-import EventConfigDrawer from '@/components/drawer/eventConfigDrawer.vue'
-import { getEventConfigList } from '@/api/config'
+import { getEventConfigList } from '@/api/eventConfiguration'
 import { map } from 'lodash/fp'
 import { initialFormValue } from '@/utils/constant/config/event/eventConfig'
-import { eventRowsType } from '@/types/components/event/display';
+import EventConfigDrawer from '@/components/drawer/EventConfigDrawer.vue'
 
 const mapWithIndex = map.convert({ cap: false })
 
@@ -104,14 +103,17 @@ const handlePageChange = async (currentPage: number): Promise<void> => {
 }
 
 const handleOpenCreate = () => {
-  drawerShow.value = true
   drawerInfo.value.title = '创建配置'
   drawerInfo.value.btnText = '创建'
   initialValue.value = initialFormValue
+  drawerShow.value = true
 }
 
 const updateDrawerShow = (bool: boolean): void => {
   drawerShow.value = bool
+}
+
+const resetValue = () => {
   drawerInfo.value.title = ''
   drawerInfo.value.btnText = ''
   initialValue.value = initialFormValue
@@ -191,6 +193,7 @@ onMounted(async () => {
       ref="table"
       class="table"
       size="small"
+      :scroll-x="1600"
       :columns="allColumns"
       :data="dataRef"
       :pagination="paginationReactive"
@@ -206,6 +209,7 @@ onMounted(async () => {
       :drawerShow="drawerShow"
       :initialValue="initialValue"
       @DrawerClose="updateDrawerShow"
+      @AfterLeave="resetValue"
     />
   </n-spin>
 </template>
