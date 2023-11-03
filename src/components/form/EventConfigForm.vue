@@ -22,7 +22,7 @@ import {
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
 import { formThemeOverrides, rootOptions, rules } from '@/utils/constant/config/event/eventConfig'
-import { useEventStore } from '@/stores/event'
+import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import { getRegionCodeList } from '@/api/eventCodeDict'
 import { filter, includes, map } from 'lodash/fp'
@@ -31,7 +31,7 @@ import type { eventConfigFormInitialValueType, eventConfigFormProps } from '@/ty
 
 const props = defineProps<eventConfigFormProps>()
 
-const eventStore = useEventStore()
+const eventStore = useConstantStore()
 const {
   actorCountryCodeList,
   actorTypeCode,

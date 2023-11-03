@@ -1,5 +1,5 @@
 // 使用for...in 进行数据的深拷贝
-const deepCopy = <T>(object: T): T | string | null => {
+const deepCopy = <T>(object: T): T => {
   let result: any
   if (Object.prototype.toString.call(object) == "[object Object]") {
     result = {}

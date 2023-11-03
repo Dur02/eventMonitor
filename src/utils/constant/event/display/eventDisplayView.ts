@@ -1,10 +1,10 @@
 import type { DataTableColumns, EllipsisProps } from 'naive-ui'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
-import { useEventStore } from '@/stores/event'
+import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import { flow, find, propEq, prop, includes } from 'lodash/fp'
 
-const eventStore = useEventStore()
+const eventStore = useConstantStore()
 const {
   actorCountryCodeList,
   actorTypeCode,

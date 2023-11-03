@@ -2,10 +2,10 @@ import type { Ref } from 'vue'
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { SelectOption, TreeSelectOption  } from 'naive-ui'
-import { getAllEventCodeList as getAllEventCodeListApi } from '@/api/eventCodeDict'
-import { map } from 'lodash/fp';
+import { getAllEventCodeList as getAllEventCodeListApi, getConfigCodeList } from '@/api/eventCodeDict'
+import { map } from 'lodash/fp'
 
-export const useEventStore = defineStore('event', () => {
+export const useConstantStore = defineStore('constant', () => {
   const actorCountryCodeList: Ref<SelectOption[]> = ref([])
   const actorTypeCode: Ref<SelectOption[]> = ref([])
   const baseCodeList: Ref<SelectOption[]> = ref([])
@@ -21,6 +21,7 @@ export const useEventStore = defineStore('event', () => {
   const quadClass: Ref<SelectOption[]>   = ref([])
   const religionCode: Ref<SelectOption[]>  = ref([])
   const rootCodeList: Ref<SelectOption[]> = ref([])
+  const eventConfigTypeList: Ref<SelectOption[]> = ref([])
 
   const getAllEventCodeList = async () => {
     if (actorTypeCode.value.length === 0) {
@@ -91,7 +92,19 @@ export const useEventStore = defineStore('event', () => {
           eventQuadClass
         }))(data.rootCodeList)
       } catch (e) {
-        //
+        return Promise.reject()
+      }
+    }
+    return Promise.resolve()
+  }
+
+  const getAllEventConfigType = async () => {
+    if (eventConfigTypeList.value.length === 0) {
+      try {
+        const { data } = await getConfigCodeList({ configType: 1 })
+        eventConfigTypeList.value = data
+      } catch (e) {
+        return Promise.reject()
       }
     }
     return Promise.resolve()
@@ -109,6 +122,8 @@ export const useEventStore = defineStore('event', () => {
     quadClass,
     religionCode,
     rootCodeList,
-    getAllEventCodeList
+    eventConfigTypeList,
+    getAllEventCodeList,
+    getAllEventConfigType
   }
 })

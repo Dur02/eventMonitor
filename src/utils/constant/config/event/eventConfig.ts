@@ -1,16 +1,35 @@
-import type { FormRules, SelectGroupOption, SelectOption, DataTableColumns, EllipsisProps } from 'naive-ui'
+import type { FormRules, SelectGroupOption, SelectOption, DataTableColumns, EllipsisProps, ConfigProviderProps } from 'naive-ui'
 import type { eventConfigRowsType, eventConfigFormInitialValueType } from '@/types/components/config/event'
 import type { CardThemeOverrides, FormThemeOverrides, DrawerThemeOverrides } from '@/types/themeOverrides'
-import { h } from 'vue'
-import { NButton, NIcon, NSpace, NTag } from 'naive-ui'
+import { h, computed } from 'vue'
+import { NButton, NIcon, NSpace, NTag, NTooltip, NPopconfirm, createDiscreteApi, lightTheme, darkTheme } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { Eye, EyeOff, PlayCircleOutline, PencilSharp, Download, Trash, Duplicate, PauseCircle } from '@vicons/ionicons5'
-import { useConfigStore } from '@/stores/config'
+import { Eye, EyeOff, PlayCircleOutline, Download, Trash, Duplicate, PauseCircle } from '@vicons/ionicons5'
 import { find, flow, prop, propEq } from 'lodash/fp'
-import { CalendarEdit20Filled } from '@vicons/fluent';
+import { CalendarEdit20Filled } from '@vicons/fluent'
+import { useConstantStore } from '@/stores/constant'
+import { StopTaskRun } from '@/api/eventConfiguration'
+import { useEventConfigStore } from '@/stores/eventConfig'
+import { useSystemStore } from '@/stores/system'
 
-const configStore = useConfigStore()
-const { eventConfigTypeList } = storeToRefs(configStore)
+const systemStore = useSystemStore()
+const { isLight } = storeToRefs(systemStore)
+const constantStore = useConstantStore()
+const { eventConfigTypeList } = storeToRefs(constantStore)
+const eventConfigStore = useEventConfigStore()
+const { paginationReactive, tableLoading } = storeToRefs(eventConfigStore)
+const { reloadTableData, changeIsShow, runTask, handleSingleDelete } = eventConfigStore
+
+const configProviderPropsRef = computed<ConfigProviderProps>(() => ({
+  theme: isLight.value ? lightTheme : darkTheme
+}))
+
+const { message } = createDiscreteApi(
+  ['message'],
+  {
+    configProviderProps: configProviderPropsRef
+  }
+)
 
 export const drawerLightThemeOverrides: DrawerThemeOverrides = {
   color: 'rgb(255, 255, 255)',
@@ -57,7 +76,10 @@ const getTagColor = (orderPriority: number) => {
 
 export const allColumns: DataTableColumns<eventConfigRowsType> = [
   {
-    type: 'selection'
+    type: 'selection',
+    disabled ({ runStatus }) {
+      return runStatus === 1 || runStatus === 4
+    }
   },
   {
     title: '序号',
@@ -70,7 +92,7 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
   {
     title: '排序',
     key: 'orderPriority',
-    width: 100,
+    width: 80,
     align,
     render: ({ orderPriority }) => {
       const type = getTagColor(orderPriority)
@@ -98,9 +120,13 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
         style: {
           fontSize: '20px'
         },
-        onClick: () => {
-          console.log(isShow)
-          console.log(id)
+        onClick: async () => {
+          try {
+            await changeIsShow(id, isShow)
+            message.success('操作成功')
+          } catch (e) {
+            //
+          }
         }
       },
       {
@@ -109,7 +135,7 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
           {
             component: isShow ? Eye : EyeOff,
           },
-          {}
+          { default: () => {} }
         )
       }
     )
@@ -117,7 +143,7 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
   {
     title: '配置名称',
     key: 'configName',
-    minWidth: 200,
+    // width: 200,
     align,
     ellipsisComponent,
     ellipsis
@@ -125,7 +151,7 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
   {
     title: '配置分类',
     key: 'configType',
-    minWidth: 200,
+    // width: 200,
     align,
     ellipsisComponent,
     ellipsis,
@@ -134,7 +160,7 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
   {
     title: '创建人',
     key: 'createByName',
-    minWidth: 100,
+    // width: 100,
     align,
     ellipsisComponent,
     ellipsis,
@@ -144,8 +170,8 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
     key: 'purview',
     width: 80,
     align,
-    ellipsisComponent,
-    ellipsis,
+    //ellipsisComponent,
+    // ellipsis,
     render: ({ purview }) => purview === 1 ? '私有' : '公有'
   },
   {
@@ -153,13 +179,13 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
     key: 'createTime',
     width: 200,
     align,
-    ellipsisComponent,
-    ellipsis,
+    //ellipsisComponent,
+    // ellipsis,
   },
   {
     title: '备注信息',
     key: 'remark',
-    width: 100,
+    // width: 100,
     align,
     ellipsisComponent,
     ellipsis,
@@ -169,8 +195,8 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
     key: 'runStatus',
     width: 100,
     align,
-    ellipsisComponent,
-    ellipsis,
+    //ellipsisComponent,
+    // ellipsis,
     render: ({ runStatus }) => {
       const getRunStatusType = (runStatus: number): 'default' | 'primary' | 'success' | 'info' | 'warning' | 'error' => {
         switch (runStatus) {
@@ -207,127 +233,200 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
     title: '操作',
     key: 'numbers',
     width: 200,
-    fixed: 'right',
+    // fixed: 'right',
     align,
-    render: ({ id }) => {
+    render: ({ id, runStatus }) => {
       return h(
         NSpace,
-        { justify: 'center' },
+        { justify: 'start' },
         { default: () => [
           h(
-            NButton,
+            NTooltip,
+            null,
             {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: PlayCircleOutline,
-              },
-              {}
-            )}
+              trigger: () => h(
+                NButton,
+                {
+                  text: true,
+                  style: {
+                    fontSize: '20px',
+                  },
+                  disabled: !(runStatus === 0 || runStatus === 3),
+                  onClick: async () => {
+                    try {
+                      await runTask(id)
+                      message.success('操作成功')
+                    } catch (e) {
+                      //
+                    }
+                  }
+                },
+                {
+                  default: () => h(
+                    NIcon,
+                    {
+                      component: PlayCircleOutline,
+                    },
+                    {}
+                  )
+                }
+              ),
+              default: () => '执行'
+            }
           ),
           h(
-            NButton,
+            NTooltip,
+            null,
             {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: CalendarEdit20Filled,
-              },
-              {}
-            )}
+              trigger: () => h(
+                NButton,
+                {
+                  text: true,
+                  style: {
+                    fontSize: '20px',
+                  },
+                  onClick: () => {
+                    console.log(id)
+                  }
+                },
+                {
+                  default: () => h(
+                    NIcon,
+                    {
+                      component: CalendarEdit20Filled,
+                    },
+                    {}
+                  )
+                }
+              ),
+              default: () => '修改'
+            }
           ),
           h(
-            NButton,
+            NTooltip,
+            null,
             {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: Download,
-              },
-              {}
-            )}
+              trigger: () => h(
+                NButton,
+                {
+                  text: true,
+                  style: {
+                    fontSize: '20px',
+                  },
+                  onClick: () => {
+                    console.log(id)
+                  }
+                },
+                { default: () => h(
+                    NIcon,
+                    {
+                      component: Download,
+                    },
+                    {}
+                )}
+              ),
+              default: () => '下载'
+            }
           ),
           h(
-            NButton,
+            NTooltip,
+            null,
             {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: Trash,
-              },
-              {}
-            )}
+              trigger: () => h(
+                NPopconfirm,
+                {
+                  onPositiveClick: async () => {
+                    try {
+                      await handleSingleDelete(id)
+                      message.success('操作成功')
+                    } catch (e) {
+                      //
+                    }
+                  }
+                },
+                {
+                  trigger: () => h(
+                    NButton,
+                    {
+                      text: true,
+                      style: {
+                        fontSize: '20px',
+                      },
+                      disabled: (runStatus === 1 || runStatus === 4)
+                    },
+                    {
+                      default: () => h(
+                        NIcon,
+                        {
+                          component: Trash,
+                        },
+                        {}
+                      )
+                    }
+                  ),
+                  default: () => '确定要删除吗?'
+                }
+              ),
+              default: () => '删除'
+            }
           ),
           h(
-            NButton,
+            NTooltip,
+            null,
             {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: Duplicate,
-              },
-              {}
-            )}
+              trigger: () => h(
+                NButton,
+                {
+                  text: true,
+                  style: {
+                    fontSize: '20px',
+                  },
+                  onClick: () => {
+                    console.log(id)
+                  }
+                },
+                {
+                  default: () => h(
+                    NIcon,
+                    {
+                      component: Duplicate,
+                    },
+                    {}
+                  )
+                }
+              ),
+              default: () => '复制'
+            }
           ),
-          h(
-            NButton,
+          (runStatus === 1 || runStatus === 4) ? h(
+            NTooltip,
+            null,
             {
-              text: true,
-              style: {
-                fontSize: '20px',
-              },
-              onClick: () => {
-                console.log(id)
-              }
-            },
-            { default: () => h(
-              NIcon,
-              {
-                component: PauseCircle,
-              },
-              {}
-            )}
-          )
+              trigger: () => h(
+                NButton,
+                {
+                  text: true,
+                  style: {
+                    fontSize: '20px',
+                  },
+                  onClick: async () => {
+                    await StopTaskRun({ configId: id })
+                    await reloadTableData(paginationReactive.value.page!)
+                  }
+                },
+                {
+                  default: () => h(
+                    NIcon,
+                    {
+                      component: PauseCircle,
+                    },
+                    {}
+                  )
+                }
+              ),
+              default: () => '停止'
+            }
+          ) : '',
         ]}
       )
     }

@@ -19,6 +19,7 @@ import type { eventDisplayRowsType } from '@/types/components/event/display'
 import { allColumns } from '@/utils/constant/event/display/eventDisplayView'
 import { map, filter, includes } from 'lodash/fp'
 
+// @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
 
 const route = useRoute()

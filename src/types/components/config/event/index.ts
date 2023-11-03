@@ -45,6 +45,13 @@ export interface eventConfigFormInitialValueType {
   isrootevent: string
 }
 
+export interface searchFormType {
+  configName: string ,
+  configType: string | null,
+  runStatus: number | null,
+  createByName: string
+}
+
 export interface eventConfigFormProps {
   initialValue: eventConfigFormInitialValueType
 }

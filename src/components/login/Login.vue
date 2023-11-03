@@ -156,7 +156,7 @@ onMounted(() => {
             class="form-input form-code-input"
             placeholder="请输入验证码"
             v-model:value="formValue.code"
-            @keydown.enter.prevent
+            @keydown.enter.prevent="handleLogin"
             :theme-overrides="inputThemeOverrides"
           >
             <template #prefix>

@@ -26,7 +26,7 @@ import { Calendar, Grid, Calculator, People, DocumentText, Save, Folder } from '
 import { IosApps } from '@vicons/ionicons4'
 import { useRoute } from 'vue-router'
 import { useFooterStore } from '@/stores/footer'
-import { useEventStore } from '@/stores/event'
+import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
 import { cardThemeOverrides, formThemeOverrides, initialFormValue, rules, rootOptions } from '@/utils/constant/event/display/eventDisplayForm'
@@ -36,7 +36,7 @@ import { map, join, includes, filter } from 'lodash/fp'
 const footerStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footerStore)
 
-const eventStore = useEventStore()
+const eventStore = useConstantStore()
 const {
   actorCountryCodeList,
   actorTypeCode,

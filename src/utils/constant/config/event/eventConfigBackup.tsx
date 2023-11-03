@@ -5,12 +5,12 @@ import { NButton, NIcon, NSpace, NTag } from 'naive-ui'
 import { Eye, EyeOff, PlayCircleOutline, Download, Duplicate, Trash, PauseCircle } from '@vicons/ionicons5'
 import { CalendarEdit20Filled } from '@vicons/fluent'
 import { h } from 'vue'
-import { useConfigStore } from '@/stores/config'
 import { storeToRefs } from 'pinia'
 import { find, flow, prop, propEq } from 'lodash/fp'
+import { useConstantStore } from '@/stores/constant';
 
-const configStore = useConfigStore()
-const { eventConfigTypeList } = storeToRefs(configStore)
+const constantStore = useConstantStore()
+const { eventConfigTypeList } = storeToRefs(constantStore)
 
 export const drawerLightThemeOverrides: DrawerThemeOverrides = {
   color: 'rgb(255, 255, 255)',

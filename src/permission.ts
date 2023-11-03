@@ -4,11 +4,11 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
-const whiteList = ['/login']
-
 const { loadingBar } = createDiscreteApi(
-  ['loadingBar']
+  ['loadingBar', 'dialog']
 )
+
+const whiteList = ['/login']
 
 loadingBar.start()
 
@@ -28,7 +28,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
           next({ ...to, replace: true })
         } catch (e) {
           await logout()
-          await router.replace('/login')
+          next({ path: '/login', replace: true })
         }
       } else {
         next()

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Ref, VNodeChild } from 'vue'
-import { onMounted, reactive, ref } from 'vue'
-import type { FormInst, PaginationInfo, PaginationProps } from 'naive-ui'
+import type { Ref } from 'vue'
+import type { FormInst, DataTableRowKey } from 'naive-ui'
+import type { searchFormType } from '@/types/components/config/event'
+import { nextTick, onMounted, ref } from 'vue'
 import {
   NButton,
   NDataTable,
@@ -9,93 +10,51 @@ import {
   NFormItem,
   NInput,
   NSelect,
-  NSpin
+  NSpin,
+  NPopconfirm
 } from 'naive-ui'
-import { useConfigStore } from '@/stores/config'
 import { storeToRefs } from 'pinia'
 import { allColumns, configStatus } from '@/utils/constant/config/event/eventConfig'
-import { getEventConfigList } from '@/api/eventConfiguration'
 import { map } from 'lodash/fp'
 import { initialFormValue } from '@/utils/constant/config/event/eventConfig'
 import EventConfigDrawer from '@/components/drawer/EventConfigDrawer.vue'
+import { useConstantStore } from '@/stores/constant'
+import { useEventConfigStore } from '@/stores/eventConfig'
+import deepCopy from '@/utils/function/deepcopy'
 
+// @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
 
-const configStore = useConfigStore()
-const { eventConfigTypeList } = storeToRefs(configStore)
-const { getAllEventConfigType } = configStore
+const constantStore = useConstantStore()
+const { eventConfigTypeList } = storeToRefs(constantStore)
+const { getAllEventConfigType } = constantStore
+const eventConfigStore = useEventConfigStore()
+const { tableLoading, dataRef, checkedRowKeysRef, paginationReactive } = storeToRefs(eventConfigStore)
+const { setTableLoading, changeLastSearchValue, setCheckedRowKeys, reloadTableData, handleMultipleDelete } = eventConfigStore
 
 const formRef: Ref<FormInst | null> = ref(null)
-const tableLoading: Ref<boolean> = ref(false)
-const dataRef = ref([])
-const initialValue = ref(initialFormValue)
-const drawerShow = ref(false)
+const drawerShow: Ref<boolean>  = ref(false)
 const drawerInfo = ref({
   title: '',
   btnText: ''
 })
+const initialValue = ref(initialFormValue)
 
 // 保存搜索表单的值
-const searchFormValue = ref({
-  createByName: undefined,
-  configType: undefined,
-  runStatus: undefined,
-  createBy: undefined
+const searchFormValue: Ref<searchFormType> = ref({
+  configName: '',
+  configType: null,
+  runStatus: null,
+  createByName: ''
 })
 
-// 最后一次点击查询按钮后保存的值，避免在搜索表单修改后不点击查询按钮进行换页等操作
-const lastSearchValue = ref({
-  createByName: undefined,
-  configType: undefined,
-  runStatus: undefined,
-  createBy: undefined
-})
-
-const paginationReactive: PaginationProps = reactive({
-  page: 1,
-  // pageCount: 1,
-  pageSize: 50,
-  // pageSizes: [10, 20, 50, 100],
-  itemCount: 2,
-  // showSizePicker: true,
-  showQuickJumper: true,
-  suffix ({ itemCount }: PaginationInfo): VNodeChild {
-    return `共${itemCount}条`
-  }
-})
-
-const reloadTableData = async (page: number) => {
-  if (!tableLoading.value) {
-    tableLoading.value = true
-    paginationReactive.page = page
-    try {
-      const { rows, total } = await getEventConfigList({
-        ...lastSearchValue.value,
-        pageNum: page,
-        pageSize: paginationReactive.pageSize!
-      })
-      dataRef.value = mapWithIndex((item: any, index: number) => ({
-        ...item,
-        numbers: index + (page - 1) * paginationReactive.pageSize! + 1
-      }))(rows)
-      paginationReactive.itemCount = total
-    } catch (e) {
-      //
-    }
-    tableLoading.value = false
-  }
+const handleSearch = async () => {
+  changeLastSearchValue(deepCopy(searchFormValue.value))
+  await reloadTableData(1)
 }
 
-const handleSearch = async (e: MouseEvent) => {
-  e.preventDefault()
-  const { createByName, configType, runStatus, createBy } = searchFormValue.value
-  lastSearchValue.value = {
-    createByName,
-    configType,
-    runStatus,
-    createBy,
-  }
-  await reloadTableData(1)
+const handleInputClear = () => {
+  nextTick(async () => await handleSearch())
 }
 
 const handlePageChange = async (currentPage: number): Promise<void> => {
@@ -113,6 +72,7 @@ const updateDrawerShow = (bool: boolean): void => {
   drawerShow.value = bool
 }
 
+// 关闭drawer后重置初始值
 const resetValue = () => {
   drawerInfo.value.title = ''
   drawerInfo.value.btnText = ''
@@ -121,12 +81,12 @@ const resetValue = () => {
 
 onMounted(async () => {
   try {
-    tableLoading.value = true
+    setTableLoading(true)
     await getAllEventConfigType()
-    tableLoading.value = false
+    setTableLoading(false)
     await reloadTableData(1)
   } catch (e) {
-    tableLoading.value = false
+    setTableLoading(false)
   }
 })
 </script>
@@ -144,8 +104,10 @@ onMounted(async () => {
     >
       <n-form-item label="配置名称">
         <n-input
-          v-model:value="searchFormValue.createByName"
+          v-model:value="searchFormValue.configName"
           clearable
+          @keyup.enter.prevent="handleSearch"
+          @clear="handleInputClear"
         />
       </n-form-item>
       <n-form-item label="类型筛选">
@@ -155,6 +117,8 @@ onMounted(async () => {
           placeholder="请选择"
           clearable
           style="width: 180px;"
+          @update:value="handleSearch"
+          @clear="handleInputClear"
         />
       </n-form-item>
       <n-form-item label="配置状态">
@@ -164,18 +128,22 @@ onMounted(async () => {
           placeholder="请选择"
           clearable
           style="width: 180px;"
+          @update:value="handleSearch"
+          @clear="handleInputClear"
         />
       </n-form-item>
       <n-form-item label="创建人" label-width="60">
         <n-input
-          v-model:value="searchFormValue.createBy"
+          v-model:value="searchFormValue.createByName"
           clearable
+          @keyup.enter.prevent="handleSearch"
+          @clear="handleInputClear"
         />
       </n-form-item>
       <n-form-item>
         <n-button
           type="success"
-          @click="handleSearch"
+          @click.prevent="handleSearch"
         >
           查询
         </n-button>
@@ -188,12 +156,37 @@ onMounted(async () => {
           新增配置
         </n-button>
       </n-form-item>
+      <n-form-item>
+        <n-button
+          type="info"
+          @click="async () => {
+            await reloadTableData(paginationReactive.page!)
+          }"
+        >
+          刷新
+        </n-button>
+      </n-form-item>
+      <n-form-item v-if="checkedRowKeysRef.length !== 0">
+        <n-popconfirm
+          @positive-click="handleMultipleDelete"
+        >
+          <template #trigger>
+            <n-button
+              type="error"
+            >
+              批量删除
+            </n-button>
+          </template>
+          确定要删除吗?
+        </n-popconfirm>
+      </n-form-item>
     </n-form>
+<!--    :scroll-x="1600"-->
     <n-data-table
       ref="table"
       class="table"
       size="small"
-      :scroll-x="1600"
+      :checked-row-keys="checkedRowKeysRef"
       :columns="allColumns"
       :data="dataRef"
       :pagination="paginationReactive"
@@ -203,6 +196,7 @@ onMounted(async () => {
       remote
       border
       @update:page="handlePageChange"
+      @update:checked-row-keys="setCheckedRowKeys"
     />
     <event-config-drawer
       :drawerInfo="drawerInfo"

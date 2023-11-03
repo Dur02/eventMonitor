@@ -1,7 +1,7 @@
 export type ConfigListType = {
   configName?: string,
-  configType?: string,
-  runStatus?: string,
+  configType?: string | null,
+  runStatus?: number | null,
   createByName?: string,
   pageNum: number,
   pageSize: number
