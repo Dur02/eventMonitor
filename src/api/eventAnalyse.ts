@@ -10,3 +10,15 @@ export function runTask({ configId }: { configId: number } ) {
     }
   })
 }
+
+// 事件库分析-导出数据
+export function eventConfigExport({ configId }: { configId: number } ) {
+  return request({
+    url: '/eventMonitor/eventAnalyze/export',
+    method: 'post',
+    responseType: 'blob',
+    params: {
+      configId
+    }
+  })
+}

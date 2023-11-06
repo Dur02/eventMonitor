@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { FormInst, DataTableRowKey } from 'naive-ui'
+import type { FormInst } from 'naive-ui'
 import type { searchFormType } from '@/types/components/config/event'
 import { nextTick, onMounted, ref } from 'vue'
 import {
@@ -15,15 +15,11 @@ import {
 } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { allColumns, configStatus } from '@/utils/constant/config/event/eventConfig'
-import { map } from 'lodash/fp'
-import { initialFormValue } from '@/utils/constant/config/event/eventConfig'
+import { eventConfigFormInitialValue, eventConfigSettingInitialValue } from '@/utils/constant/config/event/eventConfig'
 import EventConfigDrawer from '@/components/drawer/EventConfigDrawer.vue'
 import { useConstantStore } from '@/stores/constant'
 import { useEventConfigStore } from '@/stores/eventConfig'
 import deepCopy from '@/utils/function/deepcopy'
-
-// @ts-ignore
-const mapWithIndex = map.convert({ cap: false })
 
 const constantStore = useConstantStore()
 const { eventConfigTypeList } = storeToRefs(constantStore)
@@ -34,11 +30,9 @@ const { setTableLoading, changeLastSearchValue, setCheckedRowKeys, reloadTableDa
 
 const formRef: Ref<FormInst | null> = ref(null)
 const drawerShow: Ref<boolean>  = ref(false)
-const drawerInfo = ref({
-  title: '',
-  btnText: ''
-})
-const initialValue = ref(initialFormValue)
+const drawerTitle = ref('')
+const settingInitialValue = ref(eventConfigSettingInitialValue)
+const formInitialValue = ref(eventConfigFormInitialValue)
 
 // 保存搜索表单的值
 const searchFormValue: Ref<searchFormType> = ref({
@@ -62,9 +56,8 @@ const handlePageChange = async (currentPage: number): Promise<void> => {
 }
 
 const handleOpenCreate = () => {
-  drawerInfo.value.title = '创建配置'
-  drawerInfo.value.btnText = '创建'
-  initialValue.value = initialFormValue
+  drawerTitle.value = '创建配置'
+  formInitialValue.value = eventConfigFormInitialValue
   drawerShow.value = true
 }
 
@@ -74,9 +67,8 @@ const updateDrawerShow = (bool: boolean): void => {
 
 // 关闭drawer后重置初始值
 const resetValue = () => {
-  drawerInfo.value.title = ''
-  drawerInfo.value.btnText = ''
-  initialValue.value = initialFormValue
+  drawerTitle.value = ''
+  formInitialValue.value = eventConfigFormInitialValue
 }
 
 onMounted(async () => {
@@ -181,7 +173,6 @@ onMounted(async () => {
         </n-popconfirm>
       </n-form-item>
     </n-form>
-<!--    :scroll-x="1600"-->
     <n-data-table
       ref="table"
       class="table"
@@ -199,9 +190,10 @@ onMounted(async () => {
       @update:checked-row-keys="setCheckedRowKeys"
     />
     <event-config-drawer
-      :drawerInfo="drawerInfo"
+      :drawer-title="drawerTitle"
       :drawerShow="drawerShow"
-      :initialValue="initialValue"
+      :settingInitialValue="settingInitialValue"
+      :formInitialValue="formInitialValue"
       @DrawerClose="updateDrawerShow"
       @AfterLeave="resetValue"
     />

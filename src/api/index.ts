@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/user'
 import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
 import router from '@/router'
+import { download } from '@/utils/function/download'
 
 const service: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
@@ -35,6 +36,7 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   (res: AxiosResponse) => {
+
     const userStore = useUserStore()
     const { logout } = userStore
     const systemStore = useSystemStore()
@@ -50,11 +52,12 @@ service.interceptors.response.use(
     )
 
     // 未设置状态码则默认成功状态
-    const code = res.data.code || 200;
+    const code = res.data.code || 200
     // 获取错误信息
     const msg = res.data.msg
     // 二进制数据则直接返回
     if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
+      download(res)
       return res.data
     }
 

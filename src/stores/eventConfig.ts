@@ -104,10 +104,6 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     return Promise.resolve()
   }
 
-  const handleDownload = () => {
-
-  }
-
   const handleSingleDelete = async (id: number) => {
     if (!tableLoading.value) {
       tableLoading.value = true

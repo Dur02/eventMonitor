@@ -28,6 +28,7 @@ import { getRegionCodeList } from '@/api/eventCodeDict'
 import { filter, includes, map } from 'lodash/fp'
 import deepCopy from '@/utils/function/deepcopy'
 import type { eventConfigFormInitialValueType, eventConfigFormProps } from '@/types/components/config/event'
+import { renderOption } from '@/utils/function/renderOption'
 
 const props = defineProps<eventConfigFormProps>()
 
@@ -124,23 +125,32 @@ onMounted(async () => {
   await getAllEventCodeList()
   rootOption.value = rootCodeList.value
 })
+
+defineExpose({
+  formRef,
+  formValue
+})
 </script>
 
 <template>
   <n-form
     ref="formRef"
     class="form"
-    :label-width="110"
     :rules="rules"
     :model="formValue"
     size="medium"
     label-placement="left"
     label-align="left"
+    label-width="80"
     :theme-overrides="formThemeOverrides"
     :show-require-mark="false"
   >
     <p style="margin: 0 0 5px 110px;">当前数据库时间范围: 2011-01-04 至 2023-08-01</p>
-    <n-form-item path="sqldate" label-style="font-weight: 600;">
+    <n-form-item
+      path="sqldate"
+      label-style="font-weight: 600;"
+      label-width="110"
+    >
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
@@ -158,7 +168,11 @@ onMounted(async () => {
         clearable
       />
     </n-form-item>
-    <n-form-item path="dataSource" label-style="font-weight: 600;">
+    <n-form-item
+      path="dataSource"
+      label-style="font-weight: 600;"
+      label-width="110"
+    >
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
@@ -184,6 +198,7 @@ onMounted(async () => {
     <n-form-item
       path="weightBasis"
       label-style="font-weight: 600;"
+      label-width="110"
     >
       <template #label>
         <div class="icon-label">
@@ -213,6 +228,7 @@ onMounted(async () => {
     <n-form-item
       path="statisticsBasis"
       label-style="font-weight: 600;"
+      label-width="110"
     >
       <template #label>
         <div class="icon-label">
@@ -233,7 +249,11 @@ onMounted(async () => {
         </n-space>
       </n-radio-group>
     </n-form-item>
-    <n-form-item :show-feedback="false" label-style="font-weight: 600;">
+    <n-form-item
+      :show-feedback="false"
+      label-style="font-weight: 600;"
+      label-width="110"
+    >
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
@@ -250,99 +270,112 @@ onMounted(async () => {
           label-style="font-weight: 600;"
           :show-feedback="false"
         >
-          <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-            <n-form-item-gi span="24 m:6" label="国家(地区)" label-width="80">
+          <n-grid
+            cols="2 600:3 800:4"
+            :x-gap="15"
+            item-responsive
+            responsive="self"
+          >
+            <n-form-item-gi span="1" label="国家(地区)">
               <n-select
                 v-model:value="formValue.actor1countrycode"
                 :options="actorCountryCodeList"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="组织" label-width="80">
+            <n-form-item-gi span="1" label="组织">
               <n-select
                 v-model:value="formValue.actor1knowngroupcode"
                 :options="knownGroupCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="宗教1" label-width="80">
+            <n-form-item-gi span="1" label="宗教1">
               <n-select
                 v-model:value="formValue.actor1religion1code"
                 :options="religionCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="宗教2" label-width="80">
+            <n-form-item-gi span="1" label="宗教2">
               <n-select
                 v-model:value="formValue.actor1religion2code"
                 :options="religionCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="种族" label-width="80">
+            <n-form-item-gi span="1" label="种族">
               <n-select
                 v-model:value="formValue.actor1ethniccode"
                 :options="ethnicCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="种类1" label-width="80">
+            <n-form-item-gi span="1" label="种类1">
               <n-select
                 v-model:value="formValue.actor1type1code"
                 :options="actorTypeCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="种类2" label-width="80">
+            <n-form-item-gi span="1" label="种类2">
               <n-select
                 v-model:value="formValue.actor1type2code"
                 :options="actorTypeCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="种类3" label-width="80">
+            <n-form-item-gi span="1" label="种类3">
               <n-select
                 v-model:value="formValue.actor1type3code"
                 :options="actorTypeCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="24 m:18" style="margin-left: 80px;">
+            <n-gi span="4" style="margin-left: 80px;">
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="18" label="角色全称" label-width="80">
+            <n-form-item-gi span="3" label="角色全称">
               <n-input v-model:value="formValue.actor1name" />
             </n-form-item-gi>
-            <n-form-item-gi span="6">
+            <n-form-item-gi span="1">
               <n-checkbox v-model:checked="formValue.actor1nameCaseSensitive">
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
+            <n-form-item-gi span="2" label="地理类型">
               <n-select
                 v-model:value="formValue.actor1geoType"
                 :options="geoTypeList"
@@ -352,7 +385,7 @@ onMounted(async () => {
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80">
+            <n-form-item-gi span="2" label="国家/州省">
               <n-tree-select
                 v-model:value="formValue.actor1geoCountrycodeAndAdm1code"
                 :options="geoCountryCodeList"
@@ -366,13 +399,13 @@ onMounted(async () => {
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="24 m:18" style="margin-left: 80px;">
+            <n-gi span="4" style="margin-left: 80px;">
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="18" label="地理全称" label-width="80">
+            <n-form-item-gi span="3" label="地理全称">
               <n-input v-model:value="formValue.actor1geoFullname" />
             </n-form-item-gi>
-            <n-form-item-gi span="6">
+            <n-form-item-gi span="1">
               <n-checkbox v-model:checked="formValue.actor1geoFullnameCaseSensitive">
                 区分大小写
               </n-checkbox>
@@ -386,99 +419,112 @@ onMounted(async () => {
           label-style="font-weight: 600;"
           :show-feedback="false"
         >
-          <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-            <n-form-item-gi span="24 m:6" label="国家(地区)" label-width="80">
+          <n-grid
+            cols="2 600:3 800:4"
+            :x-gap="15"
+            item-responsive
+            responsive="self"
+          >
+            <n-form-item-gi span="1" label="国家(地区)">
               <n-select
                 v-model:value="formValue.actor2countrycode"
                 :options="actorCountryCodeList"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="组织" label-width="80">
+            <n-form-item-gi span="1" label="组织">
               <n-select
                 v-model:value="formValue.actor2knowngroupcode"
                 :options="knownGroupCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="宗教1" label-width="80">
+            <n-form-item-gi span="1" label="宗教1">
               <n-select
                 v-model:value="formValue.actor2religion1code"
                 :options="religionCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="宗教2" label-width="80">
+            <n-form-item-gi span="1" label="宗教2">
               <n-select
                 v-model:value="formValue.actor2religion2code"
                 :options="religionCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="种族" label-width="80">
+            <n-form-item-gi span="1" label="种族">
               <n-select
                 v-model:value="formValue.actor2ethniccode"
                 :options="ethnicCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="种类1" label-width="80">
+            <n-form-item-gi span="1" label="种类1">
               <n-select
                 v-model:value="formValue.actor2type1code"
                 :options="actorTypeCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="种类2" label-width="80">
+            <n-form-item-gi span="1" label="种类2">
               <n-select
                 v-model:value="formValue.actor2type2code"
                 :options="actorTypeCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="种类3" label-width="80">
+            <n-form-item-gi span="1" label="种类3">
               <n-select
                 v-model:value="formValue.actor2type3code"
                 :options="actorTypeCode"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="24 m:18" style="margin-left: 80px;">
+            <n-gi span="4" style="margin-left: 80px;">
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="18" label="角色全称" label-width="80">
+            <n-form-item-gi span="3" label="角色全称">
               <n-input v-model:value="formValue.actor2name" />
             </n-form-item-gi>
-            <n-form-item-gi span="6">
+            <n-form-item-gi span="1">
               <n-checkbox v-model:checked="formValue.actor2nameCaseSensitive">
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
+            <n-form-item-gi span="2" label="地理类型">
               <n-select
                 v-model:value="formValue.actor2geoType"
                 :options="geoTypeList"
@@ -488,7 +534,7 @@ onMounted(async () => {
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80">
+            <n-form-item-gi span="2" label="国家/州省">
               <n-tree-select
                 v-model:value="formValue.actor2geoCountrycodeAndAdm1code"
                 :options="geoCountryCodeList"
@@ -502,13 +548,13 @@ onMounted(async () => {
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="24 m:18" style="margin-left: 80px;">
+            <n-gi span="4" style="margin-left: 80px;">
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="18" label="地理全称" label-width="80">
+            <n-form-item-gi span="3" label="地理全称">
               <n-input v-model:value="formValue.actor2geoFullname" />
             </n-form-item-gi>
-            <n-form-item-gi span="6">
+            <n-form-item-gi span="1">
               <n-checkbox v-model:checked="formValue.actor2geoFullnameCaseSensitive">
                 区分大小写
               </n-checkbox>
@@ -517,7 +563,11 @@ onMounted(async () => {
         </n-form-item-gi>
       </n-grid>
     </n-form-item>
-    <n-form-item :show-feedback="false" label-style="font-weight: 600;">
+    <n-form-item
+      :show-feedback="false"
+      label-style="font-weight: 600;"
+      label-width="110"
+    >
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
@@ -527,12 +577,24 @@ onMounted(async () => {
         </div>
       </template>
       <n-grid :cols="24">
-        <n-form-item-gi :span="24" label="类型" label-width="60" label-style="font-weight: 600;" :show-feedback="false">
-          <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-            <n-form-item-gi span="24 m:6" label="大类" label-width="80">
+        <n-form-item-gi
+          :span="24"
+          label="类型"
+          label-width="60"
+          label-style="font-weight: 600;"
+          :show-feedback="false"
+        >
+          <n-grid
+            cols="2 600:3 800:4"
+            :x-gap="15"
+            item-responsive
+            responsive="self"
+          >
+            <n-form-item-gi span="1" label="大类">
               <n-select
                 v-model:value="formValue.quadclass"
                 :options="quadClass"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
@@ -540,10 +602,11 @@ onMounted(async () => {
                 @update:value="handleClassUpdate"
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="根类" label-width="80">
+            <n-form-item-gi span="1" label="根类">
               <n-select
                 v-model:value="formValue.eventrootcode"
                 :options="rootOption"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
@@ -551,10 +614,11 @@ onMounted(async () => {
                 @update:value="handleRootUpdate"
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="基类" label-width="80">
+            <n-form-item-gi span="1" label="基类">
               <n-select
                 v-model:value="formValue.eventbasecode"
                 :options="baseOption"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
@@ -562,10 +626,11 @@ onMounted(async () => {
                 @update:value="handleBaseUpdate"
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="子类" label-width="80">
+            <n-form-item-gi span="1" label="子类">
               <n-select
                 v-model:value="formValue.eventcode"
                 :options="subOption"
+                :render-option="renderOption"
                 multiple
                 max-tag-count="responsive"
                 filterable
@@ -574,9 +639,20 @@ onMounted(async () => {
             </n-form-item-gi>
           </n-grid>
         </n-form-item-gi>
-        <n-form-item-gi :span="24" label="发生地" label-width="60" label-style="font-weight: 600;" :show-feedback="false">
-          <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-            <n-form-item-gi span="24 m:6" label="地理类型" label-width="80">
+        <n-form-item-gi
+          :span="24"
+          label="发生地"
+          label-width="60"
+          label-style="font-weight: 600;"
+          :show-feedback="false"
+        >
+          <n-grid
+            cols="2 600:3 800:4"
+            :x-gap="15"
+            item-responsive
+            responsive="self"
+          >
+            <n-form-item-gi span="2" label="地理类型">
               <n-select
                 v-model:value="formValue.actiongeoType"
                 :options="geoTypeList"
@@ -586,7 +662,7 @@ onMounted(async () => {
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="国家/州省" label-width="80">
+            <n-form-item-gi span="2" label="国家/州省">
               <n-tree-select
                 v-model:value="formValue.actiongeoCountrycodeAndAdm1code"
                 :options="geoCountryCodeList"
@@ -600,25 +676,36 @@ onMounted(async () => {
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="24 m:18" style="margin-left: 80px;">
+            <n-gi span="4" style="margin-left: 80px;">
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="18" label="地理全称" label-width="80">
+            <n-form-item-gi span="3" label="地理全称">
               <n-input v-model:value="formValue.actiongeoFullname" />
             </n-form-item-gi>
-            <n-form-item-gi span="6">
+            <n-form-item-gi span="1">
               <n-checkbox v-model:checked="formValue.actiongeoFullnameCaseSensitive">
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
           </n-grid>
         </n-form-item-gi>
-        <n-form-item-gi :span="24" label="其他" label-width="60" label-style="font-weight: 600;" :show-feedback="false">
-          <n-grid :cols="24" :x-gap="15" item-responsive responsive="screen">
-            <n-form-item-gi span="24 m:6" label="源url" label-width="80">
+        <n-form-item-gi
+          :span="24"
+          label="其他"
+          label-width="60"
+          label-style="font-weight: 600;"
+          :show-feedback="false"
+        >
+          <n-grid
+            cols="2 600:3 800:4"
+            :x-gap="15"
+            item-responsive
+            responsive="self"
+          >
+            <n-form-item-gi span="1" label="源url">
               <n-input v-model:value="formValue.sourceUrl" />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="情感值" label-width="80">
+            <n-form-item-gi span="1" label="情感值">
               <n-input-number
                 v-model:value="formValue.avgtone[0]"
                 :show-button="false"
@@ -637,7 +724,7 @@ onMounted(async () => {
                 style="padding-left: 5px;"
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="影响度" label-width="80">
+            <n-form-item-gi span="1" label="影响度">
               <n-input-number
                 v-model:value="formValue.goldsteinscale[0]"
                 :show-button="false"
@@ -656,8 +743,11 @@ onMounted(async () => {
                 style="padding-left: 5px;"
               />
             </n-form-item-gi>
-            <n-form-item-gi span="24 m:6" label="是否根类" label-width="80">
-              <n-select v-model:value="formValue.isrootevent" :options="rootOptions" />
+            <n-form-item-gi span="1" label="是否根类">
+              <n-select
+                v-model:value="formValue.isrootevent"
+                :options="rootOptions"
+              />
             </n-form-item-gi>
           </n-grid>
         </n-form-item-gi>

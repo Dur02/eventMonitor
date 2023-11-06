@@ -1,3 +1,19 @@
+export interface searchFormType {
+  configName: string ,
+  configType: string | null,
+  runStatus: number | null,
+  createByName: string
+}
+
+export interface eventConfigSettingInitialValueType {
+  configName: string,
+  configType: string | null,
+  remark: string,
+  orderPriority: number | null,
+  purview: number | null,
+  isShow: number | null
+}
+
 export interface eventConfigFormInitialValueType {
   sqldate: [number, number] | null,
   dataSource: string,
@@ -42,14 +58,11 @@ export interface eventConfigFormInitialValueType {
   sourceUrl: string,
   avgtone: Array<number>,
   goldsteinscale: Array<number>,
-  isrootevent: string
+  isrootevent: string | null
 }
 
-export interface searchFormType {
-  configName: string ,
-  configType: string | null,
-  runStatus: number | null,
-  createByName: string
+export interface eventConfigSettingProps {
+  initialValue: eventConfigSettingInitialValueType
 }
 
 export interface eventConfigFormProps {

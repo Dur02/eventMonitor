@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import type { FormValidationError } from 'naive-ui'
 import {
   NDrawer,
   NDrawerContent,
   NCard,
-  NScrollbar
+  NScrollbar,
+  NButton
 } from 'naive-ui'
 import {
   cardDarkThemeOverrides,
@@ -13,22 +16,24 @@ import {
 } from '@/utils/constant/config/event/eventConfig'
 import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
+import EventConfigSetting from '@/components/form/EventConfigSetting.vue'
 import EventConfigForm from '@/components/form/EventConfigForm.vue'
-import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
+import type { eventConfigSettingInitialValueType, eventConfigFormInitialValueType } from '@/types/components/config/event'
 
 const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
 
 defineProps<{
-  drawerInfo: {
-    title: string,
-    btnText: string
-  },
+  drawerTitle: string,
   drawerShow: boolean,
-  initialValue: eventConfigFormInitialValueType
+  settingInitialValue: eventConfigSettingInitialValueType,
+  formInitialValue: eventConfigFormInitialValueType
 }>()
 
 const emits = defineEmits(['DrawerClose', 'AfterLeave'])
+
+const settingRef: any = ref(null)
+const formRef: any = ref(null)
 
 const handleDrawerClose = (value: boolean): void => {
   emits("DrawerClose", value)
@@ -36,6 +41,16 @@ const handleDrawerClose = (value: boolean): void => {
 
 const handleResetValue = (): void => {
   emits('AfterLeave')
+}
+
+const handleSubmit = () => {
+  settingRef.value?.formRef.validate((settingErrors: Array<FormValidationError>) => {
+    formRef.value?.formRef.validate((formError: Array<FormValidationError>) => {
+      if (!settingErrors && !formError) {
+
+      }
+    })
+  })
 }
 </script>
 
@@ -54,14 +69,14 @@ const handleResetValue = (): void => {
     @after-leave="handleResetValue"
   >
     <n-drawer-content
-      closable
       :native-scrollbar="true"
       :body-content-style="{
         overflow: 'hidden'
       }"
+      closable
     >
       <template #header>
-        {{ drawerInfo.title }}
+        {{ drawerTitle }}
       </template>
       <n-scrollbar
         class="scroll-box"
@@ -75,9 +90,22 @@ const handleResetValue = (): void => {
           :bordered="false"
           :theme-overrides="isLight ? cardLightThemeOverrides : cardDarkThemeOverrides"
         >
-          <event-config-form
-            :initial-value="initialValue"
+          <event-config-setting
+            ref="settingRef"
+            :initial-value="settingInitialValue"
           />
+          <event-config-form
+            ref="formRef"
+            :initial-value="formInitialValue"
+          />
+          <div style="text-align: center;">
+            <n-button
+              type="info"
+              @click="handleSubmit"
+            >
+              提交
+            </n-button>
+          </div>
         </n-card>
       </n-scrollbar>
     </n-drawer-content>
@@ -85,4 +113,5 @@ const handleResetValue = (): void => {
 </template>
 
 <style scoped lang="scss">
+
 </style>

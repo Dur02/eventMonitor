@@ -1,5 +1,9 @@
 import type { FormRules, SelectGroupOption, SelectOption, DataTableColumns, EllipsisProps, ConfigProviderProps } from 'naive-ui'
-import type { eventConfigRowsType, eventConfigFormInitialValueType } from '@/types/components/config/event'
+import type {
+  eventConfigRowsType,
+  eventConfigFormInitialValueType,
+  eventConfigSettingInitialValueType
+} from '@/types/components/config/event'
 import type { CardThemeOverrides, FormThemeOverrides, DrawerThemeOverrides } from '@/types/themeOverrides'
 import { h, computed } from 'vue'
 import { NButton, NIcon, NSpace, NTag, NTooltip, NPopconfirm, createDiscreteApi, lightTheme, darkTheme } from 'naive-ui'
@@ -11,6 +15,7 @@ import { useConstantStore } from '@/stores/constant'
 import { StopTaskRun } from '@/api/eventConfiguration'
 import { useEventConfigStore } from '@/stores/eventConfig'
 import { useSystemStore } from '@/stores/system'
+import { eventConfigExport } from '@/api/eventAnalyse'
 
 const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
@@ -40,12 +45,12 @@ export const drawerDarkThemeOverrides: DrawerThemeOverrides = {
 }
 
 export const cardLightThemeOverrides: CardThemeOverrides = {
-  paddingMedium: '15px 20px',
+  paddingMedium: '10px 20px',
   colorModal: 'rgb(255, 255, 255)'
 }
 
 export const cardDarkThemeOverrides: CardThemeOverrides = {
-  paddingMedium: '15px 20px',
+  paddingMedium: '10px 20px',
   colorModal: 'rgb(24, 24, 28)'
 }
 
@@ -313,8 +318,10 @@ export const allColumns: DataTableColumns<eventConfigRowsType> = [
                   style: {
                     fontSize: '20px',
                   },
-                  onClick: () => {
-                    console.log(id)
+                  disabled: runStatus !== 2,
+                  onClick: async () => {
+                    await eventConfigExport({ configId: id })
+                    message.success('开始下载')
                   }
                 },
                 { default: () => h(
@@ -441,42 +448,70 @@ export const configStatus = [
   { label: '排队中', value: 4 }
 ]
 
-export const rules: FormRules = {
-  sqldate: {
-    type: 'array',
-    required: true,
-    message: '请选择日期',
-    trigger: ['change', 'blur']
-  },
-  dataSource: {
-    required: true,
-    message: '请选择数据源aaaaa',
-    trigger: ['input', 'blur']
-  },
-  weightBasis: {
-    required: true,
-    message: '请选择权重依据',
-    trigger: ['input', 'blur']
-  },
-  statisticsBasis: {
-    required: true,
-    message: '请选择统计依据',
-    trigger: ['input', 'blur']
-  }
-}
-
 export const rootOptions: Array<SelectOption | SelectGroupOption> = [
   {
     label: '是',
-    value: 'true'
+    value: 1
   },
   {
     label: '否',
-    value: 'false'
+    value: 0
   }
 ]
 
-export const initialFormValue: eventConfigFormInitialValueType = {
+export const priorityOption: Array<SelectOption | SelectGroupOption> = [
+  {
+    label: '公有',
+    value: 2
+  },
+  {
+    label: '私有',
+    value: 1
+  }
+]
+
+export const monitorOption: Array<SelectOption | SelectGroupOption> = [
+  {
+    label: '是',
+    value: 1
+  },
+  {
+    label: '否',
+    value: 2
+  }
+]
+
+export const eventConfigSettingInitialValue: eventConfigSettingInitialValueType = {
+  configName: '',
+  configType: null,
+  remark: '',
+  orderPriority: null,
+  purview: null,
+  isShow: null
+}
+
+export const eventConfigSettingRules: FormRules = {
+  configName: [
+    { required: true, message: '请输入配置名称', trigger: ['change', 'blur'] }
+  ],
+  configType: [
+    { type: 'array', required: true, message: '请选择配置类型', trigger: ['change', 'blur']  }
+  ],
+  remark: [
+    { required: true, message: '请输入备注信息', trigger: ['change', 'blur'] }
+  ],
+  orderPriority: [
+    { type: 'number', required: true, message: '请输入优先级', trigger: ['change', 'blur'] }
+  ],
+  purview: [
+    { type: 'number', required: true, message: '请选择选择权限', trigger: ['change', 'blur'] }
+  ],
+  isShow: [
+    { type: 'number', required: true, message: '请选择实时监测', trigger: ['change', 'blur'] }
+  ]
+}
+
+export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   sqldate: null,
   dataSource: 'dataSource1',
   weightBasis: 'weight1',
@@ -520,5 +555,29 @@ export const initialFormValue: eventConfigFormInitialValueType = {
   sourceUrl: '',
   avgtone: [],
   goldsteinscale: [],
-  isrootevent: ''
+  isrootevent: null
+}
+
+export const rules: FormRules = {
+  sqldate: {
+    type: 'array',
+    required: true,
+    message: '请选择日期',
+    trigger: ['change', 'blur']
+  },
+  dataSource: {
+    required: true,
+    message: '请选择数据源aaaaa',
+    trigger: ['input', 'blur']
+  },
+  weightBasis: {
+    required: true,
+    message: '请选择权重依据',
+    trigger: ['input', 'blur']
+  },
+  statisticsBasis: {
+    required: true,
+    message: '请选择统计依据',
+    trigger: ['input', 'blur']
+  }
 }
