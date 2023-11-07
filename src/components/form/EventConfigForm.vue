@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import type { FormInst, SelectOption, SelectGroupOption, TreeSelectOption } from 'naive-ui'
 import {
   NForm,
@@ -121,15 +121,23 @@ const handleBaseUpdate = async (value: string[]) => {
   }
 }
 
+defineExpose({
+  formRef,
+  formValue
+})
+
 onMounted(async () => {
   await getAllEventCodeList()
   rootOption.value = rootCodeList.value
 })
 
-defineExpose({
-  formRef,
-  formValue
-})
+watch(
+  () => props.initialValue,
+  () => {
+    formRef.value?.restoreValidation()
+    formValue.value = deepCopy(props.initialValue)
+  }
+)
 </script>
 
 <template>
@@ -210,16 +218,16 @@ defineExpose({
       </template>
       <n-radio-group v-model:value="formValue.weightBasis">
         <n-space>
-          <n-radio value="weight1">
+          <n-radio :value="1">
             事件数
           </n-radio>
-          <n-radio value="weight2">
+          <n-radio :value="2">
             文章数
           </n-radio>
-          <n-radio value="weight3">
+          <n-radio :value="3">
             信源数
           </n-radio>
-          <n-radio value="weight4">
+          <n-radio :value="4">
             事件数(去重)
           </n-radio>
         </n-space>
@@ -240,10 +248,10 @@ defineExpose({
       </template>
       <n-radio-group v-model:value="formValue.statisticsBasis">
         <n-space>
-          <n-radio value="statistics1">
+          <n-radio :value="1">
             比重
           </n-radio>
-          <n-radio value="statistics2">
+          <n-radio :value="2">
             数量
           </n-radio>
         </n-space>
@@ -371,7 +379,7 @@ defineExpose({
               <n-input v-model:value="formValue.actor1name" />
             </n-form-item-gi>
             <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actor1nameCaseSensitive">
+              <n-checkbox v-model:checked="formValue.actor1nameIsBig">
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
@@ -406,7 +414,7 @@ defineExpose({
               <n-input v-model:value="formValue.actor1geoFullname" />
             </n-form-item-gi>
             <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actor1geoFullnameCaseSensitive">
+              <n-checkbox v-model:checked="formValue.actor1geoFullnameIsBig">
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
@@ -520,7 +528,7 @@ defineExpose({
               <n-input v-model:value="formValue.actor2name" />
             </n-form-item-gi>
             <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actor2nameCaseSensitive">
+              <n-checkbox v-model:checked="formValue.actor2nameIsBig">
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
@@ -555,7 +563,7 @@ defineExpose({
               <n-input v-model:value="formValue.actor2geoFullname" />
             </n-form-item-gi>
             <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actor2geoFullnameCaseSensitive">
+              <n-checkbox v-model:checked="formValue.actor2geoFullnameIsBig">
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
@@ -683,7 +691,7 @@ defineExpose({
               <n-input v-model:value="formValue.actiongeoFullname" />
             </n-form-item-gi>
             <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actiongeoFullnameCaseSensitive">
+              <n-checkbox v-model:checked="formValue.actiongeoFullnameIsBig">
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>

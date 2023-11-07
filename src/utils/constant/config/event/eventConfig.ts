@@ -9,7 +9,7 @@ import { h, computed } from 'vue'
 import { NButton, NIcon, NSpace, NTag, NTooltip, NPopconfirm, createDiscreteApi, lightTheme, darkTheme } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { Eye, EyeOff, PlayCircleOutline, Download, Trash, Duplicate, PauseCircle } from '@vicons/ionicons5'
-import { find, flow, prop, propEq } from 'lodash/fp'
+import { find, flow, prop, propEq, split, drop, dropRight, join, concat, compact } from 'lodash/fp'
 import { CalendarEdit20Filled } from '@vicons/fluent'
 import { useConstantStore } from '@/stores/constant'
 import { StopTaskRun } from '@/api/eventConfiguration'
@@ -58,387 +58,502 @@ export const formThemeOverrides: FormThemeOverrides = {
   blankHeightMedium: '10px'
 }
 
-const align = 'center'
-const ellipsisComponent = 'performant-ellipsis'
-const ellipsis: EllipsisProps = {
-  tooltip: true,
-  lineClamp: 1,
-}
+const splitString = (param: string | null) => param === null ? null : split(',')(param)
 
-const findValueInTarget = (value: string | number, target: any) => flow(
-  find(propEq('value', value)),
-  prop('label')
-)(target)
-
-const getTagColor = (orderPriority: number) => {
-  switch (orderPriority) {
-    case 1: return 'error'
-    case 2: return 'success'
-    case 3: return 'warning'
-    default: return 'info'
+const getSqlDate = (beginSqldate: number, endSqldate: number): [number, number] => {
+  const getDateValue = (type: string, date: number) => {
+    switch (type) {
+      case 'year': {
+        return flow(
+          split(''),
+          dropRight(4),
+          join('')
+        )(String(date))
+      }
+      case 'month': {
+        return flow(
+          split(''),
+          drop(4),
+          dropRight(2),
+          join('')
+        )(String(date))
+      }
+      default: {
+        return flow(
+          split(''),
+          drop(6),
+          join('')
+        )(String(date))
+      }
+    }
   }
+
+  const begin = `${getDateValue('year', beginSqldate)}-${getDateValue('month', beginSqldate)}-${getDateValue('day', beginSqldate)}`
+  const end = `${getDateValue('year', endSqldate)}-${getDateValue('month', endSqldate)}-${getDateValue('day', endSqldate)}`
+
+  return [new Date(begin).getTime(), new Date(end).getTime()]
 }
 
-export const allColumns: DataTableColumns<eventConfigRowsType> = [
-  {
-    type: 'selection',
-    disabled ({ runStatus }) {
-      return runStatus === 1 || runStatus === 4
+const getSettingInitialValue = (rowData: eventConfigRowsType) => ({
+  configName: rowData.configName,
+  configType: split(',')(rowData.configType),
+  remark: rowData.remark,
+  orderPriority: rowData.orderPriority,
+  purview: rowData.purview,
+  isShow: rowData.isShow
+})
+
+const getFormInitialValue = (rowData: eventConfigRowsType) => ({
+  sqldate: getSqlDate(rowData.beginSqldate, rowData.endSqldate),
+  dataSource: 'dataSource1',
+  weightBasis: rowData.weightBasis,
+  statisticsBasis: rowData.statisticsBasis,
+  actor1countrycode: splitString(rowData.actor1countrycode),
+  actor1knowngroupcode: splitString(rowData.actor1knowngroupcode),
+  actor1religion1code: splitString(rowData.actor1religion1code),
+  actor1religion2code: splitString(rowData.actor1religion2code),
+  actor1ethniccode: splitString(rowData.actor1ethniccode),
+  actor1type1code: splitString(rowData.actor1type1code),
+  actor1type2code: splitString(rowData.actor1type2code),
+  actor1type3code: splitString(rowData.actor1type3code),
+  actor1name: rowData.actor1name,
+  actor1nameIsBig: rowData.actor1nameIsBig,
+  actor1geoType: splitString(rowData.actor1geoType),
+  actor1geoCountrycodeAndAdm1code: flow(
+    concat(splitString(rowData.actor1geoCountrycode)),
+    compact
+  )(splitString(rowData.actor1geoAdm1code)),
+  actor1geoFullname: rowData.actor1geoFullname,
+  actor1geoFullnameIsBig: rowData.actor1geoFullnameIsBig,
+  actor2countrycode: splitString(rowData.actor2countrycode),
+  actor2knowngroupcode: splitString(rowData.actor2knowngroupcode),
+  actor2religion1code: splitString(rowData.actor2religion1code),
+  actor2religion2code: splitString(rowData.actor2religion2code),
+  actor2ethniccode: splitString(rowData.actor2ethniccode),
+  actor2type1code: splitString(rowData.actor2type1code),
+  actor2type2code: splitString(rowData.actor2type2code),
+  actor2type3code: splitString(rowData.actor2type3code),
+  actor2name: rowData.actor2name,
+  actor2nameIsBig: rowData.actor2nameIsBig,
+  actor2geoType: splitString(rowData.actor2geoType),
+  actor2geoCountrycodeAndAdm1code: flow(
+    concat(splitString(rowData.actor2geoCountrycode)),
+    compact
+  )(splitString(rowData.actor2geoAdm1code)),
+  actor2geoFullname: rowData.actor2geoFullname,
+  actor2geoFullnameIsBig: rowData.actor2geoFullnameIsBig,
+  quadclass: splitString(rowData.quadclass),
+  eventrootcode: splitString(rowData.eventrootcode),
+  eventbasecode: splitString(rowData.eventbasecode),
+  eventcode: splitString(rowData.eventcode),
+  actiongeoType: splitString(rowData.actiongeoType),
+  actiongeoCountrycodeAndAdm1code: flow(
+    concat(splitString(rowData.actiongeoCountrycode)),
+    compact
+  )(splitString(rowData.actiongeoAdm1code)),
+  actiongeoFullname: rowData.actiongeoFullname,
+  actiongeoFullnameIsBig: rowData.actiongeoFullnameIsBig,
+  sourceUrl: rowData.sourceurl,
+  avgtone: [rowData.beginAvgtone, rowData.endAvgtone],
+  goldsteinscale: [rowData.beginGoldsteinscale, rowData.endGoldsteinscale],
+  isrootevent: rowData.isrootevent
+})
+
+export const allColumns = (
+  handleUpdateDrawer: (
+    title: string,
+    settingInitial: eventConfigSettingInitialValueType,
+    formInitial: eventConfigFormInitialValueType,
+    show: boolean
+  ) => void
+): DataTableColumns<eventConfigRowsType> => {
+  const align = 'center'
+  const ellipsisComponent = 'performant-ellipsis'
+  const ellipsis: EllipsisProps = {
+    tooltip: true,
+    lineClamp: 1,
+  }
+
+  const findValueInTarget = (value: string | number, target: any) => flow(
+    find(propEq('value', value)),
+    prop('label')
+  )(target)
+
+  const getTagColor = (orderPriority: number) => {
+    switch (orderPriority) {
+      case 1: return 'error'
+      case 2: return 'success'
+      case 3: return 'warning'
+      default: return 'info'
     }
-  },
-  {
-    title: '序号',
-    key: 'numbers',
-    width: 80,
-    align,
-    ellipsisComponent,
-    ellipsis
-  },
-  {
-    title: '排序',
-    key: 'orderPriority',
-    width: 80,
-    align,
-    render: ({ orderPriority }) => {
-      const type = getTagColor(orderPriority)
-      return h(
-        NTag,
-        {
-          bordered: false,
-          type
-        },
-        {
-          default: () => orderPriority
-        }
-      )
-    }
-  },
-  {
-    title: '挂起',
-    key: 'isShow',
-    width: 80,
-    align,
-    render: ({ isShow, id }) => h(
-      NButton,
-      {
-        text: true,
-        style: {
-          fontSize: '20px'
-        },
-        onClick: async () => {
-          try {
-            await changeIsShow(id, isShow)
-            message.success('操作成功')
-          } catch (e) {
-            //
-          }
-        }
-      },
-      {
-        default: () => h(
-          NIcon,
+  }
+
+  return [
+    {
+      type: 'selection',
+      disabled ({ runStatus }) {
+        return runStatus === 1 || runStatus === 4
+      }
+    },
+    {
+      title: '序号',
+      key: 'numbers',
+      width: 80,
+      align,
+      ellipsisComponent,
+      ellipsis
+    },
+    {
+      title: '排序',
+      key: 'orderPriority',
+      width: 80,
+      align,
+      render: ({ orderPriority }) => {
+        const type = getTagColor(orderPriority)
+        return h(
+          NTag,
           {
-            component: isShow ? Eye : EyeOff,
+            bordered: false,
+            type
           },
-          { default: () => {} }
+          {
+            default: () => orderPriority
+          }
         )
       }
-    )
-  },
-  {
-    title: '配置名称',
-    key: 'configName',
-    // width: 200,
-    align,
-    ellipsisComponent,
-    ellipsis
-  },
-  {
-    title: '配置分类',
-    key: 'configType',
-    // width: 200,
-    align,
-    ellipsisComponent,
-    ellipsis,
-    render: ({ configType }) => findValueInTarget(configType, eventConfigTypeList.value)
-  },
-  {
-    title: '创建人',
-    key: 'createByName',
-    // width: 100,
-    align,
-    ellipsisComponent,
-    ellipsis,
-  },
-  {
-    title: '权限',
-    key: 'purview',
-    width: 80,
-    align,
-    //ellipsisComponent,
-    // ellipsis,
-    render: ({ purview }) => purview === 1 ? '私有' : '公有'
-  },
-  {
-    title: '创建日期',
-    key: 'createTime',
-    width: 200,
-    align,
-    //ellipsisComponent,
-    // ellipsis,
-  },
-  {
-    title: '备注信息',
-    key: 'remark',
-    // width: 100,
-    align,
-    ellipsisComponent,
-    ellipsis,
-  },
-  {
-    title: '状态',
-    key: 'runStatus',
-    width: 100,
-    align,
-    //ellipsisComponent,
-    // ellipsis,
-    render: ({ runStatus }) => {
-      const getRunStatusType = (runStatus: number): 'default' | 'primary' | 'success' | 'info' | 'warning' | 'error' => {
-        switch (runStatus) {
-          case 0: return 'info'
-          case 1: return 'warning'
-          case 2: return 'success'
-          case 3: return 'error'
-          default: return 'default'
-        }
-      }
-      const getRunStatusText = (runStatus: number): string => {
-        switch (runStatus) {
-          case 0: return '待执行'
-          case 1: return '执行中'
-          case 2: return '执行成功'
-          case 3: return '执行失败'
-          default: return '排队中'
-        }
-      }
-      return h(
+    },
+    {
+      title: '挂起',
+      key: 'isShow',
+      width: 80,
+      align,
+      render: ({ isShow, id }) => h(
         NButton,
         {
           text: true,
-          tag: 'span',
-          type: getRunStatusType(runStatus)
+          style: {
+            fontSize: '20px'
+          },
+          onClick: async () => {
+            try {
+              await changeIsShow(id, isShow)
+              message.success('操作成功')
+            } catch (e) {
+              //
+            }
+          }
         },
         {
-          default: () => getRunStatusText(runStatus)
+          default: () => h(
+            NIcon,
+            {
+              component: isShow ? Eye : EyeOff,
+            },
+            { default: () => {} }
+          )
         }
       )
-    }
-  },
-  {
-    title: '操作',
-    key: 'numbers',
-    width: 200,
-    // fixed: 'right',
-    align,
-    render: ({ id, runStatus }) => {
-      return h(
-        NSpace,
-        { justify: 'start' },
-        { default: () => [
-          h(
-            NTooltip,
-            null,
-            {
-              trigger: () => h(
-                NButton,
-                {
-                  text: true,
-                  style: {
-                    fontSize: '20px',
-                  },
-                  disabled: !(runStatus === 0 || runStatus === 3),
-                  onClick: async () => {
-                    try {
-                      await runTask(id)
-                      message.success('操作成功')
-                    } catch (e) {
-                      //
+    },
+    {
+      title: '配置名称',
+      key: 'configName',
+      // width: 200,
+      align,
+      ellipsisComponent,
+      ellipsis
+    },
+    {
+      title: '配置分类',
+      key: 'configType',
+      // width: 200,
+      align,
+      ellipsisComponent,
+      ellipsis,
+      render: ({ configType }) => findValueInTarget(configType, eventConfigTypeList.value)
+    },
+    {
+      title: '创建人',
+      key: 'createByName',
+      // width: 100,
+      align,
+      ellipsisComponent,
+      ellipsis,
+    },
+    {
+      title: '权限',
+      key: 'purview',
+      width: 80,
+      align,
+      //ellipsisComponent,
+      // ellipsis,
+      render: ({ purview }) => purview === 1 ? '私有' : '公有'
+    },
+    {
+      title: '创建日期',
+      key: 'createTime',
+      width: 200,
+      align,
+      //ellipsisComponent,
+      // ellipsis,
+    },
+    {
+      title: '备注信息',
+      key: 'remark',
+      // width: 100,
+      align,
+      ellipsisComponent,
+      ellipsis,
+    },
+    {
+      title: '状态',
+      key: 'runStatus',
+      width: 100,
+      align,
+      //ellipsisComponent,
+      // ellipsis,
+      render: ({ runStatus }) => {
+        const getRunStatusType = (runStatus: number): 'default' | 'primary' | 'success' | 'info' | 'warning' | 'error' => {
+          switch (runStatus) {
+            case 0: return 'info'
+            case 1: return 'warning'
+            case 2: return 'success'
+            case 3: return 'error'
+            default: return 'default'
+          }
+        }
+        const getRunStatusText = (runStatus: number): string => {
+          switch (runStatus) {
+            case 0: return '待执行'
+            case 1: return '执行中'
+            case 2: return '执行成功'
+            case 3: return '执行失败'
+            default: return '排队中'
+          }
+        }
+        return h(
+          NButton,
+          {
+            text: true,
+            tag: 'span',
+            type: getRunStatusType(runStatus)
+          },
+          {
+            default: () => getRunStatusText(runStatus)
+          }
+        )
+      }
+    },
+    {
+      title: '操作',
+      key: 'numbers',
+      width: 200,
+      // fixed: 'right',
+      align,
+      render: (rowData) => {
+        return h(
+          NSpace,
+          { justify: 'start' },
+          { default: () => [
+            h(
+              NTooltip,
+              null,
+              {
+                trigger: () => h(
+                  NButton,
+                  {
+                    text: true,
+                    style: {
+                      fontSize: '20px',
+                    },
+                    disabled: !(rowData.runStatus === 0 || rowData.runStatus === 3),
+                    onClick: async () => {
+                      try {
+                        await runTask(rowData.id)
+                        message.success('操作成功')
+                      } catch (e) {
+                        //
+                      }
                     }
-                  }
-                },
-                {
-                  default: () => h(
-                    NIcon,
-                    {
-                      component: PlayCircleOutline,
-                    },
-                    {}
-                  )
-                }
-              ),
-              default: () => '执行'
-            }
-          ),
-          h(
-            NTooltip,
-            null,
-            {
-              trigger: () => h(
-                NButton,
-                {
-                  text: true,
-                  style: {
-                    fontSize: '20px',
                   },
-                  onClick: () => {
-                    console.log(id)
-                  }
-                },
-                {
-                  default: () => h(
-                    NIcon,
-                    {
-                      component: CalendarEdit20Filled,
-                    },
-                    {}
-                  )
-                }
-              ),
-              default: () => '修改'
-            }
-          ),
-          h(
-            NTooltip,
-            null,
-            {
-              trigger: () => h(
-                NButton,
-                {
-                  text: true,
-                  style: {
-                    fontSize: '20px',
-                  },
-                  disabled: runStatus !== 2,
-                  onClick: async () => {
-                    await eventConfigExport({ configId: id })
-                    message.success('开始下载')
-                  }
-                },
-                { default: () => h(
-                    NIcon,
-                    {
-                      component: Download,
-                    },
-                    {}
-                )}
-              ),
-              default: () => '下载'
-            }
-          ),
-          h(
-            NTooltip,
-            null,
-            {
-              trigger: () => h(
-                NPopconfirm,
-                {
-                  onPositiveClick: async () => {
-                    try {
-                      await handleSingleDelete(id)
-                      message.success('操作成功')
-                    } catch (e) {
-                      //
-                    }
-                  }
-                },
-                {
-                  trigger: () => h(
-                    NButton,
-                    {
-                      text: true,
-                      style: {
-                        fontSize: '20px',
+                  {
+                    default: () => h(
+                      NIcon,
+                      {
+                        component: PlayCircleOutline,
                       },
-                      disabled: (runStatus === 1 || runStatus === 4)
+                      {}
+                    )
+                  }
+                ),
+                default: () => '执行'
+              }
+            ),
+            h(
+              NTooltip,
+              null,
+              {
+                trigger: () => h(
+                  NButton,
+                  {
+                    text: true,
+                    style: {
+                      fontSize: '20px',
                     },
-                    {
-                      default: () => h(
-                        NIcon,
-                        {
-                          component: Trash,
+                    onClick: () => {
+                      console.log(rowData.id)
+                    }
+                  },
+                  {
+                    default: () => h(
+                      NIcon,
+                      {
+                        component: CalendarEdit20Filled,
+                      },
+                      {}
+                    )
+                  }
+                ),
+                default: () => '修改'
+              }
+            ),
+            h(
+              NTooltip,
+              null,
+              {
+                trigger: () => h(
+                  NButton,
+                  {
+                    text: true,
+                    style: {
+                      fontSize: '20px',
+                    },
+                    disabled: rowData.runStatus !== 2,
+                    onClick: async () => {
+                      await eventConfigExport({ configId: rowData.id })
+                      message.success('开始下载')
+                    }
+                  },
+                  { default: () => h(
+                      NIcon,
+                      {
+                        component: Download,
+                      },
+                      {}
+                  )}
+                ),
+                default: () => '下载'
+              }
+            ),
+            h(
+              NTooltip,
+              null,
+              {
+                trigger: () => h(
+                  NPopconfirm,
+                  {
+                    onPositiveClick: async () => {
+                      try {
+                        await handleSingleDelete(rowData.id)
+                        message.success('操作成功')
+                      } catch (e) {
+                        //
+                      }
+                    }
+                  },
+                  {
+                    trigger: () => h(
+                      NButton,
+                      {
+                        text: true,
+                        style: {
+                          fontSize: '20px',
                         },
-                        {}
+                        disabled: (rowData.runStatus === 1 || rowData.runStatus === 4)
+                      },
+                      {
+                        default: () => h(
+                          NIcon,
+                          {
+                            component: Trash,
+                          },
+                          {}
+                        )
+                      }
+                    ),
+                    default: () => '确定要删除吗?'
+                  }
+                ),
+                default: () => '删除'
+              }
+            ),
+            h(
+              NTooltip,
+              null,
+              {
+                trigger: () => h(
+                  NButton,
+                  {
+                    text: true,
+                    style: {
+                      fontSize: '20px',
+                    },
+                    onClick: () => {
+                      handleUpdateDrawer(
+                        '创建配置',
+                        getSettingInitialValue(rowData),
+                        getFormInitialValue(rowData),
+                        true
                       )
                     }
-                  ),
-                  default: () => '确定要删除吗?'
-                }
-              ),
-              default: () => '删除'
-            }
-          ),
-          h(
-            NTooltip,
-            null,
-            {
-              trigger: () => h(
-                NButton,
-                {
-                  text: true,
-                  style: {
-                    fontSize: '20px',
                   },
-                  onClick: () => {
-                    console.log(id)
+                  {
+                    default: () => h(
+                      NIcon,
+                      {
+                        component: Duplicate,
+                      },
+                      {}
+                    )
                   }
-                },
-                {
-                  default: () => h(
-                    NIcon,
-                    {
-                      component: Duplicate,
+                ),
+                default: () => '复制'
+              }
+            ),
+            (rowData.runStatus === 1 || rowData.runStatus === 4) ? h(
+              NTooltip,
+              null,
+              {
+                trigger: () => h(
+                  NButton,
+                  {
+                    text: true,
+                    style: {
+                      fontSize: '20px',
                     },
-                    {}
-                  )
-                }
-              ),
-              default: () => '复制'
-            }
-          ),
-          (runStatus === 1 || runStatus === 4) ? h(
-            NTooltip,
-            null,
-            {
-              trigger: () => h(
-                NButton,
-                {
-                  text: true,
-                  style: {
-                    fontSize: '20px',
+                    onClick: async () => {
+                      await StopTaskRun({ configId: rowData.id })
+                      await reloadTableData(paginationReactive.value.page!)
+                    }
                   },
-                  onClick: async () => {
-                    await StopTaskRun({ configId: id })
-                    await reloadTableData(paginationReactive.value.page!)
+                  {
+                    default: () => h(
+                      NIcon,
+                      {
+                        component: PauseCircle,
+                      },
+                      {}
+                    )
                   }
-                },
-                {
-                  default: () => h(
-                    NIcon,
-                    {
-                      component: PauseCircle,
-                    },
-                    {}
-                  )
-                }
-              ),
-              default: () => '停止'
-            }
-          ) : '',
-        ]}
-      )
-    }
-  },
-]
+                ),
+                default: () => '停止'
+              }
+            ) : '',
+          ]}
+        )
+      }
+    },
+  ]
+}
 
 export const configStatus = [
   { label: '待执行', value: 0 },
@@ -477,7 +592,7 @@ export const monitorOption: Array<SelectOption | SelectGroupOption> = [
   },
   {
     label: '否',
-    value: 2
+    value: 0
   }
 ]
 
@@ -486,25 +601,29 @@ export const eventConfigSettingInitialValue: eventConfigSettingInitialValueType 
   configType: null,
   remark: '',
   orderPriority: null,
-  purview: null,
+  purview: 1,
   isShow: null
 }
 
 export const eventConfigSettingRules: FormRules = {
   configName: [
-    { required: true, message: '请输入配置名称', trigger: ['change', 'blur'] }
+    {
+      required: true,
+      message: '请输入配置名称',
+      trigger: ['change', 'blur']
+    },
   ],
   configType: [
     { type: 'array', required: true, message: '请选择配置类型', trigger: ['change', 'blur']  }
   ],
-  remark: [
-    { required: true, message: '请输入备注信息', trigger: ['change', 'blur'] }
-  ],
-  orderPriority: [
-    { type: 'number', required: true, message: '请输入优先级', trigger: ['change', 'blur'] }
-  ],
+  // remark: [
+  //   { required: true, message: '请输入备注信息', trigger: ['change', 'blur'] }
+  // ],
+  // orderPriority: [
+  //   { type: 'number', required: true, message: '请输入优先级', trigger: ['change', 'blur'] }
+  // ],
   purview: [
-    { type: 'number', required: true, message: '请选择选择权限', trigger: ['change', 'blur'] }
+    { type: 'number', required: true, message: '请选择权限', trigger: ['change', 'blur'] }
   ],
   isShow: [
     { type: 'number', required: true, message: '请选择实时监测', trigger: ['change', 'blur'] }
@@ -514,8 +633,8 @@ export const eventConfigSettingRules: FormRules = {
 export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   sqldate: null,
   dataSource: 'dataSource1',
-  weightBasis: 'weight1',
-  statisticsBasis: 'statistics1',
+  weightBasis: 1,
+  statisticsBasis: 1,
   actor1countrycode: [],
   actor1knowngroupcode: [],
   actor1religion1code: [],
@@ -525,11 +644,11 @@ export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   actor1type2code: [],
   actor1type3code: [],
   actor1name: '',
-  actor1nameCaseSensitive: true,
+  actor1nameIsBig: 1,
   actor1geoType: [],
   actor1geoCountrycodeAndAdm1code: [],
   actor1geoFullname: '',
-  actor1geoFullnameCaseSensitive: true,
+  actor1geoFullnameIsBig: 1,
   actor2countrycode: [],
   actor2knowngroupcode: [],
   actor2religion1code: [],
@@ -539,11 +658,11 @@ export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   actor2type2code: [],
   actor2type3code: [],
   actor2name: '',
-  actor2nameCaseSensitive: true,
+  actor2nameIsBig: 1,
   actor2geoType: [],
   actor2geoCountrycodeAndAdm1code: [],
   actor2geoFullname: '',
-  actor2geoFullnameCaseSensitive: true,
+  actor2geoFullnameIsBig: 1,
   quadclass: [],
   eventrootcode: [],
   eventbasecode: [],
@@ -551,7 +670,7 @@ export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   actiongeoType: [],
   actiongeoCountrycodeAndAdm1code: [],
   actiongeoFullname: '',
-  actiongeoFullnameCaseSensitive: true,
+  actiongeoFullnameIsBig: 1,
   sourceUrl: '',
   avgtone: [],
   goldsteinscale: [],
@@ -567,15 +686,17 @@ export const rules: FormRules = {
   },
   dataSource: {
     required: true,
-    message: '请选择数据源aaaaa',
+    message: '请选择数据源',
     trigger: ['input', 'blur']
   },
   weightBasis: {
+    type: 'number',
     required: true,
     message: '请选择权重依据',
     trigger: ['input', 'blur']
   },
   statisticsBasis: {
+    type: 'number',
     required: true,
     message: '请选择统计依据',
     trigger: ['input', 'blur']

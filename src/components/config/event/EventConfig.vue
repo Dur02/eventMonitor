@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import type { FormInst } from 'naive-ui'
-import type { searchFormType } from '@/types/components/config/event'
+import type { eventConfigFormInitialValueType, searchFormType } from '@/types/components/config/event'
 import { nextTick, onMounted, ref } from 'vue'
 import {
   NButton,
@@ -20,6 +20,7 @@ import EventConfigDrawer from '@/components/drawer/EventConfigDrawer.vue'
 import { useConstantStore } from '@/stores/constant'
 import { useEventConfigStore } from '@/stores/eventConfig'
 import deepCopy from '@/utils/function/deepcopy'
+import type { eventConfigSettingInitialValueType } from '@/types/components/config/event'
 
 const constantStore = useConstantStore()
 const { eventConfigTypeList } = storeToRefs(constantStore)
@@ -30,9 +31,9 @@ const { setTableLoading, changeLastSearchValue, setCheckedRowKeys, reloadTableDa
 
 const formRef: Ref<FormInst | null> = ref(null)
 const drawerShow: Ref<boolean>  = ref(false)
-const drawerTitle = ref('')
-const settingInitialValue = ref(eventConfigSettingInitialValue)
-const formInitialValue = ref(eventConfigFormInitialValue)
+const drawerTitle: Ref<string> = ref('')
+const settingInitialValue: Ref<eventConfigSettingInitialValueType> = ref(eventConfigSettingInitialValue)
+const formInitialValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
 
 // 保存搜索表单的值
 const searchFormValue: Ref<searchFormType> = ref({
@@ -55,10 +56,25 @@ const handlePageChange = async (currentPage: number): Promise<void> => {
   await reloadTableData(currentPage)
 }
 
+const handleUpdateDrawer = (
+  title: string,
+  settingInitial: eventConfigSettingInitialValueType,
+  formInitial: eventConfigFormInitialValueType,
+  show: boolean
+) => {
+  drawerTitle.value = title
+  settingInitialValue.value = settingInitial
+  formInitialValue.value = formInitial
+  drawerShow.value = show
+}
+
 const handleOpenCreate = () => {
-  drawerTitle.value = '创建配置'
-  formInitialValue.value = eventConfigFormInitialValue
-  drawerShow.value = true
+  handleUpdateDrawer(
+    '创建配置',
+    eventConfigSettingInitialValue,
+    eventConfigFormInitialValue,
+    true
+  )
 }
 
 const updateDrawerShow = (bool: boolean): void => {
@@ -68,6 +84,7 @@ const updateDrawerShow = (bool: boolean): void => {
 // 关闭drawer后重置初始值
 const resetValue = () => {
   drawerTitle.value = ''
+  settingInitialValue.value = eventConfigSettingInitialValue
   formInitialValue.value = eventConfigFormInitialValue
 }
 
@@ -178,7 +195,7 @@ onMounted(async () => {
       class="table"
       size="small"
       :checked-row-keys="checkedRowKeysRef"
-      :columns="allColumns"
+      :columns="allColumns(handleUpdateDrawer)"
       :data="dataRef"
       :pagination="paginationReactive"
       :row-key="(rowData) => rowData.id"

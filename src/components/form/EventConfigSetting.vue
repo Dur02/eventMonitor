@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import type { FormInst } from 'naive-ui'
 import {
@@ -40,6 +40,14 @@ defineExpose({
   formRef,
   formValue
 })
+
+watch(
+  () => props.initialValue,
+  () => {
+    formRef.value?.restoreValidation()
+    formValue.value = deepCopy(props.initialValue)
+  }
+)
 </script>
 
 <template>
@@ -82,6 +90,8 @@ defineExpose({
         >
           <n-input
             v-model:value="formValue.configName"
+            :maxlength="30"
+            show-count
             clearable
           />
         </n-form-item-gi>
@@ -103,7 +113,6 @@ defineExpose({
         <n-form-item-gi
           span="2"
           label="备注信息"
-          path="remark"
         >
           <n-input
             v-model:value="formValue.remark"

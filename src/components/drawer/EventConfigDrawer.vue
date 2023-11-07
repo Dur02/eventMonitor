@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { FormValidationError } from 'naive-ui'
 import {
   NDrawer,
@@ -32,8 +32,8 @@ defineProps<{
 
 const emits = defineEmits(['DrawerClose', 'AfterLeave'])
 
-const settingRef: any = ref(null)
-const formRef: any = ref(null)
+const configSetting: any = ref(null)
+const configForm: any = ref(null)
 
 const handleDrawerClose = (value: boolean): void => {
   emits("DrawerClose", value)
@@ -44,10 +44,10 @@ const handleResetValue = (): void => {
 }
 
 const handleSubmit = () => {
-  settingRef.value?.formRef.validate((settingErrors: Array<FormValidationError>) => {
-    formRef.value?.formRef.validate((formError: Array<FormValidationError>) => {
+  configSetting.value?.formRef.validate((settingErrors: Array<FormValidationError>) => {
+    configForm.value?.formRef.validate((formError: Array<FormValidationError>) => {
       if (!settingErrors && !formError) {
-
+        console.log('验证通过')
       }
     })
   })
@@ -91,11 +91,11 @@ const handleSubmit = () => {
           :theme-overrides="isLight ? cardLightThemeOverrides : cardDarkThemeOverrides"
         >
           <event-config-setting
-            ref="settingRef"
+            ref="configSetting"
             :initial-value="settingInitialValue"
           />
           <event-config-form
-            ref="formRef"
+            ref="configForm"
             :initial-value="formInitialValue"
           />
           <div style="text-align: center;">
