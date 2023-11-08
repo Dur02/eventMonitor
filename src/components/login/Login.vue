@@ -44,7 +44,7 @@ const handleLogin = () => {
             un: encodeUserName,
             p: encodePassword
           }
-          Cookies.set('unp', JSON.stringify(localForm), { expires: 7 })
+          Cookies.set('unp', JSON.stringify(localForm), { expires: 7, samesite: 'strict' })
           break
         }
         default: {

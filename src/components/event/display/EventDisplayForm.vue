@@ -42,7 +42,7 @@ import { map, includes, filter } from 'lodash/fp'
 const footerStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footerStore)
 
-const eventStore = useConstantStore()
+const constantStore = useConstantStore()
 const {
   actorCountryCodeList,
   actorTypeCode,
@@ -55,8 +55,8 @@ const {
   quadClass,
   religionCode,
   rootCodeList
-} = storeToRefs(eventStore)
-const { getAllEventCodeList } = eventStore
+} = storeToRefs(constantStore)
+const { getAllEventCodeList } = constantStore
 
 const route = useRoute()
 

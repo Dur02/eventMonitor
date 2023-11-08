@@ -35,14 +35,14 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  (res: AxiosResponse) => {
+  async (res: AxiosResponse) => {
 
     const userStore = useUserStore()
-    const { logout } = userStore
+    const {logout} = userStore
     const systemStore = useSystemStore()
-    const { isLight } = storeToRefs(systemStore)
+    const {isLight} = storeToRefs(systemStore)
 
-    const { message, dialog } = createDiscreteApi(
+    const {message, dialog} = createDiscreteApi(
       ['message', 'dialog'],
       {
         configProviderProps: {
@@ -52,13 +52,19 @@ service.interceptors.response.use(
     )
 
     // 未设置状态码则默认成功状态
-    const code = res.data.code || 200
+    let code = res.data.code || 200
     // 获取错误信息
-    const msg = res.data.msg
-    // 二进制数据则直接返回
+    let msg = res.data.msg
+    // 二进制数据则下载
     if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
-      download(res)
-      return res.data
+      if (res.data.type !== 'application/json') {
+        download(res)
+      } else {
+        const resText = await res.data.text()
+        const rspObj = JSON.parse(resText)
+        code = rspObj.code
+        msg = rspObj.msg
+      }
     }
 
     // 处理错误状态码

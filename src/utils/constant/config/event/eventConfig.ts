@@ -58,7 +58,7 @@ export const formThemeOverrides: FormThemeOverrides = {
   blankHeightMedium: '10px'
 }
 
-const splitString = (param: string | null) => param === null ? null : split(',')(param)
+const splitString = (param: string | null) => param ? split(',')(param) : null
 
 const getSqlDate = (beginSqldate: number, endSqldate: number): [number, number] => {
   const getDateValue = (type: string, date: number) => {
@@ -96,7 +96,7 @@ const getSqlDate = (beginSqldate: number, endSqldate: number): [number, number] 
 
 const getSettingInitialValue = (rowData: eventConfigRowsType) => ({
   configName: rowData.configName,
-  configType: split(',')(rowData.configType),
+  configType: splitString(rowData.configType),
   remark: rowData.remark,
   orderPriority: rowData.orderPriority,
   purview: rowData.purview,
@@ -164,7 +164,8 @@ export const allColumns = (
     title: string,
     settingInitial: eventConfigSettingInitialValueType,
     formInitial: eventConfigFormInitialValueType,
-    show: boolean
+    show: boolean,
+    disabled: boolean
   ) => void
 ): DataTableColumns<eventConfigRowsType> => {
   const align = 'center'
@@ -400,7 +401,13 @@ export const allColumns = (
                       fontSize: '20px',
                     },
                     onClick: () => {
-                      console.log(rowData.id)
+                      handleUpdateDrawer(
+                        '修改配置',
+                        getSettingInitialValue(rowData),
+                        getFormInitialValue(rowData),
+                        true,
+                        (!(rowData.runStatus === 0 || rowData.runStatus === 3))
+                      )
                     }
                   },
                   {
@@ -429,8 +436,12 @@ export const allColumns = (
                     },
                     disabled: rowData.runStatus !== 2,
                     onClick: async () => {
-                      await eventConfigExport({ configId: rowData.id })
-                      message.success('开始下载')
+                      try {
+                        await eventConfigExport({ configId: rowData.id })
+                        message.success('开始下载')
+                      } catch (e) {
+                        //
+                      }
                     }
                   },
                   { default: () => h(
@@ -502,7 +513,8 @@ export const allColumns = (
                         '创建配置',
                         getSettingInitialValue(rowData),
                         getFormInitialValue(rowData),
-                        true
+                        true,
+                        false
                       )
                     }
                   },
@@ -600,7 +612,7 @@ export const eventConfigSettingInitialValue: eventConfigSettingInitialValueType 
   configName: '',
   configType: null,
   remark: '',
-  orderPriority: null,
+  orderPriority: 1,
   purview: 1,
   isShow: null
 }
@@ -619,9 +631,9 @@ export const eventConfigSettingRules: FormRules = {
   // remark: [
   //   { required: true, message: '请输入备注信息', trigger: ['change', 'blur'] }
   // ],
-  // orderPriority: [
-  //   { type: 'number', required: true, message: '请输入优先级', trigger: ['change', 'blur'] }
-  // ],
+  orderPriority: [
+    { type: 'number', required: true, message: '请输入优先级', trigger: ['change', 'blur'] }
+  ],
   purview: [
     { type: 'number', required: true, message: '请选择权限', trigger: ['change', 'blur'] }
   ],
@@ -644,11 +656,11 @@ export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   actor1type2code: [],
   actor1type3code: [],
   actor1name: '',
-  actor1nameIsBig: 1,
+  actor1nameIsBig: 0,
   actor1geoType: [],
   actor1geoCountrycodeAndAdm1code: [],
   actor1geoFullname: '',
-  actor1geoFullnameIsBig: 1,
+  actor1geoFullnameIsBig: 0,
   actor2countrycode: [],
   actor2knowngroupcode: [],
   actor2religion1code: [],
@@ -658,11 +670,11 @@ export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   actor2type2code: [],
   actor2type3code: [],
   actor2name: '',
-  actor2nameIsBig: 1,
+  actor2nameIsBig: 0,
   actor2geoType: [],
   actor2geoCountrycodeAndAdm1code: [],
   actor2geoFullname: '',
-  actor2geoFullnameIsBig: 1,
+  actor2geoFullnameIsBig: 0,
   quadclass: [],
   eventrootcode: [],
   eventbasecode: [],
@@ -670,14 +682,14 @@ export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   actiongeoType: [],
   actiongeoCountrycodeAndAdm1code: [],
   actiongeoFullname: '',
-  actiongeoFullnameIsBig: 1,
+  actiongeoFullnameIsBig: 0,
   sourceUrl: '',
   avgtone: [],
   goldsteinscale: [],
   isrootevent: null
 }
 
-export const rules: FormRules = {
+export const eventConfigFormBaseRules: FormRules = {
   sqldate: {
     type: 'array',
     required: true,

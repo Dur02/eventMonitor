@@ -61,14 +61,6 @@ export interface eventConfigFormInitialValueType {
   isrootevent: number | null
 }
 
-export interface eventConfigSettingProps {
-  initialValue: eventConfigSettingInitialValueType
-}
-
-export interface eventConfigFormProps {
-  initialValue: eventConfigFormInitialValueType
-}
-
 // export type eventConfigRowsType = {
 //   numbers: number,
 //   orderPriority: number,

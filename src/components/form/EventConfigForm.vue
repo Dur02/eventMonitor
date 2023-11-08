@@ -21,16 +21,21 @@ import {
 } from 'naive-ui'
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
-import { formThemeOverrides, rootOptions, rules } from '@/utils/constant/config/event/eventConfig'
+import { formThemeOverrides, rootOptions, eventConfigFormBaseRules } from '@/utils/constant/config/event/eventConfig'
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import { getRegionCodeList } from '@/api/eventCodeDict'
-import { filter, includes, map } from 'lodash/fp'
+import { filter, includes, map, intersection } from 'lodash/fp'
 import deepCopy from '@/utils/function/deepcopy'
-import type { eventConfigFormInitialValueType, eventConfigFormProps } from '@/types/components/config/event'
+import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
 import { renderOption } from '@/utils/function/renderOption'
+import { formatTimeStamp } from '@/utils/function/date'
 
-const props = defineProps<eventConfigFormProps>()
+const props = defineProps<{
+  initialValue: eventConfigFormInitialValueType,
+  configType: string[] | null,
+  formDisabled: boolean
+}>()
 
 const eventStore = useConstantStore()
 const {
@@ -49,6 +54,7 @@ const {
 const { getAllEventCodeList } = eventStore
 
 const formValue: Ref<eventConfigFormInitialValueType> = ref(deepCopy(props.initialValue) as eventConfigFormInitialValueType)
+const displayDate: Ref<string[]> = ref([])
 const formRef: Ref<FormInst | null> = ref(null)
 const rootOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 const baseOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
@@ -136,6 +142,16 @@ watch(
   () => {
     formRef.value?.restoreValidation()
     formValue.value = deepCopy(props.initialValue)
+    if (!formValue.value.sqldate) {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      formValue.value.sqldate = [start.getTime(), end.getTime()]
+    }
+    displayDate.value = [formatTimeStamp(formValue.value.sqldate[0]), formatTimeStamp(formValue.value.sqldate[1])]
+  },
+  {
+    immediate: true
   }
 )
 </script>
@@ -144,7 +160,8 @@ watch(
   <n-form
     ref="formRef"
     class="form"
-    :rules="rules"
+    :disabled="formDisabled"
+    :rules="eventConfigFormBaseRules"
     :model="formValue"
     size="medium"
     label-placement="left"
@@ -153,7 +170,7 @@ watch(
     :theme-overrides="formThemeOverrides"
     :show-require-mark="false"
   >
-    <p style="margin: 0 0 5px 110px;">当前数据库时间范围: 2011-01-04 至 2023-08-01</p>
+    <p style="margin: 0 0 5px 110px;">当前数据库时间范围: {{ displayDate[0] }} 至 {{ displayDate[1] }}</p>
     <n-form-item
       path="sqldate"
       label-style="font-weight: 600;"
@@ -204,6 +221,7 @@ watch(
       </n-radio-group>
     </n-form-item>
     <n-form-item
+      v-if="!includes('event_show_viz')(configType)"
       path="weightBasis"
       label-style="font-weight: 600;"
       label-width="110"
@@ -234,6 +252,7 @@ watch(
       </n-radio-group>
     </n-form-item>
     <n-form-item
+      v-if="intersection(configType, ['event_timeline_viz', 'event_timeline_type_viz', 'event_timeline_geo_viz', 'event_tone_scale_viz']).length !== 0"
       path="statisticsBasis"
       label-style="font-weight: 600;"
       label-width="110"
@@ -257,7 +276,9 @@ watch(
         </n-space>
       </n-radio-group>
     </n-form-item>
+<!--    v-if="!includes('event_country_monitor')(configType)"-->
     <n-form-item
+      v-if="intersection(configType, ['event_country_monitor']).length === 0"
       :show-feedback="false"
       label-style="font-weight: 600;"
       label-width="110"
@@ -284,7 +305,10 @@ watch(
             item-responsive
             responsive="self"
           >
-            <n-form-item-gi span="1" label="国家(地区)">
+            <n-form-item-gi
+              span="1"
+              label="国家(地区)"
+            >
               <n-select
                 v-model:value="formValue.actor1countrycode"
                 :options="actorCountryCodeList"
@@ -295,7 +319,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="组织">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="组织"
+            >
               <n-select
                 v-model:value="formValue.actor1knowngroupcode"
                 :options="knownGroupCode"
@@ -306,7 +334,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="宗教1">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="宗教1"
+            >
               <n-select
                 v-model:value="formValue.actor1religion1code"
                 :options="religionCode"
@@ -317,7 +349,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="宗教2">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="宗教2"
+            >
               <n-select
                 v-model:value="formValue.actor1religion2code"
                 :options="religionCode"
@@ -328,7 +364,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="种族">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="种族"
+            >
               <n-select
                 v-model:value="formValue.actor1ethniccode"
                 :options="ethnicCode"
@@ -339,7 +379,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="种类1">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="种类1"
+            >
               <n-select
                 v-model:value="formValue.actor1type1code"
                 :options="actorTypeCode"
@@ -350,7 +394,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="种类2">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="种类2"
+            >
               <n-select
                 v-model:value="formValue.actor1type2code"
                 :options="actorTypeCode"
@@ -361,7 +409,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="种类3">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="种类3"
+            >
               <n-select
                 v-model:value="formValue.actor1type3code"
                 :options="actorTypeCode"
@@ -372,18 +424,40 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="4" style="margin-left: 80px;">
+            <n-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="4"
+              style="margin-left: 80px;"
+            >
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="3" label="角色全称">
-              <n-input v-model:value="formValue.actor1name" />
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="3"
+              label="角色全称"
+            >
+              <n-input
+                v-model:value="formValue.actor1name"
+              />
             </n-form-item-gi>
-            <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actor1nameIsBig">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+            >
+              <n-checkbox
+                :checked="formValue.actor1nameIsBig === 0"
+                @update:checked="(checked) => {
+                  checked ? formValue.actor1nameIsBig = 0 : formValue.actor1nameIsBig = 1
+                }"
+              >
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
-            <n-form-item-gi span="2" label="地理类型">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="2"
+              label="地理类型"
+            >
               <n-select
                 v-model:value="formValue.actor1geoType"
                 :options="geoTypeList"
@@ -393,7 +467,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="2" label="国家/州省">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="2"
+              label="国家/州省"
+            >
               <n-tree-select
                 v-model:value="formValue.actor1geoCountrycodeAndAdm1code"
                 :options="geoCountryCodeList"
@@ -407,20 +485,37 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="4" style="margin-left: 80px;">
+            <n-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="4"
+              style="margin-left: 80px;"
+            >
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="3" label="地理全称">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="3"
+              label="地理全称"
+            >
               <n-input v-model:value="formValue.actor1geoFullname" />
             </n-form-item-gi>
-            <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actor1geoFullnameIsBig">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+            >
+              <n-checkbox
+                :checked="formValue.actor1geoFullnameIsBig === 0"
+                @update:checked="(checked) => {
+                  checked ? formValue.actor1geoFullnameIsBig = 0 : formValue.actor1geoFullnameIsBig = 1
+                }"
+              >
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
           </n-grid>
         </n-form-item-gi>
         <n-form-item-gi
+          v-if="!includes('event_country_monitor')(configType)"
           :span="24"
           label="角色2"
           label-width="60"
@@ -433,7 +528,10 @@ watch(
             item-responsive
             responsive="self"
           >
-            <n-form-item-gi span="1" label="国家(地区)">
+            <n-form-item-gi
+              span="1"
+              label="国家(地区)"
+            >
               <n-select
                 v-model:value="formValue.actor2countrycode"
                 :options="actorCountryCodeList"
@@ -444,7 +542,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="组织">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="组织"
+            >
               <n-select
                 v-model:value="formValue.actor2knowngroupcode"
                 :options="knownGroupCode"
@@ -455,7 +557,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="宗教1">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="宗教1"
+            >
               <n-select
                 v-model:value="formValue.actor2religion1code"
                 :options="religionCode"
@@ -466,7 +572,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="宗教2">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="宗教2"
+            >
               <n-select
                 v-model:value="formValue.actor2religion2code"
                 :options="religionCode"
@@ -477,7 +587,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="种族">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="种族"
+            >
               <n-select
                 v-model:value="formValue.actor2ethniccode"
                 :options="ethnicCode"
@@ -488,7 +602,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="种类1">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="种类1"
+            >
               <n-select
                 v-model:value="formValue.actor2type1code"
                 :options="actorTypeCode"
@@ -499,7 +617,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="种类2">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="种类2"
+            >
               <n-select
                 v-model:value="formValue.actor2type2code"
                 :options="actorTypeCode"
@@ -510,7 +632,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="种类3">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+              label="种类3"
+            >
               <n-select
                 v-model:value="formValue.actor2type3code"
                 :options="actorTypeCode"
@@ -521,18 +647,38 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="4" style="margin-left: 80px;">
+            <n-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="4"
+              style="margin-left: 80px;"
+            >
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="3" label="角色全称">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="3"
+              label="角色全称"
+            >
               <n-input v-model:value="formValue.actor2name" />
             </n-form-item-gi>
-            <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actor2nameIsBig">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+            >
+              <n-checkbox
+                :checked="formValue.actor2nameIsBig === 0"
+                @update:checked="(checked) => {
+                  checked ? formValue.actor2nameIsBig = 0 : formValue.actor2nameIsBig = 1
+                }"
+              >
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
-            <n-form-item-gi span="2" label="地理类型">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="2"
+              label="地理类型"
+            >
               <n-select
                 v-model:value="formValue.actor2geoType"
                 :options="geoTypeList"
@@ -542,7 +688,11 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="2" label="国家/州省">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="2"
+              label="国家/州省"
+            >
               <n-tree-select
                 v-model:value="formValue.actor2geoCountrycodeAndAdm1code"
                 :options="geoCountryCodeList"
@@ -556,14 +706,30 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-gi span="4" style="margin-left: 80px;">
+            <n-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="4"
+              style="margin-left: 80px;"
+            >
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
-            <n-form-item-gi span="3" label="地理全称">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="3"
+              label="地理全称"
+            >
               <n-input v-model:value="formValue.actor2geoFullname" />
             </n-form-item-gi>
-            <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actor2geoFullnameIsBig">
+            <n-form-item-gi
+              v-if="!includes('event_country_relation_viz')(configType)"
+              span="1"
+            >
+              <n-checkbox
+                :checked="formValue.actor2geoFullnameIsBig === 0"
+                @update:checked="(checked) => {
+                  checked ? formValue.actor2geoFullnameIsBig = 0 : formValue.actor2geoFullnameIsBig = 1
+                }"
+              >
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
@@ -572,6 +738,7 @@ watch(
       </n-grid>
     </n-form-item>
     <n-form-item
+      v-if="intersection(configType, ['event_country_monitor', 'event_country_relation_viz']).length === 0"
       :show-feedback="false"
       label-style="font-weight: 600;"
       label-width="110"
@@ -691,7 +858,12 @@ watch(
               <n-input v-model:value="formValue.actiongeoFullname" />
             </n-form-item-gi>
             <n-form-item-gi span="1">
-              <n-checkbox v-model:checked="formValue.actiongeoFullnameIsBig">
+              <n-checkbox
+                :checked="formValue.actiongeoFullnameIsBig === 0"
+                @update:checked="(checked) => {
+                  checked ? formValue.actiongeoFullnameIsBig = 0 : formValue.actiongeoFullnameIsBig = 1
+                }"
+              >
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>

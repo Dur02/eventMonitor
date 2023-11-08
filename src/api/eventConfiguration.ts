@@ -26,6 +26,15 @@ export function getEventConfigList(
   })
 }
 
+// 新增事件配置管理
+export function addEventConfig(data: any) {
+  return request({
+    url: '/eventMonitor/eventConfiguration',
+    method: 'post',
+    data
+  })
+}
+
 // 是否挂起转态修改：1->显示(默认)，2->不显示
 export function updateEventConfigShow(
   {

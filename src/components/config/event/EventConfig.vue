@@ -32,6 +32,7 @@ const { setTableLoading, changeLastSearchValue, setCheckedRowKeys, reloadTableDa
 const formRef: Ref<FormInst | null> = ref(null)
 const drawerShow: Ref<boolean>  = ref(false)
 const drawerTitle: Ref<string> = ref('')
+const formDisabled: Ref<boolean>  = ref(false)
 const settingInitialValue: Ref<eventConfigSettingInitialValueType> = ref(eventConfigSettingInitialValue)
 const formInitialValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
 
@@ -60,12 +61,14 @@ const handleUpdateDrawer = (
   title: string,
   settingInitial: eventConfigSettingInitialValueType,
   formInitial: eventConfigFormInitialValueType,
-  show: boolean
+  show: boolean,
+  disabled: boolean
 ) => {
   drawerTitle.value = title
   settingInitialValue.value = settingInitial
   formInitialValue.value = formInitial
   drawerShow.value = show
+  formDisabled.value = disabled
 }
 
 const handleOpenCreate = () => {
@@ -73,7 +76,8 @@ const handleOpenCreate = () => {
     '创建配置',
     eventConfigSettingInitialValue,
     eventConfigFormInitialValue,
-    true
+    true,
+    false
   )
 }
 
@@ -211,6 +215,7 @@ onMounted(async () => {
       :drawerShow="drawerShow"
       :settingInitialValue="settingInitialValue"
       :formInitialValue="formInitialValue"
+      :formDisabled="formDisabled"
       @DrawerClose="updateDrawerShow"
       @AfterLeave="resetValue"
     />

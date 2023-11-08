@@ -22,19 +22,23 @@ import {
 import { Menu as MenuIcon } from '@vicons/ionicons5'
 import { useConstantStore } from '@/stores/constant'
 import { renderOption } from '@/utils/function/renderOption'
-import type {
-  eventConfigSettingInitialValueType,
-  eventConfigSettingProps
-} from '@/types/components/config/event'
+import type { eventConfigSettingInitialValueType } from '@/types/components/config/event'
 import deepCopy from '@/utils/function/deepcopy'
 
-const props = defineProps<eventConfigSettingProps>()
+const props = defineProps<{
+  initialValue: eventConfigSettingInitialValueType
+}>()
+const emits = defineEmits(['selectConfigType'])
 
 const constantStore = useConstantStore()
 const { eventConfigTypeList } = storeToRefs(constantStore)
 
 const formRef: Ref<FormInst | null> = ref(null)
 const formValue: Ref<eventConfigSettingInitialValueType> = ref(deepCopy(props.initialValue) as eventConfigSettingInitialValueType)
+
+const handleSelectConfigType = (configType: string[]) => {
+  emits('selectConfigType', configType)
+}
 
 defineExpose({
   formRef,
@@ -46,6 +50,10 @@ watch(
   () => {
     formRef.value?.restoreValidation()
     formValue.value = deepCopy(props.initialValue)
+    emits('selectConfigType', deepCopy(formValue.value.configType))
+  },
+  {
+    immediate: true
   }
 )
 </script>
@@ -107,7 +115,9 @@ watch(
             max-tag-count="responsive"
             multiple
             clearable
+            filterable
             style="width: 100%;"
+            @update:value="handleSelectConfigType"
           />
         </n-form-item-gi>
         <n-form-item-gi
