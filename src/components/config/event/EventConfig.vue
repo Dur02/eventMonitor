@@ -35,6 +35,7 @@ const drawerTitle: Ref<string> = ref('')
 const formDisabled: Ref<boolean>  = ref(false)
 const settingInitialValue: Ref<eventConfigSettingInitialValueType> = ref(eventConfigSettingInitialValue)
 const formInitialValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
+const configId: Ref<number | null> = ref(null)
 
 // 保存搜索表单的值
 const searchFormValue: Ref<searchFormType> = ref({
@@ -62,13 +63,15 @@ const handleUpdateDrawer = (
   settingInitial: eventConfigSettingInitialValueType,
   formInitial: eventConfigFormInitialValueType,
   show: boolean,
-  disabled: boolean
+  disabled: boolean,
+  id: number | null
 ) => {
   drawerTitle.value = title
   settingInitialValue.value = settingInitial
   formInitialValue.value = formInitial
   drawerShow.value = show
   formDisabled.value = disabled
+  configId.value = id
 }
 
 const handleOpenCreate = () => {
@@ -77,7 +80,8 @@ const handleOpenCreate = () => {
     eventConfigSettingInitialValue,
     eventConfigFormInitialValue,
     true,
-    false
+    false,
+    null
   )
 }
 
@@ -216,6 +220,7 @@ onMounted(async () => {
       :settingInitialValue="settingInitialValue"
       :formInitialValue="formInitialValue"
       :formDisabled="formDisabled"
+      :configId="configId"
       @DrawerClose="updateDrawerShow"
       @AfterLeave="resetValue"
     />

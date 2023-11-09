@@ -25,7 +25,7 @@ import { formThemeOverrides, rootOptions, eventConfigFormBaseRules } from '@/uti
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import { getRegionCodeList } from '@/api/eventCodeDict'
-import { filter, includes, map, intersection } from 'lodash/fp'
+import { filter, includes, map, intersection, difference, flow, remove, reject } from 'lodash/fp'
 import deepCopy from '@/utils/function/deepcopy'
 import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
 import { renderOption } from '@/utils/function/renderOption'

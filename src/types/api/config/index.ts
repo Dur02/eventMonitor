@@ -1,4 +1,11 @@
-export type ConfigListType = {
+import type { eventConfigRowsType } from '@/types/components/config/event'
+
+export type UpdateEventConfigShowType = {
+  configId: number,
+  isShow: number
+}
+
+export type GetEventConfigListType = {
   configName?: string,
   configType?: string | null,
   runStatus?: number | null,
@@ -7,7 +14,7 @@ export type ConfigListType = {
   pageSize: number
 }
 
-export type ConfigListResultType = {
-  rows: any,
+export type GetEventConfigListRespType = {
+  rows: eventConfigRowsType,
   total: number
 }

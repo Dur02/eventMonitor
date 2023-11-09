@@ -6,24 +6,50 @@ import type {
 } from '@/types/components/config/event'
 import type { CardThemeOverrides, FormThemeOverrides, DrawerThemeOverrides } from '@/types/themeOverrides'
 import { h, computed } from 'vue'
-import { NButton, NIcon, NSpace, NTag, NTooltip, NPopconfirm, createDiscreteApi, lightTheme, darkTheme } from 'naive-ui'
+import type { TreeSelectOption } from 'naive-ui'
+import {
+  NButton,
+  NIcon,
+  NSpace,
+  NTag,
+  NTooltip,
+  NPopconfirm,
+  createDiscreteApi,
+  lightTheme,
+  darkTheme,
+} from 'naive-ui'
+import pinia from '@/stores/pinia'
 import { storeToRefs } from 'pinia'
 import { Eye, EyeOff, PlayCircleOutline, Download, Trash, Duplicate, PauseCircle } from '@vicons/ionicons5'
-import { find, flow, prop, propEq, split, drop, dropRight, join, concat, compact } from 'lodash/fp'
+import {
+  find,
+  flow,
+  prop,
+  propEq,
+  split,
+  drop,
+  dropRight,
+  join,
+  concat,
+  compact,
+  filter,
+  map,
+  flatten, includes
+} from 'lodash/fp'
 import { CalendarEdit20Filled } from '@vicons/fluent'
 import { useConstantStore } from '@/stores/constant'
-import { StopTaskRun } from '@/api/eventConfiguration'
 import { useEventConfigStore } from '@/stores/eventConfig'
 import { useSystemStore } from '@/stores/system'
 import { eventConfigExport } from '@/api/eventAnalyse'
+import deepCopy from '@/utils/function/deepcopy'
 
-const systemStore = useSystemStore()
+
+const systemStore = useSystemStore(pinia)
 const { isLight } = storeToRefs(systemStore)
-const constantStore = useConstantStore()
+const constantStore = useConstantStore(pinia)
 const { eventConfigTypeList } = storeToRefs(constantStore)
-const eventConfigStore = useEventConfigStore()
-const { paginationReactive, tableLoading } = storeToRefs(eventConfigStore)
-const { reloadTableData, changeIsShow, runTask, handleSingleDelete } = eventConfigStore
+const eventConfigStore = useEventConfigStore(pinia)
+const { updateSingle, changeIsShow, runTask, stopTask, handleSingleDelete } = eventConfigStore
 
 const configProviderPropsRef = computed<ConfigProviderProps>(() => ({
   theme: isLight.value ? lightTheme : darkTheme
@@ -165,9 +191,11 @@ export const allColumns = (
     settingInitial: eventConfigSettingInitialValueType,
     formInitial: eventConfigFormInitialValueType,
     show: boolean,
-    disabled: boolean
+    disabled: boolean,
+    id: number | null
   ) => void
 ): DataTableColumns<eventConfigRowsType> => {
+
   const align = 'center'
   const ellipsisComponent = 'performant-ellipsis'
   const ellipsis: EllipsisProps = {
@@ -315,10 +343,10 @@ export const allColumns = (
       render: ({ runStatus }) => {
         const getRunStatusType = (runStatus: number): 'default' | 'primary' | 'success' | 'info' | 'warning' | 'error' => {
           switch (runStatus) {
-            case 0: return 'info'
             case 1: return 'warning'
             case 2: return 'success'
             case 3: return 'error'
+            case 4: return 'info'
             default: return 'default'
           }
         }
@@ -369,8 +397,18 @@ export const allColumns = (
                     disabled: !(rowData.runStatus === 0 || rowData.runStatus === 3),
                     onClick: async () => {
                       try {
-                        await runTask(rowData.id)
-                        message.success('操作成功')
+                        const runStatus = await updateSingle(rowData.id)
+                        switch (runStatus === 0 || runStatus === 3) {
+                          case true: {
+                            await runTask(rowData.id)
+                            message.success('操作成功')
+                            break
+                          }
+                          default: {
+                            message.error('执行状态已改变,操作失败')
+                            break
+                          }
+                        }
                       } catch (e) {
                         //
                       }
@@ -400,14 +438,20 @@ export const allColumns = (
                     style: {
                       fontSize: '20px',
                     },
-                    onClick: () => {
-                      handleUpdateDrawer(
-                        '修改配置',
-                        getSettingInitialValue(rowData),
-                        getFormInitialValue(rowData),
-                        true,
-                        (!(rowData.runStatus === 0 || rowData.runStatus === 3))
-                      )
+                    onClick: async () => {
+                      try {
+                        const runStatus = await updateSingle(rowData.id)
+                        handleUpdateDrawer(
+                          '修改配置',
+                          getSettingInitialValue(rowData),
+                          getFormInitialValue(rowData),
+                          true,
+                          (!(runStatus === 0 || runStatus === 3)),
+                          rowData.id
+                        )
+                      } catch (e) {
+                        //
+                      }
                     }
                   },
                   {
@@ -437,8 +481,18 @@ export const allColumns = (
                     disabled: rowData.runStatus !== 2,
                     onClick: async () => {
                       try {
-                        await eventConfigExport({ configId: rowData.id })
-                        message.success('开始下载')
+                        const runStatus = await updateSingle(rowData.id)
+                        switch (runStatus === 2) {
+                          case true: {
+                            await eventConfigExport({ configId: rowData.id })
+                            message.success('开始下载')
+                            break
+                          }
+                          default: {
+                            message.error('执行状态已改变,操作失败')
+                            break
+                          }
+                        }
                       } catch (e) {
                         //
                       }
@@ -464,8 +518,18 @@ export const allColumns = (
                   {
                     onPositiveClick: async () => {
                       try {
-                        await handleSingleDelete(rowData.id)
-                        message.success('操作成功')
+                        const runStatus = await updateSingle(rowData.id)
+                        switch (runStatus !== 1 && runStatus !== 4) {
+                          case true: {
+                            await handleSingleDelete(rowData.id)
+                            message.success('操作成功')
+                            break
+                          }
+                          default: {
+                            message.error('执行状态已改变,操作失败')
+                            break
+                          }
+                        }
                       } catch (e) {
                         //
                       }
@@ -508,13 +572,14 @@ export const allColumns = (
                     style: {
                       fontSize: '20px',
                     },
-                    onClick: () => {
+                    onClick: async () => {
                       handleUpdateDrawer(
                         '创建配置',
                         getSettingInitialValue(rowData),
                         getFormInitialValue(rowData),
                         true,
-                        false
+                        false,
+                        null
                       )
                     }
                   },
@@ -543,8 +608,22 @@ export const allColumns = (
                       fontSize: '20px',
                     },
                     onClick: async () => {
-                      await StopTaskRun({ configId: rowData.id })
-                      await reloadTableData(paginationReactive.value.page!)
+                      try {
+                        const runStatus = await updateSingle(rowData.id)
+                        switch (runStatus === 1 || runStatus === 4) {
+                          case true: {
+                            await stopTask(rowData.id)
+                            message.success('操作成功')
+                            break
+                          }
+                          default: {
+                            message.error('执行状态已改变,操作失败')
+                            break
+                          }
+                        }
+                      } catch (e) {
+                        //
+                      }
                     }
                   },
                   {
@@ -713,4 +792,75 @@ export const eventConfigFormBaseRules: FormRules = {
     message: '请选择统计依据',
     trigger: ['input', 'blur']
   }
+}
+
+export const getEventConfigParam = (configSetting: any, configForm: any, geoCountryCodeList: TreeSelectOption[]) => {
+  const joinArray = (target: Array<number | string>): number | string => {
+    return join(',')(target)
+  }
+
+  const getGeoCountryCode = (target: string[]) => flow(
+    filter((item) => find(propEq('key', item))(deepCopy(geoCountryCodeList))),
+    join(',')
+  )(deepCopy(target))
+
+  const getGeoAdmCode = (target: string[]) => flow(
+    map((item: any) => item.children),
+    flatten,
+    compact,
+    filter(({ key }) => includes(key)(deepCopy(target))),
+    map((item) => item.key),
+    join(',')
+  )(deepCopy(geoCountryCodeList))
+
+  const getDateString = (timestamp: number) => {
+    const date = new Date(timestamp)
+
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+
+    return (year + month + day);
+  }
+
+  return ({
+    ...configSetting.formValue,
+    ...configForm.formValue,
+    configType: joinArray(configSetting.formValue.configType),
+    actor1countrycode: joinArray(configForm.formValue.actor1countrycode),
+    actor1ethniccode: joinArray(configForm.formValue.actor1ethniccode),
+    actor1geoCountrycode: getGeoCountryCode(configForm.formValue.actor1geoCountrycodeAndAdm1code),
+    actor1geoAdm1code: getGeoAdmCode(configForm.formValue.actor1geoCountrycodeAndAdm1code),
+    actor1geoType: joinArray(configForm.formValue.actor1geoType),
+    actor1knowngroupcode: joinArray(configForm.formValue.actor1knowngroupcode),
+    actor1religion1code: joinArray(configForm.formValue.actor1religion1code),
+    actor1religion2code: joinArray(configForm.formValue.actor1religion2code),
+    actor1type1code: joinArray(configForm.formValue.actor1type1code),
+    actor1type2code: joinArray(configForm.formValue.actor1type2code),
+    actor1type3code: joinArray(configForm.formValue.actor1type3code),
+    actor2countrycode: joinArray(configForm.formValue.actor2countrycode),
+    actor2ethniccode: joinArray(configForm.formValue.actor2ethniccode),
+    actor2geoCountrycode: getGeoCountryCode(configForm.formValue.actor2geoCountrycodeAndAdm1code),
+    actor2geoAdm1code: getGeoAdmCode(configForm.formValue.actor2geoCountrycodeAndAdm1code),
+    actor2geoType: joinArray(configForm.formValue.actor2geoType),
+    actor2knowngroupcode: joinArray(configForm.formValue.actor2knowngroupcode),
+    actor2religion1code: joinArray(configForm.formValue.actor2religion1code),
+    actor2religion2code: joinArray(configForm.formValue.actor2religion2code),
+    actor2type1code: joinArray(configForm.formValue.actor2type1code),
+    actor2type2code: joinArray(configForm.formValue.actor2type2code),
+    actor2type3code: joinArray(configForm.formValue.actor2type3code),
+    actiongeoCountrycode  : getGeoCountryCode(configForm.formValue.actiongeoCountrycodeAndAdm1code),
+    actiongeoAdm1code: getGeoAdmCode(configForm.formValue.actiongeoCountrycodeAndAdm1code),
+    actiongeoType: joinArray(configForm.formValue.actiongeoType),
+    eventbasecode: joinArray(configForm.formValue.eventbasecode),
+    eventcode: joinArray(configForm.formValue.eventcode),
+    eventrootcode: joinArray(configForm.formValue.eventrootcode),
+    quadclass: joinArray(configForm.formValue.quadclass),
+    beginSqldate: getDateString(configForm.formValue.sqldate[0]),
+    endSqldate: getDateString(configForm.formValue.sqldate[1]),
+    beginAvgtone: configForm.formValue.avgtone[0] || null,
+    endAvgtone: configForm.formValue.avgtone[1] || null,
+    beginGoldsteinscale: configForm.formValue.goldsteinscale[0] || null,
+    endGoldsteinscale: configForm.formValue.goldsteinscale[1] || null,
+  })
 }

@@ -1,12 +1,18 @@
 import type { Ref, VNodeChild } from 'vue'
 import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { deleteEventConfig, getEventConfigList, updateEventConfigShow } from '@/api/eventConfiguration'
+import {
+  deleteEventConfig,
+  getEventConfigList,
+  getSingleEventConfig,
+  StopTaskRun,
+  updateEventConfigShow
+} from '@/api/eventConfiguration'
 import type { PaginationInfo, PaginationProps, DataTableRowKey } from 'naive-ui'
-import { map } from 'lodash/fp'
-import type { searchFormType } from '@/types/components/config/event'
+import { flow, map } from 'lodash/fp'
+import type { eventConfigRowsType, searchFormType } from '@/types/components/config/event'
 import { runTask as runTaskApi } from '@/api/eventAnalyse'
-import deepCopy from '@/utils/function/deepcopy';
+import deepCopy from '@/utils/function/deepcopy'
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
@@ -72,6 +78,27 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     return Promise.resolve()
   }
 
+  const updateSingle = async (id: number) => {
+    if (!tableLoading.value) {
+      tableLoading.value = true
+      try {
+        const { data } = await getSingleEventConfig({ id })
+        dataRef.value = flow(
+          map((item: eventConfigRowsType) => {
+            if (item.id === data.id) {
+              return data
+            }
+            return item
+          })
+        )(deepCopy(dataRef.value))
+        tableLoading.value = false
+        return Promise.resolve(data.runStatus)
+      } catch (e) {
+        return Promise.reject()
+      }
+    }
+  }
+
   const changeIsShow = async (id: number, isShow: number) => {
     if (!tableLoading.value) {
       tableLoading.value = true
@@ -93,6 +120,22 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
       tableLoading.value = true
       try {
         await runTaskApi({ configId: id })
+        tableLoading.value = false
+        await reloadTableData(paginationReactive.page!)
+      } catch (e) {
+        tableLoading.value = false
+        return Promise.reject()
+      }
+      tableLoading.value = false
+    }
+    return Promise.resolve()
+  }
+
+  const stopTask = async (id: number) => {
+    if (!tableLoading.value) {
+      tableLoading.value = true
+      try {
+        await StopTaskRun({ configId: id })
         tableLoading.value = false
         await reloadTableData(paginationReactive.page!)
       } catch (e) {
@@ -156,8 +199,10 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     changeLastSearchValue,
     setCheckedRowKeys,
     reloadTableData,
+    updateSingle,
     changeIsShow,
     runTask,
+    stopTask,
     handleSingleDelete,
     handleMultipleDelete,
   }

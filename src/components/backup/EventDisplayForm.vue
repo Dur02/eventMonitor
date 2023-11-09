@@ -29,14 +29,20 @@ import { useFooterStore } from '@/stores/footer'
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
-import { cardThemeOverrides, formThemeOverrides, initialFormValue, rules, rootOptions } from '@/utils/constant/event/display/eventDisplayForm'
+import {
+  cardThemeOverrides,
+  formThemeOverrides,
+  initialFormValue,
+  rules,
+  rootOptions
+} from '@/utils/constant/event/display/eventDisplayForm'
 import { getRegionCodeList } from '@/api/eventCodeDict'
-import { map, join, includes, filter } from 'lodash/fp'
+import { map, includes, filter } from 'lodash/fp'
 
 const footerStore = useFooterStore()
 const { selectedBtn, initialData } = storeToRefs(footerStore)
 
-const eventStore = useConstantStore()
+const constantStore = useConstantStore()
 const {
   actorCountryCodeList,
   actorTypeCode,
@@ -49,8 +55,8 @@ const {
   quadClass,
   religionCode,
   rootCodeList
-} = storeToRefs(eventStore)
-const { getAllEventCodeList } = eventStore
+} = storeToRefs(constantStore)
+const { getAllEventCodeList } = constantStore
 
 const route = useRoute()
 
@@ -197,7 +203,6 @@ defineExpose({
 
 <template>
   <n-scrollbar
-    class="scroll-box"
     :style="{
       maxHeight: '440px',
       border: '1px solid var(--n-border-color)',
@@ -790,10 +795,7 @@ defineExpose({
           v-if="!selectedBtn"
         >
           <n-space class="space-box">
-            <n-button type="success" attr-type="button" @click="handleValidateClick">
-              保存
-            </n-button>
-            <n-button type="info" attr-type="button" @click="handleValidateClick">
+            <n-button type="info" @click="handleValidateClick">
               提交
             </n-button>
           </n-space>

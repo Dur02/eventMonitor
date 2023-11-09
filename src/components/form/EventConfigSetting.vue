@@ -26,7 +26,8 @@ import type { eventConfigSettingInitialValueType } from '@/types/components/conf
 import deepCopy from '@/utils/function/deepcopy'
 
 const props = defineProps<{
-  initialValue: eventConfigSettingInitialValueType
+  initialValue: eventConfigSettingInitialValueType,
+  formDisabled: boolean
 }>()
 const emits = defineEmits(['selectConfigType'])
 
@@ -111,6 +112,7 @@ watch(
           <n-select
             :options="eventConfigTypeList"
             v-model:value="formValue.configType"
+            :disabled="formDisabled"
             :render-option="renderOption"
             max-tag-count="responsive"
             multiple
