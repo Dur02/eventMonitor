@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import type { FormInst, SelectOption, SelectGroupOption, TreeSelectOption } from 'naive-ui'
 import {
   NForm,
@@ -152,6 +152,73 @@ watch(
   },
   {
     immediate: true
+  }
+)
+
+watch(
+  () => props.configType,
+  (newValue, oldValue) => {
+    // 存在于newV而不存在于oldV
+    const newVRejectOldV = difference(newValue ? deepCopy(newValue) : [], oldValue ? deepCopy(oldValue) : [])
+    const resetActorFormItem = () => {
+      formValue.value.actor1knowngroupcode = []
+      formValue.value.actor1religion1code = []
+      formValue.value.actor1religion2code = []
+      formValue.value.actor1ethniccode = []
+      formValue.value.actor1type1code = []
+      formValue.value.actor1type2code = []
+      formValue.value.actor1type3code = []
+      formValue.value.actor1name = ''
+      formValue.value.actor1nameIsBig = 0
+      formValue.value.actor1geoType = []
+      formValue.value.actor1geoCountrycodeAndAdm1code = []
+      formValue.value.actor1geoFullname = ''
+      formValue.value.actor1geoFullnameIsBig = 0
+    }
+    const resetActionFormItem = () => {
+      formValue.value.quadclass = []
+      formValue.value.eventrootcode = []
+      formValue.value.eventbasecode = []
+      formValue.value.eventcode = []
+      formValue.value.actiongeoType = []
+      formValue.value.actiongeoCountrycodeAndAdm1code = []
+      formValue.value.actiongeoFullname = ''
+      formValue.value.actiongeoFullnameIsBig = 0
+      formValue.value.sourceUrl = ''
+      formValue.value.avgtone = []
+      formValue.value.goldsteinscale = []
+      formValue.value.isrootevent = null
+    }
+    // 把以上两个数组循环判断是否为条件类型，进行表单值初始化或清除
+    map((item) => {
+      switch (item) {
+        case 'event_timeline_viz':
+        case 'event_timeline_type_viz':
+        case 'event_timeline_geo_viz':
+        case 'event_tone_scale_viz': {
+          break
+        }
+        case 'event_show_viz': {
+          formValue.value.weightBasis = 1
+          break
+        }
+        case 'event_country_monitor': {
+          formValue.value.actor1countrycode = []
+          resetActorFormItem()
+          resetActionFormItem()
+          break
+        }
+        case 'event_country_relation_viz': {
+          resetActorFormItem()
+          resetActionFormItem()
+          break
+        }
+        default: {
+          formValue.value.statisticsBasis = 1
+          break
+        }
+      }
+    })(newVRejectOldV)
   }
 )
 </script>

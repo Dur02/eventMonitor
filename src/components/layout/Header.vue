@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { NAvatar, NDropdown, NH2, NIcon, NLayoutHeader, NSpace, NText } from 'naive-ui'
+import { NAvatar, NDropdown, NH2, NIcon, NLayoutHeader, NSpace, NText, NImage } from 'naive-ui'
 import { Person } from '@vicons/ionicons5'
 import ChangePassword from '@/components/modal/ChangePassword.vue'
 import router from '@/router'
@@ -37,11 +37,11 @@ const handleSelect = async (key: string | number): void => {
     position="absolute"
     bordered
   >
-    <N-h2 class="title" align-text style="">
-      <NText>
+    <n-h2 class="title" align-text>
+      <n-text>
         全球政治安全监测分析系统
-      </NText>
-    </N-h2>
+      </n-text>
+    </n-h2>
     <n-space
       align="center"
       class="avatar-container"
@@ -76,6 +76,8 @@ const handleSelect = async (key: string | number): void => {
   justify-content: space-between;
   align-items: center;
   padding: 7px 24px;
+  background: url("@/assets/image/flag.png") no-repeat;
+  background-size: auto 70px;
 
   .title {
     margin: 0;

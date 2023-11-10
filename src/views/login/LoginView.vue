@@ -14,5 +14,7 @@ import Login from "../../components/login/Login.vue";
   min-height: 100vh;
   background: #2d3a4b;
   overflow: hidden;
+  background: url('@/assets/image/login_bg.png') no-repeat;
+  background-size: cover;
 }
 </style>

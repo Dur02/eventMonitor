@@ -22,7 +22,7 @@ const { selectedBtn, initialData } = storeToRefs(footerStore)
 
 const disabled = ref(false)
 const formValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
-const formRef: Ref<any | null> = ref(null)
+const configFormRef: Ref<any | null> = ref(null)
 
 const handleValidateClick =  (e: MouseEvent) => {
   e.preventDefault()
@@ -53,7 +53,7 @@ const handleValidateClick =  (e: MouseEvent) => {
 
 defineExpose({
   restoreValidation: () => {
-    formRef.value?.formRef.restoreValidation()
+    configFormRef.value?.formRef.restoreValidation()
   }
 })
 </script>
@@ -71,7 +71,7 @@ defineExpose({
       :theme-overrides="cardThemeOverrides"
     >
       <event-config-form
-        ref="formRef"
+        ref="configFormRef"
         :initialValue="formValue"
         :configType="['event_show_viz']"
         :formDisabled="true"
