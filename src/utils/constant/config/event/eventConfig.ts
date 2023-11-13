@@ -34,7 +34,7 @@ import {
   compact,
   filter,
   map,
-  flatten, includes
+  flatten, includes, intersection
 } from 'lodash/fp'
 import { CalendarEdit20Filled } from '@vicons/fluent'
 import { useConstantStore } from '@/stores/constant'
@@ -795,7 +795,7 @@ export const eventConfigFormBaseRules: FormRules = {
 }
 
 export const getEventConfigParam = (configSetting: any, configForm: any, geoCountryCodeList: TreeSelectOption[]) => {
-  const joinArray = (target: Array<number | string>): number | string => {
+  const joinArray = (target: Array<number | string>): string => {
     return join(',')(target)
   }
 
@@ -823,44 +823,117 @@ export const getEventConfigParam = (configSetting: any, configForm: any, geoCoun
     return (year + month + day);
   }
 
+  const getActorAndActionFormItem = () => {
+    const nullCommonObject = {
+      actor1ethniccode: null,
+      actor1geoCountrycode: null,
+      actor1geoAdm1code: null,
+      actor1geoType: null,
+      actor1knowngroupcode: null,
+      actor1religion1code: null,
+      actor1religion2code: null,
+      actor1type1code: null,
+      actor1type2code: null,
+      actor1type3code: null,
+      actor1name: null,
+      actor1nameIsBig: 0,
+      actor1geoFullname: null,
+      actor1geoFullnameIsBig: 0,
+      actor2ethniccode: null,
+      actor2geoCountrycode: null,
+      actor2geoAdm1code: null,
+      actor2geoType: null,
+      actor2knowngroupcode: null,
+      actor2religion1code: null,
+      actor2religion2code: null,
+      actor2type1code: null,
+      actor2type2code: null,
+      actor2type3code: null,
+      actor2name: null,
+      actor2nameIsBig: 0,
+      actor2geoFullname: null,
+      actor2geoFullnameIsBig: 0,
+      actiongeoCountrycode: null,
+      actiongeoAdm1code: null,
+      actiongeoType: null,
+      eventbasecode: null,
+      eventcode: null,
+      eventrootcode: null,
+      quadclass: null,
+      actiongeoFullname: null,
+      actiongeoFullnameIsBig: 0,
+      beginAvgtone: null,
+      endAvgtone: null,
+      beginGoldsteinscale: null,
+      endGoldsteinscale: null
+    }
+
+    return includes('event_country_monitor')(configSetting.formValue.configType) ? {
+      actor1countrycode: null,
+      actor2countrycode: null,
+      ...nullCommonObject
+    } : includes('event_country_relation_viz')(configSetting.formValue.configType) ? {
+      actor1countrycode: joinArray(configForm.formValue.actor1countrycode),
+      actor2countrycode: joinArray(configForm.formValue.actor2countrycode),
+      ...nullCommonObject
+    } : {
+      actor1countrycode: joinArray(configForm.formValue.actor1countrycode),
+      actor1ethniccode: joinArray(configForm.formValue.actor1ethniccode),
+      actor1geoCountrycode: getGeoCountryCode(configForm.formValue.actor1geoCountrycodeAndAdm1code),
+      actor1geoAdm1code: getGeoAdmCode(configForm.formValue.actor1geoCountrycodeAndAdm1code),
+      actor1geoType: joinArray(configForm.formValue.actor1geoType),
+      actor1knowngroupcode: joinArray(configForm.formValue.actor1knowngroupcode),
+      actor1religion1code: joinArray(configForm.formValue.actor1religion1code),
+      actor1religion2code: joinArray(configForm.formValue.actor1religion2code),
+      actor1type1code: joinArray(configForm.formValue.actor1type1code),
+      actor1type2code: joinArray(configForm.formValue.actor1type2code),
+      actor1type3code: joinArray(configForm.formValue.actor1type3code),
+      actor1name: configForm.formValue.actor1name,
+      actor1nameIsBig: configForm.formValue.actor1nameIsBig,
+      actor1geoFullname: configForm.formValue.actor1geoFullname,
+      actor1geoFullnameIsBig: configForm.formValue.actor1geoFullnameIsBig,
+      actor2countrycode: joinArray(configForm.formValue.actor2countrycode),
+      actor2ethniccode: joinArray(configForm.formValue.actor2ethniccode),
+      actor2geoCountrycode: getGeoCountryCode(configForm.formValue.actor2geoCountrycodeAndAdm1code),
+      actor2geoAdm1code: getGeoAdmCode(configForm.formValue.actor2geoCountrycodeAndAdm1code),
+      actor2geoType: joinArray(configForm.formValue.actor2geoType),
+      actor2knowngroupcode: joinArray(configForm.formValue.actor2knowngroupcode),
+      actor2religion1code: joinArray(configForm.formValue.actor2religion1code),
+      actor2religion2code: joinArray(configForm.formValue.actor2religion2code),
+      actor2type1code: joinArray(configForm.formValue.actor2type1code),
+      actor2type2code: joinArray(configForm.formValue.actor2type2code),
+      actor2type3code: joinArray(configForm.formValue.actor2type3code),
+      actor2name: configForm.formValue.actor2name,
+      actor2nameIsBig: configForm.formValue.actor2nameIsBig,
+      actor2geoFullname: configForm.formValue.actor2geoFullname,
+      actor2geoFullnameIsBig: configForm.formValue.actor2geoFullnameIsBig,
+      actiongeoCountrycode: getGeoCountryCode(configForm.formValue.actiongeoCountrycodeAndAdm1code),
+      actiongeoAdm1code: getGeoAdmCode(configForm.formValue.actiongeoCountrycodeAndAdm1code),
+      actiongeoType: joinArray(configForm.formValue.actiongeoType),
+      eventbasecode: joinArray(configForm.formValue.eventbasecode),
+      eventcode: joinArray(configForm.formValue.eventcode),
+      eventrootcode: joinArray(configForm.formValue.eventrootcode),
+      quadclass: joinArray(configForm.formValue.quadclass),
+      actiongeoFullname: configForm.formValue.actor2name,
+      actiongeoFullnameIsBig: configForm.formValue.actiongeoFullnameIsBig,
+      beginAvgtone: configForm.formValue.avgtone[0] || null,
+      endAvgtone: configForm.formValue.avgtone[1] || null,
+      beginGoldsteinscale: configForm.formValue.goldsteinscale[0] || null,
+      endGoldsteinscale: configForm.formValue.goldsteinscale[1] || null
+    }
+  }
+
   return ({
     ...configSetting.formValue,
     ...configForm.formValue,
     configType: joinArray(configSetting.formValue.configType),
-    actor1countrycode: joinArray(configForm.formValue.actor1countrycode),
-    actor1ethniccode: joinArray(configForm.formValue.actor1ethniccode),
-    actor1geoCountrycode: getGeoCountryCode(configForm.formValue.actor1geoCountrycodeAndAdm1code),
-    actor1geoAdm1code: getGeoAdmCode(configForm.formValue.actor1geoCountrycodeAndAdm1code),
-    actor1geoType: joinArray(configForm.formValue.actor1geoType),
-    actor1knowngroupcode: joinArray(configForm.formValue.actor1knowngroupcode),
-    actor1religion1code: joinArray(configForm.formValue.actor1religion1code),
-    actor1religion2code: joinArray(configForm.formValue.actor1religion2code),
-    actor1type1code: joinArray(configForm.formValue.actor1type1code),
-    actor1type2code: joinArray(configForm.formValue.actor1type2code),
-    actor1type3code: joinArray(configForm.formValue.actor1type3code),
-    actor2countrycode: joinArray(configForm.formValue.actor2countrycode),
-    actor2ethniccode: joinArray(configForm.formValue.actor2ethniccode),
-    actor2geoCountrycode: getGeoCountryCode(configForm.formValue.actor2geoCountrycodeAndAdm1code),
-    actor2geoAdm1code: getGeoAdmCode(configForm.formValue.actor2geoCountrycodeAndAdm1code),
-    actor2geoType: joinArray(configForm.formValue.actor2geoType),
-    actor2knowngroupcode: joinArray(configForm.formValue.actor2knowngroupcode),
-    actor2religion1code: joinArray(configForm.formValue.actor2religion1code),
-    actor2religion2code: joinArray(configForm.formValue.actor2religion2code),
-    actor2type1code: joinArray(configForm.formValue.actor2type1code),
-    actor2type2code: joinArray(configForm.formValue.actor2type2code),
-    actor2type3code: joinArray(configForm.formValue.actor2type3code),
-    actiongeoCountrycode  : getGeoCountryCode(configForm.formValue.actiongeoCountrycodeAndAdm1code),
-    actiongeoAdm1code: getGeoAdmCode(configForm.formValue.actiongeoCountrycodeAndAdm1code),
-    actiongeoType: joinArray(configForm.formValue.actiongeoType),
-    eventbasecode: joinArray(configForm.formValue.eventbasecode),
-    eventcode: joinArray(configForm.formValue.eventcode),
-    eventrootcode: joinArray(configForm.formValue.eventrootcode),
-    quadclass: joinArray(configForm.formValue.quadclass),
     beginSqldate: getDateString(configForm.formValue.sqldate[0]),
     endSqldate: getDateString(configForm.formValue.sqldate[1]),
-    beginAvgtone: configForm.formValue.avgtone[0] || null,
-    endAvgtone: configForm.formValue.avgtone[1] || null,
-    beginGoldsteinscale: configForm.formValue.goldsteinscale[0] || null,
-    endGoldsteinscale: configForm.formValue.goldsteinscale[1] || null,
+    weightBasis: includes('event_show_viz')(configSetting.formValue.configType) ? 1 : configForm.formValue.weightBasis,
+    statisticsBasis: intersection(
+      configSetting.formValue.configType,
+      ['event_timeline_viz', 'event_timeline_type_viz', 'event_timeline_geo_viz', 'event_tone_scale_viz']
+    ).length !== 0 ? configForm.formValue.weightBasis : 1,
+    ...getActorAndActionFormItem(),
   })
 }
