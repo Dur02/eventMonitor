@@ -19,7 +19,7 @@
 
 })("h337", this, function () {
 
-// Heatmap Config stores default values and will be merged with instance config
+// Heatmap Config stores default values and will be merged with instance eventAnalyse
 var HeatmapConfig = {
   defaultRadius: 40,
   defaultRenderer: 'canvas2d',

@@ -176,7 +176,7 @@ $(document).ready(function(){
 			dt = {type: 2};
 		}
 		$.ajax({
-			url:'../config/getEventCategoryListByType',
+			url:'../eventAnalyse/getEventCategoryListByType',
 			type:'GET',
 			data: dt,
 			success:function(data){

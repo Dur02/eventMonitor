@@ -1,6 +1,6 @@
 import request from './index'
-import type { GetEventConfigListRespType, GetEventConfigListType, UpdateEventConfigShowType } from '@/types/api/config'
-import type { AxiosResponse } from 'axios';
+import type { GetEventConfigListRespType, GetEventConfigListType, UpdateEventConfigShowType } from 'src/types/api/eventConfiguration'
+import type { AxiosResponse } from 'axios'
 
 // 是否挂起转态修改：1->显示(默认)，2->不显示
 export function updateEventConfigShow(

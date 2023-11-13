@@ -3047,7 +3047,7 @@ function getActorSelectData(){
 }
 //配置页面下载数据
 function dowoladFile(fileId){
-	window.location.href="../config/downloadFile?fileId="+fileId;
+	window.location.href="../eventAnalyse/downloadFile?fileId="+fileId;
 }
 //根据领导人名称获取对应关键字
 function findLeaderKeyWordByName(obj){

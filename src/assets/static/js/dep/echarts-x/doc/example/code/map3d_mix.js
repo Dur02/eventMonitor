@@ -1,4 +1,4 @@
-var ecConfig = require('echarts/config');
+var ecConfig = require('echarts/eventAnalyse');
 var mapParams = require('echarts/util/mapData/params').params;
 
 mapParams.world.getGeoJson(function (data) {

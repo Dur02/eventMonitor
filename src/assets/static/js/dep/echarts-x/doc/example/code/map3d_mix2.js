@@ -1,4 +1,4 @@
-var ecConfig = require('echarts/config');
+var ecConfig = require('echarts/eventAnalyse');
 
 $.ajax({
     url: 'data/gdp.json',

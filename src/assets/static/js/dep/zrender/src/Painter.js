@@ -483,7 +483,7 @@
             if (!layer) {
                 return;
             }
-            // Save config
+            // Save eventAnalyse
             this.modLayer(zlevel, {
                 position: layer.position,
                 rotation: layer.rotation,

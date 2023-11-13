@@ -1,5 +1,5 @@
 /**
- * This is a sample chart export config file. It is provided as a reference on
+ * This is a sample chart export eventAnalyse file. It is provided as a reference on
  * how miscelaneous items in export menu can be used and set up.
  *
  * Please refer to README.md for more information.
@@ -66,7 +66,7 @@ AmCharts.exportDrawingMenu = [ {
 
 
 /**
- * Define main universal config
+ * Define main universal eventAnalyse
  */
 AmCharts.exportCFG = {
   enabled: true,

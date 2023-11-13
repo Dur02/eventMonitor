@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { LayoutFooterProps } from 'naive-ui'
 import { NButton, NIcon, NLayoutFooter, NScrollbar } from 'naive-ui'
 import { ArrowBackSharp, ArrowForward, CaretDownCircle, CaretUpCircle } from '@vicons/ionicons5'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
@@ -11,17 +10,14 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import { layoutFooterLightThemeOverrides, layoutFooterDarkThemeOverrides } from '@/utils/constant/layout/footer'
 import CommonForm from '@/components/layout/CommonForm.vue'
-import { getFooterBtn, getSearchInitial } from '@/api/footer'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const footerStore = useFooterStore()
-const { selectedBtn } = storeToRefs(footerStore)
-const { setSelectedBtn, setInitialData } = footerStore
+const { isSearchNow, paginationReactive, selectedId, configList } = storeToRefs(footerStore)
+const { getConfigList, setSelectedId, setIsSearchNow } = footerStore
 const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
 
-const footerBtn: Ref<any[]> = ref([])
-const currentPage: Ref<number> = ref(1)
 const footerForm: any = ref(null)
 const scrollContainer: any = ref(null)
 const scrollWrapper: Ref<HTMLElement | null> = ref(null)
@@ -32,11 +28,10 @@ const handleScroll = (e: WheelEvent) => {
   scrollContainer.value!.scrollBy({ left: eventDelta < 0 ? 100 : -100 })
 }
 
-const changeSelectedTab = (name: string) => {
-  if (selectedBtn.value !== name) {
-    setSelectedBtn(name)
-    const res = getSearchInitial(name)
-    setInitialData(res)
+const changeSelectedTab = (id: number) => {
+  setIsSearchNow(false)
+  if (selectedId.value !== id) {
+    setSelectedId(id)
     if (footerForm.value?.restoreValidation) {
       footerForm.value?.restoreValidation()
     }
@@ -55,41 +50,39 @@ const changeExpand = () => {
 const changePage = (isNext: boolean): void => {
   switch (isNext) {
     case true: {
-      footerBtn.value = getFooterBtn('number')
-      setSelectedBtn(footerBtn.value[0]?.name)
-      const initialRes = getSearchInitial(footerBtn.value[0]?.name)
-      setInitialData(initialRes)
+      reload(paginationReactive.value.page! + 1, paginationReactive.value.pageSize!)
       break
     }
     default: {
-      footerBtn.value = getFooterBtn('letter')
-      setSelectedBtn(footerBtn.value[0]?.name)
-      const initialRes = getSearchInitial(footerBtn.value[0]?.name)
-      setInitialData(initialRes)
+      reload(paginationReactive.value.page! - 1, paginationReactive.value.pageSize!)
       break
     }
   }
 }
 
 const handleSearchNow = () => {
-  setSelectedBtn('')
+  setIsSearchNow(true)
   if (footerForm.value?.restoreValidation) {
     footerForm.value?.restoreValidation()
   }
   footerExpand.value = true
 }
 
-const reload = async () => {
-  footerBtn.value = getFooterBtn(route.meta.type as string)
-  setSelectedBtn(footerBtn.value[0]?.name)
-  const initialRes = getSearchInitial(footerBtn.value[0]?.name)
-  setInitialData(initialRes)
+const reload = async (page: number, pageSize: number) => {
+  if (route.meta.requestFunc && route.meta.type) {
+    await getConfigList(
+      route.meta.requestFunc as Function,
+      route.meta.type as string,
+      page,
+      pageSize
+    )
+  }
 }
 
 watch(
   () => route.name,
   async () => {
-    await reload()
+    await reload(1, 10)
   },
   {
     immediate: true
@@ -120,7 +113,9 @@ watch(
         </template>
       </n-button>
       <n-button
+        v-if="paginationReactive.itemCount! > paginationReactive.pageSize!"
         class="fixed-btn"
+        :disabled="paginationReactive.page! === 1"
         type="warning"
         size="small"
         @click="() => changePage(false)"
@@ -142,18 +137,20 @@ watch(
         <div class="scroll-wrapper" ref="scrollWrapper">
           <n-button
             class="footer-btn"
-            v-for="item in footerBtn"
-            :key="item.name"
-            :type="selectedBtn === item.name ? 'primary': 'tertiary'"
+            v-for="item in configList"
+            :type="selectedId === item.id && !isSearchNow ? 'primary': 'tertiary'"
+            :key="item.id"
             size="small"
-            @click="() => changeSelectedTab(item.name)"
+            @click="() => changeSelectedTab(item.id)"
           >
-            {{ item.name }}
+            {{ item.configName }}
           </n-button>
         </div>
       </n-scrollbar>
       <n-button
+        v-if="paginationReactive.itemCount! > paginationReactive.pageSize!"
         class="fixed-btn"
+        :disabled="paginationReactive.page! + 1 > Math.ceil(paginationReactive.itemCount! / paginationReactive.pageSize!)"
         type="warning"
         size="small"
         @click="() => changePage(true)"

@@ -3,6 +3,7 @@ import renderIcon from '@/utils/function/renderIcon'
 import { NavigateCircle, NotificationsSharp, Settings } from '@vicons/ionicons5'
 import EventDisplayForm from '@/components/event/display/EventDisplayForm.vue'
 import EventTimelineForm from '@/components/event/timeline/EventTimelineForm.vue'
+import { getEventConfigListByConfigName } from '@/api/eventAnalyse'
 
 export default [
   {
@@ -21,7 +22,8 @@ export default [
         meta: {
           breadcrumb: '事件展示',
           hasFooter: true,
-          type: 'letter',
+          type: 'event_show_viz',
+          requestFunc: getEventConfigListByConfigName,
           footerForm: EventDisplayForm
         },
         component: () => import('../views/event/display/EventDisplayView.vue')
@@ -32,7 +34,8 @@ export default [
         meta: {
           breadcrumb: '事件时间线',
           hasFooter: true,
-          type: 'number',
+          type: 'event_timeline_viz',
+          requestFunc: getEventConfigListByConfigName,
           footerForm: EventTimelineForm
         },
         component: () => import('../views/event/timeline/EventTimelineView.vue')
@@ -55,6 +58,9 @@ export default [
         meta: {
           breadcrumb: '图谱展示',
           hasFooter: true,
+          type: 'event_show_viz',
+          requestFunc: getEventConfigListByConfigName,
+          footerForm: EventDisplayForm
         },
         component: () => import('../views/graph/display/GraphDisplayView.vue')
       },
@@ -64,6 +70,9 @@ export default [
         meta: {
           breadcrumb: '图谱时间线',
           hasFooter: true,
+          type: 'event_show_viz',
+          requestFunc: getEventConfigListByConfigName,
+          footerForm: EventDisplayForm
         },
         component: () => import('../views/graph/timeline/GraphTimelineView.vue')
       },

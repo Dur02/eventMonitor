@@ -8,7 +8,7 @@ define(function (require) {
 
     'use strict';
 
-    var ecConfig = require('echarts/config');
+    var ecConfig = require('echarts/eventAnalyse');
     var zrUtil = require('zrender/tool/util');
 
     var ComponentBase3D = require('../component/base3d');

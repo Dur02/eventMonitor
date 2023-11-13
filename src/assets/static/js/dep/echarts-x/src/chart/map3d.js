@@ -698,7 +698,7 @@ define(function (require) {
         },
 
         /**
-         * Update sun light position and shading config
+         * Update sun light position and shading eventAnalyse
          * @param  {Array.<Object>} seriesGroup
          */
         _updateLightShading: function (seriesGroup) {

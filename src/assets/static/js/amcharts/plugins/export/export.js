@@ -4065,7 +4065,7 @@ if ( !AmCharts.translations[ "export" ][ "en" ] ) {
 			},
 
 			/**
-			 * Initiates export instance; merges given config; attaches event listener
+			 * Initiates export instance; merges given eventAnalyse; attaches event listener
 			 */
 			construct: function() {
 				// ANNOTATION; MAP "DONE"

@@ -1063,8 +1063,8 @@ Path.prototype = {
  * @param {string} props.type Path type
  * @param {Function} props.init Initialize
  * @param {Function} props.buildPath Overwrite buildPath method
- * @param {Object} [props.style] Extended default style config
- * @param {Object} [props.shape] Extended default shape config
+ * @param {Object} [props.style] Extended default style eventAnalyse
+ * @param {Object} [props.shape] Extended default shape eventAnalyse
  */
 
 Path.extend = function (defaults) {
@@ -12439,15 +12439,15 @@ var easingFuncs = __webpack_require__(46);
 
 /**
  * 动画主控制器
- * @config target 动画对象，可以是数组，如果是数组的话会批量分发onframe等事件
- * @config life(1000) 动画时长
- * @config delay(0) 动画延迟时间
- * @config loop(true)
- * @config gap(0) 循环的间隔时间
- * @config onframe
- * @config easing(optional)
- * @config ondestroy(optional)
- * @config onrestart(optional)
+ * @eventAnalyse target 动画对象，可以是数组，如果是数组的话会批量分发onframe等事件
+ * @eventAnalyse life(1000) 动画时长
+ * @eventAnalyse delay(0) 动画延迟时间
+ * @eventAnalyse loop(true)
+ * @eventAnalyse gap(0) 循环的间隔时间
+ * @eventAnalyse onframe
+ * @eventAnalyse easing(optional)
+ * @eventAnalyse ondestroy(optional)
+ * @eventAnalyse onrestart(optional)
  *
  * TODO pause
  */

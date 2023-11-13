@@ -14,27 +14,29 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import { useRoute } from 'vue-router'
-import { getEventList } from '@/api/event'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
 import { allColumns } from '@/utils/constant/event/display/eventDisplayView'
-import { map, filter, includes } from 'lodash/fp'
+import { map, filter, includes, slice } from 'lodash/fp'
+import { getResultDataByConfigId } from '@/api/eventAnalyse'
+import deepCopy from '@/utils/function/deepcopy'
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
 
 const route = useRoute()
 const footStore = useFooterStore()
-const { selectedBtn, initialData } = storeToRefs(footStore)
+const { selectedId } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
 const columnsRef: Ref<DataTableColumns<eventDisplayRowsType>> = ref(allColumns)
 const selectedColumn: Ref<string[]> = ref(map(({ key }) => key)(allColumns))
+const allData: Ref<eventDisplayRowsType[]> = ref([])
 const dataRef: Ref<eventDisplayRowsType[]> = ref([])
 const loadingRef: Ref<boolean> = ref(false)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
   // pageCount: 1,
-  pageSize: 50,
+  pageSize: 30,
   // pageSizes: [10, 20, 50, 100],
   itemCount: 0,
   // showSizePicker: true,
@@ -56,14 +58,20 @@ const handleSelect = (selectedArray: Array<string>) => {
 const reloadTableData = async (page: number) => {
   if (!loadingRef.value) {
     loadingRef.value = true
-    paginationReactive.page = page
     try {
-      const { rows, total } = await getEventList({ pageNum: page, pageSize: paginationReactive.pageSize! })
-      dataRef.value = mapWithIndex((item: eventDisplayRowsType, index: number) => ({
+      const {
+        data: {
+          resultData: {
+            rows
+          }
+        }
+      } = await getResultDataByConfigId({ configId: selectedId.value! })
+      allData.value = mapWithIndex((item: eventDisplayRowsType, index: number) => ({
         ...item,
         numbers: index + (page - 1) * paginationReactive.pageSize! + 1
       }))(rows)
-      paginationReactive.itemCount = total
+      dataRef.value = slice(0, paginationReactive.pageSize!)(deepCopy(allData.value))
+      paginationReactive.itemCount = rows.length
     } catch (e) {
       //
     }
@@ -72,13 +80,14 @@ const reloadTableData = async (page: number) => {
 }
 
 const handlePageChange = async (currentPage: number): Promise<void> => {
-  await reloadTableData(currentPage)
+  dataRef.value = slice((currentPage - 1) * paginationReactive.pageSize!, currentPage * paginationReactive.pageSize!)(deepCopy(allData.value))
+  paginationReactive.page = currentPage
 }
 
 watch(
-  () => initialData.value,
+  () => selectedId.value,
   async () => {
-    if (Object.keys(initialData.value).length !== 0 && selectedBtn.value && route.name === 'eventDisplay') {
+    if (selectedId.value && route.name === 'eventDisplay') {
       await reloadTableData(1)
     }
   },
@@ -126,7 +135,6 @@ watch(
         :row-key="(rowData: eventDisplayRowsType) => rowData.globaleventid"
         max-height="calc(100vh - 295px)"
         @update:page="handlePageChange"
-        virtual-scroll
       />
     </n-space>
   </div>

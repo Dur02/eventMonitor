@@ -1,5 +1,5 @@
 import request from './index'
-import type { CountryType, EventCodeType } from '@/types/api/codeDict'
+import type { CountryType, EventCodeType } from 'src/types/api/eventCodeDict'
 
 // 通过国家编码获取地区编码信息
 export function getRegionCodeList({ countryCode }: CountryType) {

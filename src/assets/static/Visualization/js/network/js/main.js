@@ -3,7 +3,7 @@ var sigInst, canvas, $GP
 //Load configuration file
 var config={};
 
-//For debug allow a config=file.json parameter to specify the config
+//For debug allow a eventAnalyse=file.json parameter to specify the eventAnalyse
 function GetQueryStringParams(sParam,defaultVal) {
     var sPageURL = ""+window.location;//.search.substring(1);//This might be causing error in Safari?
     if (sPageURL.indexOf("?")==-1) return defaultVal;
@@ -123,8 +123,8 @@ function setupGUI(config) {
 	$("#titletext").html(config.text.intro);
 
 	// More information
-//	if (config.text.more) {
-//		$("#information").html(config.text.more);
+//	if (eventAnalyse.text.more) {
+//		$("#information").html(eventAnalyse.text.more);
 //	} else {
 //		//hide more information link
 //		$("#moreinformation").hide();

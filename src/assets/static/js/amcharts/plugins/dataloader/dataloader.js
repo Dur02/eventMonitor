@@ -394,7 +394,7 @@ AmCharts.addInitHandler( function( chart ) {
   }
 
   /**
-   * Applies defaults to config object
+   * Applies defaults to eventAnalyse object
    */
   function applyDefaults( obj ) {
     for ( var x in defaults ) {

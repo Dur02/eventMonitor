@@ -60,11 +60,11 @@ define(function (require) {
     checkVersion(require('qtek'), 'qtek');
     checkVersion(require('echarts'), 'echarts');
 
-    var ecConfig = require('echarts/config');
+    var ecConfig = require('echarts/eventAnalyse');
     var ecxConfig = require('./config');
     var zrUtil = require('zrender/tool/util');
 
-    // Extend echarts config
+    // Extend echarts eventAnalyse
     zrUtil.merge(ecConfig, ecxConfig, true);
 
     // Some basic dependencies

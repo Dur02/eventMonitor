@@ -3,7 +3,7 @@ var etpl = require('etpl');
 var marked = require('marked');
 var _ = require('lodash');
 
-var config = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
+var config = JSON.parse(fs.readFileSync('eventAnalyse.json', 'utf-8'));
 
 
 etpl.compile(fs.readFileSync('tpl/footer.tpl', 'utf-8'));
