@@ -22,7 +22,7 @@ const route = useRoute()
       <n-layout
         position="absolute"
         has-sider
-        style="top: 50px;"
+        style="top: 70px;"
       >
         <custom-sider/>
         <n-layout>

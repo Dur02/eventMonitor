@@ -4,6 +4,7 @@ import type {
   GetResultDataByConfigIdRespType,
   GetResultDataByConfigIdType
 } from 'src/types/api/eventAnalyse'
+import type { AxiosResponse } from 'axios'
 
 // 事件库分析-执行任务
 export function runTask({ configId }: { configId: number } ) {
@@ -59,5 +60,14 @@ export function getResultDataByConfigId({ configId }: GetResultDataByConfigIdTyp
     params: {
       configId
     }
+  })
+}
+
+// 事件库分析-根据事件配置id查询结果数据
+export function instantQuery(params: any): Promise<AxiosResponse<any, any>> {
+  return request({
+    url: '/eventMonitor/eventAnalyze/instantQuery',
+    method: 'post',
+    params
   })
 }

@@ -32,6 +32,7 @@ const { setTableLoading, changeLastSearchValue, setCheckedRowKeys, reloadTableDa
 const formRef: Ref<FormInst | null> = ref(null)
 const drawerShow: Ref<boolean>  = ref(false)
 const drawerTitle: Ref<string> = ref('')
+const settingDisabled: Ref<boolean>  = ref(false)
 const formDisabled: Ref<boolean>  = ref(false)
 const settingInitialValue: Ref<eventConfigSettingInitialValueType> = ref(eventConfigSettingInitialValue)
 const formInitialValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
@@ -63,14 +64,16 @@ const handleUpdateDrawer = (
   settingInitial: eventConfigSettingInitialValueType,
   formInitial: eventConfigFormInitialValueType,
   show: boolean,
-  disabled: boolean,
+  settingDisabledParam: boolean,
+  formDisabledParam: boolean,
   id: number | null
 ) => {
   drawerTitle.value = title
   settingInitialValue.value = settingInitial
   formInitialValue.value = formInitial
   drawerShow.value = show
-  formDisabled.value = disabled
+  settingDisabled.value = settingDisabledParam
+  formDisabled.value = formDisabledParam
   configId.value = id
 }
 
@@ -80,6 +83,7 @@ const handleOpenCreate = () => {
     eventConfigSettingInitialValue,
     eventConfigFormInitialValue,
     true,
+    false,
     false,
     null
   )
@@ -219,6 +223,7 @@ onMounted(async () => {
       :drawerShow="drawerShow"
       :settingInitialValue="settingInitialValue"
       :formInitialValue="formInitialValue"
+      :settingDisabled="settingDisabled"
       :formDisabled="formDisabled"
       :configId="configId"
       @DrawerClose="updateDrawerShow"

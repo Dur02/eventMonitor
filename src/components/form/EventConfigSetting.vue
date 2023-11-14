@@ -27,7 +27,7 @@ import deepCopy from '@/utils/function/deepcopy'
 
 const props = defineProps<{
   initialValue: eventConfigSettingInitialValueType,
-  formDisabled: boolean
+  settingDisabled: boolean
 }>()
 const emits = defineEmits(['selectConfigType'])
 
@@ -112,7 +112,7 @@ watch(
           <n-select
             :options="eventConfigTypeList"
             v-model:value="formValue.configType"
-            :disabled="formDisabled"
+            :disabled="settingDisabled"
             :render-option="renderOption"
             max-tag-count="responsive"
             multiple
@@ -155,19 +155,17 @@ watch(
           <n-select
             v-model:value="formValue.purview"
             :options="priorityOption"
-            clearable
             style="width: 100%;"
           />
         </n-form-item-gi>
         <n-form-item-gi
           span="1"
           label="实时监测"
-          path="isShow"
+          path="isMonitor"
         >
           <n-select
-            v-model:value="formValue.isShow"
+            v-model:value="formValue.isMonitor"
             :options="monitorOption"
-            clearable
             style="width: 100%;"
           />
         </n-form-item-gi>

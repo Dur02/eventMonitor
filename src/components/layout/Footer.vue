@@ -82,7 +82,7 @@ const reload = async (page: number, pageSize: number) => {
 watch(
   () => route.name,
   async () => {
-    await reload(1, 10)
+    await reload(1, paginationReactive.value.pageSize!)
   },
   {
     immediate: true

@@ -36,7 +36,7 @@ export default [
           hasFooter: true,
           type: 'event_timeline_viz',
           requestFunc: getEventConfigListByConfigName,
-          footerForm: EventTimelineForm
+          footerForm: EventDisplayForm
         },
         component: () => import('../views/event/timeline/EventTimelineView.vue')
       },

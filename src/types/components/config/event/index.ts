@@ -11,7 +11,7 @@ export interface eventConfigSettingInitialValueType {
   remark: string | null,
   orderPriority: number | null,
   purview: number | null,
-  isShow: number | null
+  isMonitor: number | null
 }
 
 export interface eventConfigFormInitialValueType {
@@ -56,24 +56,20 @@ export interface eventConfigFormInitialValueType {
   actiongeoFullname: string | null,
   actiongeoFullnameIsBig: number,
   sourceUrl: string | null,
-  avgtone: Array<number | null>,
-  goldsteinscale: Array<number | null>,
-  isrootevent: number | null
+  beginAvgtone: number | null,
+  endAvgtone: number | null,
+  // avgtone: Array<number | null>,
+  beginGoldsteinscale: number | null,
+  endGoldsteinscale: number | null,
+  // goldsteinscale: Array<number | null>,
+  isrootevent: number | null,
+  numsourcesMin: number | null,
+  numsourcesMax: number | null,
+  nummentionsMin: number | null,
+  nummentionsMax: number | null,
+  numarticlesMin: number | null,
+  numarticlesMax: number | null,
 }
-
-// export type eventConfigRowsType = {
-//   numbers: number,
-//   orderPriority: number,
-//   isShow: number,
-//   configName: string,
-//   configType: string,
-//   createByName: string,
-//   purview: number,
-//   createTime: string,
-//   remark: string,
-//   runStatus: number,
-//   id: number
-// }
 
 /**
  * EventConfigurationBo，事件配置管理业务对象 gt_event_configuration
@@ -304,6 +300,10 @@ export interface eventConfigRowsType {
    */
   id: number,
   /**
+   * 是否实时监测: 1->是，0->否
+   */
+  isMonitor: number,
+  /**
    * 是否为根事件
    */
   isrootevent: number | null,
@@ -318,27 +318,27 @@ export interface eventConfigRowsType {
   /**
    * 最大文章数
    */
-  numarticlesMax?: number,
+  numarticlesMax: number | null,
   /**
    * 最小文章数
    */
-  numarticlesMin?: number,
+  numarticlesMin: number | null,
   /**
    * 最大所提到次数（事件数)
    */
-  nummentionsMax?: number,
+  nummentionsMax: number | null,
   /**
    * 最小所提到次数（事件数)
    */
-  nummentionsMin?: number,
+  nummentionsMin: number | null,
   /**
    * 最大来源数
    */
-  numsourcesMax?: number,
+  numsourcesMax: number | null,
   /**
    * 最小来源数
    */
-  numsourcesMin?: number,
+  numsourcesMin: number | null,
   /**
    * 优先级：用于界面此配置的显示顺序
    */

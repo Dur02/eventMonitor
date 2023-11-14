@@ -297,8 +297,8 @@ watch(
         </n-space>
       </n-radio-group>
     </n-form-item>
+<!--    v-if="!includes('event_show_viz')(configType)"-->
     <n-form-item
-      v-if="!includes('event_show_viz')(configType)"
       path="weightBasis"
       label-style="font-weight: 600;"
       label-width="110"
@@ -313,8 +313,11 @@ watch(
       </template>
       <n-radio-group v-model:value="formValue.weightBasis">
         <n-space>
-          <n-radio :value="1">
+          <n-radio :value="4">
             事件数
+          </n-radio>
+          <n-radio :value="1">
+            提及数
           </n-radio>
           <n-radio :value="2">
             文章数
@@ -322,14 +325,11 @@ watch(
           <n-radio :value="3">
             信源数
           </n-radio>
-          <n-radio :value="4">
-            事件数(去重)
-          </n-radio>
         </n-space>
       </n-radio-group>
     </n-form-item>
+<!--    v-if="intersection(configType, ['event_timeline_viz', 'event_timeline_type_viz', 'event_timeline_geo_viz', 'event_tone_scale_viz']).length !== 0"-->
     <n-form-item
-      v-if="intersection(configType, ['event_timeline_viz', 'event_timeline_type_viz', 'event_timeline_geo_viz', 'event_tone_scale_viz']).length !== 0"
       path="statisticsBasis"
       label-style="font-weight: 600;"
       label-width="110"
@@ -344,18 +344,18 @@ watch(
       </template>
       <n-radio-group v-model:value="formValue.statisticsBasis">
         <n-space>
-          <n-radio :value="1">
-            比重
-          </n-radio>
           <n-radio :value="2">
             数量
+          </n-radio>
+          <n-radio :value="1">
+            比重
           </n-radio>
         </n-space>
       </n-radio-group>
     </n-form-item>
 <!--    v-if="!includes('event_country_monitor')(configType)"-->
+<!--    v-if="intersection(configType, ['event_country_monitor']).length === 0"-->
     <n-form-item
-      v-if="intersection(configType, ['event_country_monitor']).length === 0"
       :show-feedback="false"
       label-style="font-weight: 600;"
       label-width="110"
@@ -396,8 +396,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="组织"
             >
@@ -411,8 +411,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="宗教1"
             >
@@ -426,8 +426,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="宗教2"
             >
@@ -441,8 +441,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="种族"
             >
@@ -456,8 +456,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="种类1"
             >
@@ -471,8 +471,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="种类2"
             >
@@ -486,8 +486,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="种类3"
             >
@@ -501,15 +501,15 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="4"
               style="margin-left: 80px;"
             >
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="3"
               label="角色全称"
             >
@@ -517,8 +517,8 @@ watch(
                 v-model:value="formValue.actor1name"
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
             >
               <n-checkbox
@@ -530,8 +530,8 @@ watch(
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="2"
               label="地理类型"
             >
@@ -544,8 +544,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="2"
               label="国家/州省"
             >
@@ -562,22 +562,22 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="4"
               style="margin-left: 80px;"
             >
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="3"
               label="地理全称"
             >
               <n-input v-model:value="formValue.actor1geoFullname" />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
             >
               <n-checkbox
@@ -591,8 +591,8 @@ watch(
             </n-form-item-gi>
           </n-grid>
         </n-form-item-gi>
+<!--        v-if="!includes('event_country_monitor')(configType)"-->
         <n-form-item-gi
-          v-if="!includes('event_country_monitor')(configType)"
           :span="24"
           label="角色2"
           label-width="60"
@@ -619,8 +619,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="组织"
             >
@@ -634,8 +634,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="宗教1"
             >
@@ -649,8 +649,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="宗教2"
             >
@@ -664,8 +664,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="种族"
             >
@@ -679,8 +679,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="种类1"
             >
@@ -694,8 +694,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="种类2"
             >
@@ -709,8 +709,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
               label="种类3"
             >
@@ -724,22 +724,22 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="4"
               style="margin-left: 80px;"
             >
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="3"
               label="角色全称"
             >
               <n-input v-model:value="formValue.actor2name" />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
             >
               <n-checkbox
@@ -751,8 +751,8 @@ watch(
                 区分大小写
               </n-checkbox>
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="2"
               label="地理类型"
             >
@@ -765,8 +765,8 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="2"
               label="国家/州省"
             >
@@ -783,22 +783,22 @@ watch(
                 clearable
               />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="4"
               style="margin-left: 80px;"
             >
               <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
             </n-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="3"
               label="地理全称"
             >
               <n-input v-model:value="formValue.actor2geoFullname" />
             </n-form-item-gi>
+<!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
-              v-if="!includes('event_country_relation_viz')(configType)"
               span="1"
             >
               <n-checkbox
@@ -814,8 +814,8 @@ watch(
         </n-form-item-gi>
       </n-grid>
     </n-form-item>
+<!--    v-if="intersection(configType, ['event_country_monitor', 'event_country_relation_viz']).length === 0"-->
     <n-form-item
-      v-if="intersection(configType, ['event_country_monitor', 'event_country_relation_viz']).length === 0"
       :show-feedback="false"
       label-style="font-weight: 600;"
       label-width="110"
@@ -964,7 +964,7 @@ watch(
             </n-form-item-gi>
             <n-form-item-gi span="1" label="情感值">
               <n-input-number
-                v-model:value="formValue.avgtone[0]"
+                v-model:value="formValue.beginAvgtone"
                 :show-button="false"
                 :precision="0"
                 :min="-100"
@@ -973,7 +973,7 @@ watch(
               />
               至
               <n-input-number
-                v-model:value="formValue.avgtone[1]"
+                v-model:value="formValue.endAvgtone"
                 :show-button="false"
                 :precision="0"
                 :min="-100"
@@ -983,7 +983,7 @@ watch(
             </n-form-item-gi>
             <n-form-item-gi span="1" label="影响度">
               <n-input-number
-                v-model:value="formValue.goldsteinscale[0]"
+                v-model:value="formValue.beginGoldsteinscale"
                 :show-button="false"
                 :precision="0"
                 :min="-10"
@@ -992,7 +992,7 @@ watch(
               />
               至
               <n-input-number
-                v-model:value="formValue.goldsteinscale[1]"
+                v-model:value="formValue.endGoldsteinscale"
                 :show-button="false"
                 :precision="0"
                 :min="-10"
@@ -1007,6 +1007,76 @@ watch(
               />
             </n-form-item-gi>
           </n-grid>
+        </n-form-item-gi>
+      </n-grid>
+    </n-form-item>
+    <n-form-item
+      :show-feedback="false"
+      label-style="font-weight: 600;"
+      label-width="110"
+    >
+      <template #label>
+        <div class="icon-label">
+          <n-icon class="icon" size="20">
+            <document-text />
+          </n-icon>
+          <span>权重值</span>
+        </div>
+      </template>
+      <n-grid
+        cols="2 600:3 800:4"
+        x-gap="15"
+      >
+        <n-form-item-gi span="1" label="事件数" label-width="60">
+          <n-input-number
+            v-model:value="formValue.nummentionsMin"
+            :show-button="false"
+            :precision="0"
+            :min="0"
+            style="padding-right: 5px;"
+          />
+          至
+          <n-input-number
+            v-model:value="formValue.nummentionsMax"
+            :show-button="false"
+            :precision="0"
+            :min="0"
+            style="padding-left: 5px;"
+          />
+        </n-form-item-gi>
+        <n-form-item-gi span="1" label="文章数" label-width="60">
+          <n-input-number
+            v-model:value="formValue.numarticlesMin"
+            :show-button="false"
+            :precision="0"
+            :min="0"
+            style="padding-right: 5px;"
+          />
+          至
+          <n-input-number
+            v-model:value="formValue.numarticlesMax"
+            :show-button="false"
+            :precision="0"
+            :min="0"
+            style="padding-left: 5px;"
+          />
+        </n-form-item-gi>
+        <n-form-item-gi span="1" label="信源数" label-width="60">
+          <n-input-number
+            v-model:value="formValue.numsourcesMin"
+            :show-button="false"
+            :precision="0"
+            :min="0"
+            style="padding-right: 5px;"
+          />
+          至
+          <n-input-number
+            v-model:value="formValue.numsourcesMax"
+            :show-button="false"
+            :precision="0"
+            :min="0"
+            style="padding-left: 5px;"
+          />
         </n-form-item-gi>
       </n-grid>
     </n-form-item>

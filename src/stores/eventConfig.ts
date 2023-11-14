@@ -86,7 +86,10 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
         dataRef.value = flow(
           map((item: eventConfigRowsType) => {
             if (item.id === data.id) {
-              return data
+              return {
+                ...item,
+                data
+              }
             }
             return item
           })

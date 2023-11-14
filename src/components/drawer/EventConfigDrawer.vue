@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { ref } from 'vue'
-import type { FormValidationError } from 'naive-ui'
+import type { FormValidationError, ScrollbarInst } from 'naive-ui'
 import {
   NDrawer,
   NDrawerContent,
@@ -14,7 +14,9 @@ import {
   cardDarkThemeOverrides,
   cardLightThemeOverrides,
   drawerDarkThemeOverrides,
-  drawerLightThemeOverrides
+  drawerLightThemeOverrides,
+  getConfigSettingValue,
+  getConfigFormValue
 } from '@/utils/constant/config/event/eventConfig'
 import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
@@ -22,16 +24,12 @@ import EventConfigSetting from '@/components/form/EventConfigSetting.vue'
 import EventConfigForm from '@/components/form/EventConfigForm.vue'
 import type { eventConfigSettingInitialValueType, eventConfigFormInitialValueType } from '@/types/components/config/event'
 import { addEventConfig, updateEventConfig } from '@/api/eventConfiguration'
-import { useConstantStore } from '@/stores/constant'
 import { useEventConfigStore } from '@/stores/eventConfig'
-import { getEventConfigParam } from '@/utils/constant/config/event/eventConfig'
 
 const message = useMessage()
 
 const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
-const constantStore = useConstantStore()
-const { geoCountryCodeList } = storeToRefs(constantStore)
 const eventConfigStore = useEventConfigStore()
 const { paginationReactive } = storeToRefs(eventConfigStore)
 const { reloadTableData } = eventConfigStore
@@ -40,13 +38,15 @@ const props = defineProps<{
   drawerTitle: string,
   drawerShow: boolean,
   settingInitialValue: eventConfigSettingInitialValueType,
-  formInitialValue: eventConfigFormInitialValueType
+  formInitialValue: eventConfigFormInitialValueType,
+  settingDisabled: boolean,
   formDisabled: boolean,
   configId: number | null
 }>()
 
 const emits = defineEmits(['DrawerClose', 'AfterLeave'])
 
+const scrollBarRef: Ref<ScrollbarInst | null> = ref(null)
 const configSetting: any = ref(null)
 const configForm: any = ref(null)
 const configType: Ref<string[]> = ref([])
@@ -68,13 +68,19 @@ const handleCreate = () => {
     configForm.value?.formRef.validate(async (formError: Array<FormValidationError>) => {
       if (!settingErrors && !formError) {
         try {
-          await addEventConfig(getEventConfigParam(configSetting.value, configForm.value, geoCountryCodeList.value))
+          await addEventConfig({
+            ...getConfigSettingValue(configSetting.value),
+            ...getConfigFormValue(configForm.value)
+          })
           await reloadTableData(paginationReactive.value.page!)
           message.success('创建成功')
           handleDrawerClose(false)
         } catch (e) {
           console.log(e)
         }
+      } else {
+        message.error('表单填写错误')
+        scrollBarRef.value?.scrollTo({ top: 0 })
       }
     })
   })
@@ -86,8 +92,8 @@ const handleUpdate = () => {
       if (!settingErrors && !formError) {
         try {
           await updateEventConfig({
-            id: props.configId,
-            ...getEventConfigParam(configSetting.value, configForm.value, geoCountryCodeList.value)
+            ...getConfigSettingValue(configSetting.value),
+            ...getConfigFormValue(configForm.value)
           })
           await reloadTableData(paginationReactive.value.page!)
           message.success('修改成功')
@@ -95,6 +101,9 @@ const handleUpdate = () => {
         } catch (e) {
           //
         }
+      } else {
+        message.error('表单填写错误')
+        scrollBarRef.value?.scrollTo({ top: 0 })
       }
     })
   })
@@ -126,6 +135,7 @@ const handleUpdate = () => {
         {{ drawerTitle }}
       </template>
       <n-scrollbar
+        ref="scrollBarRef"
         class="scroll-box"
         :style="{
           maxHeight: '440px',
@@ -140,7 +150,7 @@ const handleUpdate = () => {
           <event-config-setting
             ref="configSetting"
             :initialValue="settingInitialValue"
-            :formDisabled="formDisabled"
+            :settingDisabled="settingDisabled"
             @selectConfigType="handleTypesChange"
           />
           <event-config-form

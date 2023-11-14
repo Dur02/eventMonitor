@@ -1,5 +1,4 @@
-import type { eventConfigRowsType } from '@/types/components/config/event'
-import type { eventDisplayRowsType } from '@/types/components/event/display';
+import type { eventDisplayRowsType } from '@/types/components/event/display'
 
 export type GetEventConfigListByConfigName = {
   configType: string,

@@ -133,7 +133,7 @@ watch(
         :loading="loadingRef"
         :pagination="paginationReactive"
         :row-key="(rowData: eventDisplayRowsType) => rowData.globaleventid"
-        max-height="calc(100vh - 295px)"
+        max-height="calc(100vh - 325px)"
         @update:page="handlePageChange"
       />
     </n-space>

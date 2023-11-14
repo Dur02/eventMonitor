@@ -14,6 +14,7 @@ const service: AxiosInstance = axios.create({
 })
 
 service.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
+service.defaults.headers['Content-Language'] = 'zh_CN'
 service.defaults.headers['clientid'] = import.meta.env.VITE_APP_CLIENT_ID
 
 // request interceptor

@@ -71,7 +71,7 @@ const handleSelect = async (key: string | number): void => {
 
 <style scoped lang="scss">
 .header-container {
-  height: 50px;
+  height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -80,9 +80,10 @@ const handleSelect = async (key: string | number): void => {
   background-size: auto 70px;
 
   .title {
-    margin: 0;
-    height: 35px;
-    font-weight: bold;
+    margin: 0 0 0 100px;
+    //height: 2.5em;
+    font-size: 2.5em;
+    font-weight: 1000;
   }
 
   .avatar-container {
