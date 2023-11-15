@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import type { FormInst, SelectOption, SelectGroupOption, TreeSelectOption } from 'naive-ui'
 import {
   NForm,
@@ -21,7 +21,8 @@ import {
 } from 'naive-ui'
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
-import { formThemeOverrides, rootOptions, eventConfigFormBaseRules } from '@/utils/constant/config/event/eventConfig'
+import { formThemeOverrides } from '@/utils/themeOverrides/common'
+import { rootOptions, eventConfigFormRules } from '@/utils/constant/form/eventConfigForm'
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import { getRegionCodeList } from '@/api/eventCodeDict'
@@ -154,83 +155,6 @@ watch(
     immediate: true
   }
 )
-
-// watch(
-//   () => props.configType,
-//   (newValue, oldValue) => {
-//     // 存在于newV而不存在于oldV
-//     const newVRejectOldV = difference(newValue ? deepCopy(newValue) : [], oldValue ? deepCopy(oldValue) : [])
-//     const oldVRejectNewV = difference(oldValue ? deepCopy(oldValue) : [], newValue ? deepCopy(newValue) : [])
-//     const resetActorFormItem = () => {
-//       formValue.value.actor1knowngroupcode = []
-//       formValue.value.actor1religion1code = []
-//       formValue.value.actor1religion2code = []
-//       formValue.value.actor1ethniccode = []
-//       formValue.value.actor1type1code = []
-//       formValue.value.actor1type2code = []
-//       formValue.value.actor1type3code = []
-//       formValue.value.actor1name = ''
-//       formValue.value.actor1nameIsBig = 0
-//       formValue.value.actor1geoType = []
-//       formValue.value.actor1geoCountrycodeAndAdm1code = []
-//       formValue.value.actor1geoFullname = ''
-//       formValue.value.actor1geoFullnameIsBig = 0
-//     }
-//     const resetActionFormItem = () => {
-//       formValue.value.quadclass = []
-//       formValue.value.eventrootcode = []
-//       formValue.value.eventbasecode = []
-//       formValue.value.eventcode = []
-//       formValue.value.actiongeoType = []
-//       formValue.value.actiongeoCountrycodeAndAdm1code = []
-//       formValue.value.actiongeoFullname = ''
-//       formValue.value.actiongeoFullnameIsBig = 0
-//       formValue.value.sourceUrl = ''
-//       formValue.value.avgtone = []
-//       formValue.value.goldsteinscale = []
-//       formValue.value.isrootevent = null
-//     }
-//     // 把以上两个数组循环判断是否为条件类型，进行表单值初始化或清除
-//     map((item) => {
-//       console.log(item)
-//       switch (item) {
-//         case 'event_timeline_viz':
-//         case 'event_timeline_type_viz':
-//         case 'event_timeline_geo_viz':
-//         case 'event_tone_scale_viz': {
-//           formValue.value.statisticsBasis = deepCopy(props.initialValue.statisticsBasis)
-//           break
-//         }
-//         case 'event_show_viz': {
-//           formValue.value.weightBasis = 1
-//           break
-//         }
-//         case 'event_country_monitor': {
-//           formValue.value.actor1countrycode = []
-//           resetActorFormItem()
-//           resetActionFormItem()
-//           break
-//         }
-//         case 'event_country_relation_viz': {
-//           resetActorFormItem()
-//           resetActionFormItem()
-//           break
-//         }
-//         default: {
-//           console.log('12322133212')
-//           formValue.value = deepCopy(props.initialValue)
-//           if (!formValue.value.sqldate) {
-//             const end = new Date()
-//             const start = new Date()
-//             start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-//             formValue.value.sqldate = [start.getTime(), end.getTime()]
-//           }
-//           break
-//         }
-//       }
-//     })(newVRejectOldV)
-//   }
-// )
 </script>
 
 <template>
@@ -238,7 +162,7 @@ watch(
     ref="formRef"
     class="form"
     :disabled="formDisabled"
-    :rules="eventConfigFormBaseRules"
+    :rules="eventConfigFormRules"
     :model="formValue"
     size="medium"
     label-placement="left"

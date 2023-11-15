@@ -5,7 +5,6 @@ import type {
   PaginationProps,
   DataTableInst,
   DataTableColumns,
-  PaginationInfo,
   SelectOption,
   SelectGroupOption
 } from 'naive-ui'
@@ -13,7 +12,6 @@ import { NDataTable, NButton, NSpace, NIcon, NPopselect } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
-import { useRoute } from 'vue-router'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
 import { allColumns } from '@/utils/constant/event/display/eventDisplayView'
 import { map, filter, includes, slice } from 'lodash/fp'
@@ -23,9 +21,8 @@ import deepCopy from '@/utils/function/deepcopy'
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
 
-const route = useRoute()
 const footStore = useFooterStore()
-const { selectedId } = storeToRefs(footStore)
+const { selectedId, configType } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
 const columnsRef: Ref<DataTableColumns<eventDisplayRowsType>> = ref(allColumns)
@@ -33,6 +30,7 @@ const selectedColumn: Ref<string[]> = ref(map(({ key }) => key)(allColumns))
 const allData: Ref<eventDisplayRowsType[]> = ref([])
 const dataRef: Ref<eventDisplayRowsType[]> = ref([])
 const loadingRef: Ref<boolean> = ref(false)
+const displayPageCount: Ref<number> = ref(0)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
   // pageCount: 1,
@@ -41,8 +39,8 @@ const paginationReactive: PaginationProps = reactive({
   itemCount: 0,
   // showSizePicker: true,
   showQuickJumper: true,
-  suffix ({ itemCount }: PaginationInfo): VNodeChild {
-    return `共${itemCount}条`
+  suffix (): VNodeChild {
+    return `共${displayPageCount.value}条`
   }
 })
 
@@ -62,7 +60,8 @@ const reloadTableData = async (page: number) => {
       const {
         data: {
           resultData: {
-            rows
+            rows,
+            total
           }
         }
       } = await getResultDataByConfigId({ configId: selectedId.value! })
@@ -72,6 +71,8 @@ const reloadTableData = async (page: number) => {
       }))(rows)
       dataRef.value = slice(0, paginationReactive.pageSize!)(deepCopy(allData.value))
       paginationReactive.itemCount = rows.length
+      paginationReactive.page = 1
+      displayPageCount.value = total
     } catch (e) {
       //
     }
@@ -87,7 +88,7 @@ const handlePageChange = async (currentPage: number): Promise<void> => {
 watch(
   () => selectedId.value,
   async () => {
-    if (selectedId.value && route.name === 'eventDisplay') {
+    if (selectedId.value && configType.value === 'event_show_viz') {
       await reloadTableData(1)
     }
   },
@@ -95,6 +96,14 @@ watch(
     immediate: true
   }
 )
+
+footStore.$onAction(({ name, store, args, after, onError }) => {
+  console.log(name)
+  console.log(store)
+  console.log(args)
+  console.log(after)
+  console.log(onError)
+})
 </script>
 
 <template>

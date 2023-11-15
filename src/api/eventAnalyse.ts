@@ -64,10 +64,10 @@ export function getResultDataByConfigId({ configId }: GetResultDataByConfigIdTyp
 }
 
 // 事件库分析-根据事件配置id查询结果数据
-export function instantQuery(params: any): Promise<AxiosResponse<any, any>> {
+export function eventInstantQuery(data: any): Promise<GetResultDataByConfigIdRespType> {
   return request({
     url: '/eventMonitor/eventAnalyze/instantQuery',
     method: 'post',
-    params
+    data
   })
 }

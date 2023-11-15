@@ -9,7 +9,8 @@ import Cookies from 'js-cookie'
 import { getCode } from '@/api/user'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { checkBoxThemeOverrides, inputThemeOverrides, formThemeOverrides, rules } from '@/utils/constant/login/login'
+import { rules } from '@/utils/constant/login/login'
+import { checkBoxThemeOverrides, inputThemeOverrides, formThemeOverrides } from '@/utils/themeOverrides/login'
 import type { ModelType } from '@/types/components/login'
 
 const userStore = useUserStore()

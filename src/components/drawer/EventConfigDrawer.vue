@@ -14,10 +14,10 @@ import {
   cardDarkThemeOverrides,
   cardLightThemeOverrides,
   drawerDarkThemeOverrides,
-  drawerLightThemeOverrides,
-  getConfigSettingValue,
-  getConfigFormValue
-} from '@/utils/constant/config/event/eventConfig'
+  drawerLightThemeOverrides
+} from '@/utils/themeOverrides/common'
+import { getConfigSettingValue } from '@/utils/constant/form/eventConfigSetting'
+import { getConfigFormValue } from '@/utils/constant/form/eventConfigForm'
 import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
 import EventConfigSetting from '@/components/form/EventConfigSetting.vue'
@@ -76,7 +76,7 @@ const handleCreate = () => {
           message.success('创建成功')
           handleDrawerClose(false)
         } catch (e) {
-          console.log(e)
+          // console.log(e)
         }
       } else {
         message.error('表单填写错误')
@@ -93,7 +93,8 @@ const handleUpdate = () => {
         try {
           await updateEventConfig({
             ...getConfigSettingValue(configSetting.value),
-            ...getConfigFormValue(configForm.value)
+            ...getConfigFormValue(configForm.value),
+            id: props.configId
           })
           await reloadTableData(paginationReactive.value.page!)
           message.success('修改成功')

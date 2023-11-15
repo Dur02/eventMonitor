@@ -1,9 +1,8 @@
 import type { RouteRecordRaw } from 'vue-router'
 import renderIcon from '@/utils/function/renderIcon'
 import { NavigateCircle, NotificationsSharp, Settings } from '@vicons/ionicons5'
-import EventDisplayForm from '@/components/event/display/EventDisplayForm.vue'
-import EventTimelineForm from '@/components/event/timeline/EventTimelineForm.vue'
-import { getEventConfigListByConfigName } from '@/api/eventAnalyse'
+import EventFooterSlot from '@/components/event/footerSlot/EventFooterSlot.vue'
+import { eventInstantQuery, getEventConfigListByConfigName } from '@/api/eventAnalyse'
 
 export default [
   {
@@ -23,8 +22,9 @@ export default [
           breadcrumb: '事件展示',
           hasFooter: true,
           type: 'event_show_viz',
+          footerForm: EventFooterSlot,
           requestFunc: getEventConfigListByConfigName,
-          footerForm: EventDisplayForm
+          instantQuery: eventInstantQuery
         },
         component: () => import('../views/event/display/EventDisplayView.vue')
       },
@@ -35,8 +35,9 @@ export default [
           breadcrumb: '事件时间线',
           hasFooter: true,
           type: 'event_timeline_viz',
+          footerForm: EventFooterSlot,
           requestFunc: getEventConfigListByConfigName,
-          footerForm: EventDisplayForm
+          instantQuery: eventInstantQuery
         },
         component: () => import('../views/event/timeline/EventTimelineView.vue')
       },
@@ -57,10 +58,7 @@ export default [
         name: 'graphDisplay',
         meta: {
           breadcrumb: '图谱展示',
-          hasFooter: true,
-          type: 'event_show_viz',
-          requestFunc: getEventConfigListByConfigName,
-          footerForm: EventDisplayForm
+          hasFooter: false
         },
         component: () => import('../views/graph/display/GraphDisplayView.vue')
       },
@@ -69,10 +67,7 @@ export default [
         name: 'graphTimeline',
         meta: {
           breadcrumb: '图谱时间线',
-          hasFooter: true,
-          type: 'event_show_viz',
-          requestFunc: getEventConfigListByConfigName,
-          footerForm: EventDisplayForm
+          hasFooter: false
         },
         component: () => import('../views/graph/timeline/GraphTimelineView.vue')
       },

@@ -39,9 +39,9 @@ service.interceptors.response.use(
   async (res: AxiosResponse) => {
 
     const userStore = useUserStore()
-    const {logout} = userStore
+    const { logout } = userStore
     const systemStore = useSystemStore()
-    const {isLight} = storeToRefs(systemStore)
+    const { isLight } = storeToRefs(systemStore)
 
     const {message, dialog} = createDiscreteApi(
       ['message', 'dialog'],

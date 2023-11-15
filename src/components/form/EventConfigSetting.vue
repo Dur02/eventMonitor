@@ -13,12 +13,8 @@ import {
   NSelect,
   NInputNumber
 } from 'naive-ui'
-import {
-  eventConfigSettingRules,
-  formThemeOverrides,
-  monitorOption,
-  priorityOption
-} from '@/utils/constant/config/event/eventConfig'
+import { formThemeOverrides, } from '@/utils/themeOverrides/common'
+import { priorityOption, monitorOption, eventConfigSettingRules } from '@/utils/constant/form/eventConfigSetting'
 import { Menu as MenuIcon } from '@vicons/ionicons5'
 import { useConstantStore } from '@/stores/constant'
 import { renderOption } from '@/utils/function/renderOption'

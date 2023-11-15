@@ -15,7 +15,8 @@ import {
 } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { allColumns, configStatus } from '@/utils/constant/config/event/eventConfig'
-import { eventConfigFormInitialValue, eventConfigSettingInitialValue } from '@/utils/constant/config/event/eventConfig'
+import { eventConfigSettingInitialValue } from '@/utils/constant/form/eventConfigSetting'
+import { eventConfigFormInitialValue } from '@/utils/constant/form/eventConfigForm'
 import EventConfigDrawer from '@/components/drawer/EventConfigDrawer.vue'
 import { useConstantStore } from '@/stores/constant'
 import { useEventConfigStore } from '@/stores/eventConfig'
@@ -95,9 +96,15 @@ const updateDrawerShow = (bool: boolean): void => {
 
 // 关闭drawer后重置初始值
 const resetValue = () => {
-  drawerTitle.value = ''
-  settingInitialValue.value = eventConfigSettingInitialValue
-  formInitialValue.value = eventConfigFormInitialValue
+  handleUpdateDrawer(
+    '',
+    eventConfigSettingInitialValue,
+    eventConfigFormInitialValue,
+    false,
+    false,
+    false,
+    null
+  )
 }
 
 onMounted(async () => {

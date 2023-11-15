@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NButton, NIcon, NLayoutFooter, NScrollbar } from 'naive-ui'
+import { NButton, NIcon, NLayoutFooter, NScrollbar, useMessage } from 'naive-ui'
 import { ArrowBackSharp, ArrowForward, CaretDownCircle, CaretUpCircle } from '@vicons/ionicons5'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
@@ -11,17 +11,19 @@ import { storeToRefs } from 'pinia'
 import { layoutFooterLightThemeOverrides, layoutFooterDarkThemeOverrides } from '@/utils/constant/layout/footer'
 import CommonForm from '@/components/layout/CommonForm.vue'
 
+const message = useMessage()
+
 const route: RouteLocationNormalizedLoaded = useRoute()
+
 const footerStore = useFooterStore()
-const { isSearchNow, paginationReactive, selectedId, configList } = storeToRefs(footerStore)
-const { getConfigList, setSelectedId, setIsSearchNow } = footerStore
+const { isSearchNow, paginationReactive, selectedId, configList, footerExpand } = storeToRefs(footerStore)
+const { getConfigList, setSelectedId, setIsSearchNow, setFooterExpand } = footerStore
 const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
 
 const footerForm: any = ref(null)
 const scrollContainer: any = ref(null)
 const scrollWrapper: Ref<HTMLElement | null> = ref(null)
-const footerExpand: Ref<boolean> = ref(false)
 
 const handleScroll = (e: WheelEvent) => {
   const eventDelta = -e.deltaY
@@ -39,7 +41,7 @@ const changeSelectedTab = (id: number) => {
 }
 
 const changeExpand = () => {
-  footerExpand.value = !footerExpand.value
+  setFooterExpand(!footerExpand.value)
   if (!footerExpand.value) {
     if (footerForm.value?.restoreValidation) {
       footerForm.value?.restoreValidation()
@@ -50,11 +52,11 @@ const changeExpand = () => {
 const changePage = (isNext: boolean): void => {
   switch (isNext) {
     case true: {
-      reload(paginationReactive.value.page! + 1, paginationReactive.value.pageSize!)
+      reloadConfigList(paginationReactive.value.page! + 1, paginationReactive.value.pageSize!)
       break
     }
     default: {
-      reload(paginationReactive.value.page! - 1, paginationReactive.value.pageSize!)
+      reloadConfigList(paginationReactive.value.page! - 1, paginationReactive.value.pageSize!)
       break
     }
   }
@@ -65,24 +67,29 @@ const handleSearchNow = () => {
   if (footerForm.value?.restoreValidation) {
     footerForm.value?.restoreValidation()
   }
-  footerExpand.value = true
+  setFooterExpand(true)
 }
 
-const reload = async (page: number, pageSize: number) => {
-  if (route.meta.requestFunc && route.meta.type) {
-    await getConfigList(
-      route.meta.requestFunc as Function,
-      route.meta.type as string,
-      page,
-      pageSize
-    )
+const reloadConfigList = async (page: number, pageSize: number) => {
+  if (route.meta.requestFunc && route.meta.type && route.meta.instantQuery) {
+    try {
+      await getConfigList(
+        route.meta.requestFunc as Function,
+        route.meta.type as string,
+        route.meta.instantQuery as Function,
+        page,
+        pageSize
+      )
+    } catch (e) {
+      //
+    }
   }
 }
 
 watch(
   () => route.name,
   async () => {
-    await reload(1, paginationReactive.value.pageSize!)
+    await reloadConfigList(1, paginationReactive.value.pageSize!)
   },
   {
     immediate: true
