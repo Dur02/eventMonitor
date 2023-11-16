@@ -10,12 +10,12 @@ import {
   NButton,
   useMessage
 } from 'naive-ui'
-import {
-  cardDarkThemeOverrides,
-  cardLightThemeOverrides,
-  drawerDarkThemeOverrides,
-  drawerLightThemeOverrides
-} from '@/utils/themeOverrides/common'
+// import {
+//   cardDarkThemeOverrides,
+//   cardLightThemeOverrides,
+//   drawerDarkThemeOverrides,
+//   drawerLightThemeOverrides
+// } from '@/utils/themeOverrides/common'
 import { getConfigSettingValue } from '@/utils/constant/form/eventConfigSetting'
 import { getConfigFormValue } from '@/utils/constant/form/eventConfigForm'
 import { useSystemStore } from '@/stores/system'
@@ -50,6 +50,7 @@ const scrollBarRef: Ref<ScrollbarInst | null> = ref(null)
 const configSetting: any = ref(null)
 const configForm: any = ref(null)
 const configType: Ref<string[]> = ref([])
+const btnLoading: Ref<boolean> = ref(false)
 
 const handleTypesChange = (selectedConfigType: string[]) => {
   configType.value = selectedConfigType
@@ -67,6 +68,7 @@ const handleCreate = () => {
   configSetting.value?.formRef.validate((settingErrors: Array<FormValidationError>) => {
     configForm.value?.formRef.validate(async (formError: Array<FormValidationError>) => {
       if (!settingErrors && !formError) {
+        btnLoading.value = true
         try {
           await addEventConfig({
             ...getConfigSettingValue(configSetting.value),
@@ -78,6 +80,7 @@ const handleCreate = () => {
         } catch (e) {
           // console.log(e)
         }
+        btnLoading.value = false
       } else {
         message.error('表单填写错误')
         scrollBarRef.value?.scrollTo({ top: 0 })
@@ -90,6 +93,7 @@ const handleUpdate = () => {
   configSetting.value?.formRef.validate((settingErrors: Array<FormValidationError>) => {
     configForm.value?.formRef.validate(async (formError: Array<FormValidationError>) => {
       if (!settingErrors && !formError) {
+        btnLoading.value = true
         try {
           await updateEventConfig({
             ...getConfigSettingValue(configSetting.value),
@@ -102,6 +106,7 @@ const handleUpdate = () => {
         } catch (e) {
           //
         }
+        btnLoading.value = false
       } else {
         message.error('表单填写错误')
         scrollBarRef.value?.scrollTo({ top: 0 })
@@ -121,7 +126,6 @@ const handleUpdate = () => {
     :block-scroll="false"
     :show-mask="false"
     :mask-closable="false"
-    :theme-overrides="isLight ? drawerLightThemeOverrides : drawerDarkThemeOverrides"
     @update:show="handleDrawerClose"
     @after-leave="handleResetValue"
   >
@@ -146,7 +150,6 @@ const handleUpdate = () => {
       >
         <n-card
           :bordered="false"
-          :theme-overrides="isLight ? cardLightThemeOverrides : cardDarkThemeOverrides"
         >
           <event-config-setting
             ref="configSetting"
@@ -165,6 +168,7 @@ const handleUpdate = () => {
             style="text-align: center;"
           >
             <n-button
+              :loading="btnLoading"
               type="info"
               @click="handleCreate"
             >
@@ -176,6 +180,7 @@ const handleUpdate = () => {
             style="text-align: center;"
           >
             <n-button
+              :loading="btnLoading"
               type="info"
               @click="handleUpdate"
             >

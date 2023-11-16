@@ -22,7 +22,7 @@ import deepCopy from '@/utils/function/deepcopy'
 const mapWithIndex = map.convert({ cap: false })
 
 const footStore = useFooterStore()
-const { selectedId, configType } = storeToRefs(footStore)
+const { selectedId, configType, isSearchNow } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
 const columnsRef: Ref<DataTableColumns<eventDisplayRowsType>> = ref(allColumns)
@@ -70,7 +70,7 @@ const reloadTableData = async (page: number) => {
         numbers: index + (page - 1) * paginationReactive.pageSize! + 1
       }))(rows)
       dataRef.value = slice(0, paginationReactive.pageSize!)(deepCopy(allData.value))
-      paginationReactive.itemCount = rows.length
+      paginationReactive.itemCount = (rows as Array<object>).length
       paginationReactive.page = 1
       displayPageCount.value = total
     } catch (e) {
@@ -97,12 +97,29 @@ watch(
   }
 )
 
-footStore.$onAction(({ name, store, args, after, onError }) => {
-  console.log(name)
-  console.log(store)
-  console.log(args)
-  console.log(after)
-  console.log(onError)
+footStore.$onAction(({ name, after }) => {
+  if (name === 'instantQuery') {
+    after((res) => {
+      if (res.data.resultData) {
+        const {
+          data: {
+            resultData: {
+              rows,
+              total
+            }
+          }
+        } = res
+        allData.value = mapWithIndex((item: eventDisplayRowsType, index: number) => ({
+          ...item,
+          numbers: index + 1
+        }))(rows)
+        dataRef.value = slice(0, paginationReactive.pageSize!)(deepCopy(allData.value))
+        paginationReactive.itemCount = rows.length
+        paginationReactive.page = 1
+        displayPageCount.value = total
+      }
+    })
+  }
 })
 </script>
 

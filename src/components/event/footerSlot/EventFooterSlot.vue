@@ -20,9 +20,10 @@ const message = useMessage()
 
 const footerStore = useFooterStore()
 const { selectedId, configType, configList, isSearchNow, paginationReactive } = storeToRefs(footerStore)
-const { getConfigList, instantQuery } = footerStore
+const { getConfigList, setSelectedId, instantQuery } = footerStore
 
-const disabled = ref(false)
+const buttonLoading = ref(false)
+const formDisabled = ref(false)
 const scrollBarRef: Ref<ScrollbarInst | null> = ref(null)
 const formValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
 const configFormRef: Ref<any | null> = ref(null)
@@ -33,6 +34,7 @@ const handleCreate = async (e: MouseEvent) => {
   configFormRef.value?.formRef.validate((formError: Array<FormValidationError>) => {
     configSaveRef.value?.formRef.validate(async (saveError: Array<FormValidationError>) => {
       if (!formError && !saveError) {
+        buttonLoading.value = true
         try {
           await instantQuery({
             configType: configType.value,
@@ -40,25 +42,21 @@ const handleCreate = async (e: MouseEvent) => {
             configName: configSaveRef.value?.formValue.configName,
             ...getConfigFormValue(configFormRef.value)
           })
-          if (configSaveRef.value?.formValue.isSave) {
-            if (route.meta.requestFunc && route.meta.type && route.meta.instantQuery) {
-              try {
-                await getConfigList(
-                  route.meta.requestFunc as Function,
-                  route.meta.type as string,
-                  route.meta.instantQuery as Function,
-                  1,
-                  paginationReactive.value.pageSize!
-                )
-              } catch (e) {
-                //
-              }
-            }
+          setSelectedId(null)
+          if (configSaveRef.value?.formValue.isSave && route.meta.requestFunc && route.meta.type && route.meta.instantQuery) {
+            await getConfigList(
+              route.meta.requestFunc as Function,
+              route.meta.type as string,
+              route.meta.instantQuery as Function,
+              1,
+              paginationReactive.value.pageSize!
+            )
           }
-          message.success('查询成功')
+          message.success(configSaveRef.value?.formValue.isSave === 1 ? '保存成功' : '查询成功')
         } catch (e) {
-          // console.log(e)
+          //
         }
+        buttonLoading.value = false
       } else {
         message.error('表单填写错误')
         scrollBarRef.value?.scrollTo({ top: 0 })
@@ -72,7 +70,7 @@ watch(
   () => {
     switch (isSearchNow.value) {
       case true: {
-        disabled.value = false
+        formDisabled.value = false
         formValue.value = deepCopy(eventConfigFormInitialValue)
         const end = new Date()
         const start = new Date()
@@ -82,7 +80,7 @@ watch(
       }
       default: {
         if (selectedId.value) {
-          disabled.value = true
+          formDisabled.value = true
           formValue.value = flow(
             find(propEq('id', selectedId.value)),
             getConfigFormInitialValue
@@ -109,19 +107,20 @@ defineExpose({
     ref="configFormRef"
     :initialValue="formValue"
     :configType="[configType]"
-    :formDisabled="disabled"
+    :formDisabled="formDisabled"
   />
   <event-config-save
-    v-if="!disabled"
+    v-if="!formDisabled"
     ref="configSaveRef"
   />
   <div
-    v-if="!disabled"
+    v-if="!formDisabled"
     style="text-align: center;"
   >
     <n-button
       type="info"
       @click="handleCreate"
+      :loading="buttonLoading"
     >
       提交
     </n-button>

@@ -21,12 +21,12 @@ import {
 } from 'naive-ui'
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
-import { formThemeOverrides } from '@/utils/themeOverrides/common'
+// import { formThemeOverrides } from '@/utils/themeOverrides/common'
 import { rootOptions, eventConfigFormRules } from '@/utils/constant/form/eventConfigForm'
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import { getRegionCodeList } from '@/api/eventCodeDict'
-import { filter, includes, map, intersection, difference, flow, remove, reject } from 'lodash/fp'
+import { filter, includes, map } from 'lodash/fp'
 import deepCopy from '@/utils/function/deepcopy'
 import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
 import { renderOption } from '@/utils/function/renderOption'
@@ -55,7 +55,7 @@ const {
 const { getAllEventCodeList } = eventStore
 
 const formValue: Ref<eventConfigFormInitialValueType> = ref(deepCopy(props.initialValue) as eventConfigFormInitialValueType)
-const displayDate: Ref<string[]> = ref([])
+// const displayDate: Ref<string[]> = ref([])
 const formRef: Ref<FormInst | null> = ref(null)
 const rootOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 const baseOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
@@ -149,7 +149,7 @@ watch(
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
       formValue.value.sqldate = [start.getTime(), end.getTime()]
     }
-    displayDate.value = [formatTimeStamp(formValue.value.sqldate[0]), formatTimeStamp(formValue.value.sqldate[1])]
+    // displayDate.value = [formatTimeStamp(formValue.value.sqldate[0]), formatTimeStamp(formValue.value.sqldate[1])]
   },
   {
     immediate: true
@@ -168,10 +168,9 @@ watch(
     label-placement="left"
     label-align="left"
     label-width="80"
-    :theme-overrides="formThemeOverrides"
     :show-require-mark="false"
   >
-    <p style="margin: 0 0 5px 110px;">当前数据库时间范围: {{ displayDate[0] }} 至 {{ displayDate[1] }}</p>
+    <p style="margin: 0 0 5px 110px;">当前数据库时间范围: 1971-01-01 至 {{ formatTimeStamp(new Date().getTime()) }}</p>
     <n-form-item
       path="sqldate"
       label-style="font-weight: 600;"

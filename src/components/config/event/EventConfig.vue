@@ -28,8 +28,17 @@ const { eventConfigTypeList } = storeToRefs(constantStore)
 const { getAllEventConfigType } = constantStore
 const eventConfigStore = useEventConfigStore()
 const { tableLoading, dataRef, checkedRowKeysRef, paginationReactive } = storeToRefs(eventConfigStore)
-const { setTableLoading, changeLastSearchValue, setCheckedRowKeys, reloadTableData, handleMultipleDelete } = eventConfigStore
+const {
+  setTableLoading,
+  changeLastSearchValue,
+  setCheckedRowKeys,
+  reloadTableData,
+  handleMultipleDelete: handleStoreDeleteInStore
+} = eventConfigStore
 
+const searchBtnLoading: Ref<boolean> = ref(false)
+const refreshBtnLoading: Ref<boolean> = ref(false)
+const multipleDeleteBtnLoading: Ref<boolean> = ref(false)
 const formRef: Ref<FormInst | null> = ref(null)
 const drawerShow: Ref<boolean>  = ref(false)
 const drawerTitle: Ref<string> = ref('')
@@ -49,7 +58,21 @@ const searchFormValue: Ref<searchFormType> = ref({
 
 const handleSearch = async () => {
   changeLastSearchValue(deepCopy(searchFormValue.value))
-  await reloadTableData(1)
+  searchBtnLoading.value = true
+  await handlePageChange(1)
+  searchBtnLoading.value = false
+}
+
+const handleRefresh = async () => {
+  refreshBtnLoading.value = true
+  await handlePageChange(paginationReactive.value.page!)
+  refreshBtnLoading.value = false
+}
+
+const handleMultipleDelete = () => {
+  multipleDeleteBtnLoading.value = true
+  handleStoreDeleteInStore()
+  multipleDeleteBtnLoading.value = false
 }
 
 const handleInputClear = () => {
@@ -170,6 +193,7 @@ onMounted(async () => {
       </n-form-item>
       <n-form-item>
         <n-button
+          :loading="searchBtnLoading"
           type="success"
           @click.prevent="handleSearch"
         >
@@ -186,10 +210,9 @@ onMounted(async () => {
       </n-form-item>
       <n-form-item>
         <n-button
+          :loading="refreshBtnLoading"
           type="info"
-          @click="async () => {
-            await reloadTableData(paginationReactive.page!)
-          }"
+          @click="handleRefresh"
         >
           刷新
         </n-button>
@@ -200,6 +223,7 @@ onMounted(async () => {
         >
           <template #trigger>
             <n-button
+              :loading="multipleDeleteBtnLoading"
               type="error"
             >
               批量删除

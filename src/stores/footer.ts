@@ -13,7 +13,7 @@ export const useFooterStore = defineStore('footer', () => {
   const paginationReactive: PaginationProps = reactive({
     page: 1,
     // pageCount: 1,
-    pageSize: 10,
+    pageSize: 20,
     // pageSizes: [10, 20, 50, 100],
     itemCount: 0,
     // showSizePicker: true,
@@ -40,12 +40,16 @@ export const useFooterStore = defineStore('footer', () => {
       paginationReactive.pageSize = pageSize
       paginationReactive.itemCount = total
       isSearchNow.value = false
-      if (rows.length !== 0) {
-        selectedId.value = rows[0].id
+      switch (rows.length !== 0) {
+        case true:
+          selectedId.value = rows[0].id
+          break
+        default:
+          selectedId.value = null
+          break
       }
       return Promise.resolve()
     } catch (e) {
-      console.log(e)
       return Promise.reject()
     }
   }
@@ -74,18 +78,18 @@ export const useFooterStore = defineStore('footer', () => {
       configName: string | null
     }
   )=> {
-    try {
-      if (instantQueryFunc.value) {
-        await (instantQueryFunc.value)({
+    if (instantQueryFunc.value) {
+      try {
+        const res = (instantQueryFunc.value)({
           configType,
           isSaveConfig,
           configName,
           ...data
         })
+        return Promise.resolve(res)
+      } catch (e) {
+        return Promise.reject()
       }
-      return Promise.resolve()
-    } catch (e) {
-      return Promise.reject()
     }
   }
 

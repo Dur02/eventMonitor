@@ -4,6 +4,8 @@ import { defineStore } from 'pinia'
 export const useSystemStore = defineStore('system', () => {
   const isLight: Ref<boolean> = ref(true)
   const isCollapse: Ref<boolean> = ref(false)
+  const showLogoutDialog: Ref<boolean> = ref(false)
+
   const setIsLight = (newValue: boolean): void => {
     isLight.value = newValue
   }
@@ -12,11 +14,17 @@ export const useSystemStore = defineStore('system', () => {
     isCollapse.value = newValue
   }
 
+  const setShowLogoutDialog = (newValue: boolean): void => {
+    showLogoutDialog.value = newValue
+  }
+
   return {
     isLight,
     isCollapse,
+    showLogoutDialog,
     setIsLight,
-    setIsCollapse
+    setIsCollapse,
+    setShowLogoutDialog
   }
 }, {
   persist: {

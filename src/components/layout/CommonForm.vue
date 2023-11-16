@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NCard, NScrollbar } from 'naive-ui'
-import { cardLightThemeOverrides } from '@/utils/themeOverrides/common'
+// import { cardLightThemeOverrides } from '@/utils/themeOverrides/common'
 
 </script>
 
@@ -15,7 +15,6 @@ import { cardLightThemeOverrides } from '@/utils/themeOverrides/common'
   >
     <n-card
       :bordered="false"
-      :theme-overrides="cardLightThemeOverrides"
     >
       <slot></slot>
     </n-card>

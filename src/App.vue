@@ -5,18 +5,19 @@ import {
   NLoadingBarProvider,
   NMessageProvider,
   NNotificationProvider,
-  NGlobalStyle,
   zhCN,
   dateZhCN,
   lightTheme,
-  darkTheme
+  darkTheme,
 } from 'naive-ui'
+import { commonLightThemeOverrider, commonDarkThemeOverrider } from '@/utils/themeOverrides/common'
 import { RouterView } from 'vue-router'
 import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
 
 const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
+
 </script>
 
 <template>
@@ -24,13 +25,13 @@ const { isLight } = storeToRefs(systemStore)
     :locale="zhCN"
     :date-locale="dateZhCN"
     :theme="isLight ? lightTheme : darkTheme"
+    :theme-overrides="isLight ? commonLightThemeOverrider : commonDarkThemeOverrider"
   >
     <n-scrollbar style="max-height: 100vh;">
       <n-loading-bar-provider>
         <n-message-provider>
           <n-notification-provider>
             <RouterView />
-            <n-global-style />
           </n-notification-provider>
         </n-message-provider>
       </n-loading-bar-provider>

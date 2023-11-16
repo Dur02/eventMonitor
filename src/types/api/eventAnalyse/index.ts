@@ -19,12 +19,7 @@ export type GetResultDataByConfigIdRespType = {
     configType: string,
     isSave: number,
     msg: string | null,
-    resultData: {
-      code: number,
-      msg: string
-      rows: Array<eventDisplayRowsType>,
-      total: number,
-    }
+    resultData: never
   },
   msg: string
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref, ShallowRef } from 'vue'
-import { ref, shallowRef, onMounted, onBeforeUnmount } from 'vue'
+import { ref, shallowRef, onMounted, watch } from 'vue'
 import type { EChartsType, ComposeOption } from 'echarts/core'
 import * as echarts from 'echarts/core'
 import type {
@@ -19,25 +19,14 @@ import type { LineSeriesOption } from 'echarts/charts'
 import { LineChart } from 'echarts/charts'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
 import { SVGRenderer } from 'echarts/renderers'
-import { NGi, NGrid, NRadio, NRadioGroup, NSpace } from 'naive-ui'
+import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin } from 'naive-ui'
+import { useFooterStore } from '@/stores/footer'
+import { storeToRefs } from 'pinia'
+import { getResultDataByConfigId } from '@/api/eventAnalyse'
+import deepCopy from '@/utils/function/deepcopy'
+import { flow, map } from 'lodash/fp';
 
-type ECOption = ComposeOption<
-  | GridComponentOption
-  | ToolboxComponentOption
-  | DataZoomComponentOption
-  | TitleComponentOption
-  | LineSeriesOption
->
-
-const echartsRef: Ref<HTMLElement | null> = ref(null)
-const echartsLine: ShallowRef<EChartsType | null>= shallowRef(null)
-const controller: AbortController = new AbortController();
-const resizeObserver = new ResizeObserver(() => {
-  const width = echartsRef.value?.offsetWidth
-  echartsLine.value?.resize({ width, height: "auto" })
-})
-const value: Ref<string> = ref('day')
-const songs = [
+const lineOptions = [
   {
     value: "year",
     label: "年"
@@ -56,6 +45,77 @@ const songs = [
   }
 ]
 
+const footStore = useFooterStore()
+const { selectedId, configType } = storeToRefs(footStore)
+
+type ECOption = ComposeOption<
+  | GridComponentOption
+  | ToolboxComponentOption
+  | DataZoomComponentOption
+  | TitleComponentOption
+  | LineSeriesOption
+>
+
+const echartsRef: Ref<HTMLElement | null> = ref(null)
+const echartsLine: ShallowRef<EChartsType | null>= shallowRef(null)
+const controller: AbortController = new AbortController()
+const resizeObserver = new ResizeObserver(() => {
+  const width = echartsRef.value?.offsetWidth
+  echartsLine.value?.resize({ width, height: "auto" })
+})
+const loadingRef: Ref<boolean> = ref(false)
+const allData = ref(null)
+const lineOptionValue: Ref<string> = ref('day')
+const lineXData = ref(null)
+const lineYData = ref(null)
+
+const getLineOption = (xData: Array<number>, yData: Array<string>): ECOption => ({
+  toolbox: {
+    feature: {
+      dataZoom: {
+        yAxisIndex: 'none',
+        title: {
+          zoom: '区域缩放',
+          back: '区域缩放还原'
+        }
+      },
+      restore: {
+        title: '还原'
+      },
+      saveAsImage: {
+        title: '保存为图谱'
+      },
+      dataView: {
+        title: '数据视图'
+      }
+    }
+  },
+  dataZoom: [
+    {
+      type: 'inside',
+    },
+    {
+      type: 'slider',
+      textStyle:{
+        color:"#fff"
+      }
+    }
+  ],
+  xAxis: {
+    type: 'category',
+    data: xData
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      data: yData,
+      type: 'line'
+    }
+  ]
+})
+
 onMounted(() => {
   echarts.use([
     GridComponent,
@@ -68,55 +128,7 @@ onMounted(() => {
     SVGRenderer
   ])
 
-  const option: ECOption = {
-    toolbox: {
-      feature: {
-        dataZoom: {
-          yAxisIndex: 'none',
-          title: {
-            zoom: '区域缩放',
-            back: '区域缩放还原'
-          }
-        },
-        restore: {
-          title: '还原'
-        },
-        saveAsImage: {
-          title: '保存为图谱'
-        },
-        dataView: {
-          title: '数据视图'
-        }
-      }
-    },
-    dataZoom: [
-      {
-        type: 'inside',
-      },
-      {
-        type: 'slider',
-        textStyle:{
-          color:"#fff"
-        }
-      }
-    ],
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        data: [150, 230, 224, 218, 135, 147, 260],
-        type: 'line'
-      }
-    ]
-  };
-
   echartsLine.value = echarts.init(echartsRef.value, null, { renderer: 'svg' })
-  echartsLine.value.setOption(option)
 
   window.addEventListener('resize', () => {
     echartsLine.value?.resize()
@@ -126,40 +138,101 @@ onMounted(() => {
   resizeObserver.observe(echartsRef.value!)
 })
 
-onBeforeUnmount(() => {
-  controller.abort()
-  resizeObserver.unobserve(echartsRef.value!)
-  echartsLine.value?.dispose()
+const handleLineChecked = (value: string) => {
+  lineOptionValue.value = value
+}
+
+const reloadTableData = async (page: number) => {
+  if (!loadingRef.value) {
+    loadingRef.value = true
+    try {
+      const {
+        data: {
+          resultData
+        }
+      } = await getResultDataByConfigId({ configId: selectedId.value! })
+      allData.value = resultData
+    } catch (e) {
+      //
+    }
+    loadingRef.value = false
+  }
+}
+
+const getDisplayData = () => {
+  switch (lineOptionValue.value) {
+    case 'day': {
+      lineXData.value = flow(
+        map(({ key }: { key: string }) => key)
+      )(deepCopy(allData.value))
+      lineYData.value = flow(
+        map(({ value }: { value: number }) => value)
+      )(deepCopy(allData.value))
+      break
+    }
+    default: {
+      break
+    }
+  }
+}
+
+watch(
+  () => selectedId.value,
+  async () => {
+    if (selectedId.value && configType.value === 'event_timeline_viz') {
+      await reloadTableData(1)
+      getDisplayData()
+      console.log(lineXData.value!)
+      console.log(lineYData.value!)
+      echartsLine.value?.setOption(getLineOption(lineXData.value!, lineYData.value!))
+    }
+  },
+  {
+    immediate: true
+  }
+)
+
+footStore.$onAction(({ name, after }) => {
+  if (name === 'instantQuery') {
+    after((res) => {
+      if (res.data.resultData) {
+        console.log(res)
+      }
+    })
+  }
 })
 </script>
 
 <template>
-  <n-grid
-    class="header-container"
-    x-gap="12"
-    :cols="3"
-  >
-    <n-gi :offset="1">
-      <h3 class="charts-title">事件时间线展示</h3>
-    </n-gi>
-    <n-gi>
-      <n-radio-group
-        class="charts-radio"
-        v-model:value="value"
-      >
-        <n-space justify="end">
-          <n-radio
-            v-for="song in songs"
-            :key="song.value"
-            :value="song.value"
-          >
-            {{ song.label }}
-          </n-radio>
-        </n-space>
-      </n-radio-group>
-    </n-gi>
-  </n-grid>
-  <div class="echarts-line" ref="echartsRef" />
+  <n-spin :show="loadingRef">
+    <n-grid
+      class="header-container"
+      x-gap="12"
+      :cols="3"
+    >
+      <n-gi :offset="1">
+        <h3 class="charts-title">事件时间线展示</h3>
+      </n-gi>
+      <n-gi>
+        <n-radio-group
+          class="charts-radio"
+          v-model:value="lineOptionValue"
+          @update:value="handleLineChecked"
+        >
+          <n-space justify="end">
+            <n-radio
+              v-for="song in lineOptions"
+              :key="song.value"
+              :value="song.value"
+            >
+              {{ song.label }}
+            </n-radio>
+          </n-space>
+        </n-radio-group>
+      </n-gi>
+    </n-grid>
+    <div class="echarts-line" ref="echartsRef" />
+  </n-spin>
 </template>
 
 <style scoped lang="scss">
@@ -178,6 +251,6 @@ onBeforeUnmount(() => {
 
 .echarts-line {
   width: 100%;
-  height: 100%;
+  height: 500px;
 }
 </style>

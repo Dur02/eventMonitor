@@ -41,9 +41,10 @@ service.interceptors.response.use(
     const userStore = useUserStore()
     const { logout } = userStore
     const systemStore = useSystemStore()
-    const { isLight } = storeToRefs(systemStore)
+    const { isLight, showLogoutDialog } = storeToRefs(systemStore)
+    const { setShowLogoutDialog } = systemStore
 
-    const {message, dialog} = createDiscreteApi(
+    const { message, dialog } = createDiscreteApi(
       ['message', 'dialog'],
       {
         configProviderProps: {
@@ -70,17 +71,21 @@ service.interceptors.response.use(
 
     // 处理错误状态码
     if (code === 401) {
-      dialog.error({
-        title: '出错',
-        content: '登录状态已过期，需要重新登录',
-        positiveText: '确定',
-        onAfterLeave: async () => {
-          if (localStorage.getItem('token')) {
-            await logout()
-            await router.replace('/login')
+      if (!showLogoutDialog.value) {
+        setShowLogoutDialog(true)
+        dialog.error({
+          title: '出错',
+          content: '登录状态已过期，需要重新登录',
+          positiveText: '确定',
+          onAfterLeave: async () => {
+            if (localStorage.getItem('token')) {
+              await logout()
+              await router.replace('/login')
+              setShowLogoutDialog(false)
+            }
           }
-        }
-      })
+        })
+      }
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。');
     } else if (code !== 200) {
       message.error(msg)

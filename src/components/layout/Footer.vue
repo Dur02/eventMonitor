@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NButton, NIcon, NLayoutFooter, NScrollbar, useMessage } from 'naive-ui'
+import { NButton, NIcon, NLayoutFooter, NScrollbar } from 'naive-ui'
 import { ArrowBackSharp, ArrowForward, CaretDownCircle, CaretUpCircle } from '@vicons/ionicons5'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
@@ -10,8 +10,6 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import { layoutFooterLightThemeOverrides, layoutFooterDarkThemeOverrides } from '@/utils/constant/layout/footer'
 import CommonForm from '@/components/layout/CommonForm.vue'
-
-const message = useMessage()
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 

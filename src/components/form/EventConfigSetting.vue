@@ -13,7 +13,7 @@ import {
   NSelect,
   NInputNumber
 } from 'naive-ui'
-import { formThemeOverrides, } from '@/utils/themeOverrides/common'
+// import { formThemeOverrides, } from '@/utils/themeOverrides/common'
 import { priorityOption, monitorOption, eventConfigSettingRules } from '@/utils/constant/form/eventConfigSetting'
 import { Menu as MenuIcon } from '@vicons/ionicons5'
 import { useConstantStore } from '@/stores/constant'
@@ -64,7 +64,6 @@ watch(
     :label-width="70"
     label-placement='left'
     label-align='left'
-    :theme-overrides="formThemeOverrides"
     :show-require-mark="false"
     inline
   >
