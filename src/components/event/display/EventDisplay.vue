@@ -13,7 +13,7 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
-import { allColumns } from '@/utils/constant/event/display/eventDisplayView'
+import { allColumns } from '@/utils/constant/event/display/eventDisplay'
 import { map, filter, includes, slice } from 'lodash/fp'
 import { getResultDataByConfigId } from '@/api/eventAnalyse'
 import deepCopy from '@/utils/function/deepcopy'
