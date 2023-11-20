@@ -1022,7 +1022,7 @@ src="<%=basePath%>/static/Visualization/js/leaflet/leaflet.dvf.experimental.js">
        		        feature: {
        		            saveAsImage: {}
        		        }
-       		    }, 
+       		    },
 					geo: [{
 						map:'world',
 						zoom: 1,

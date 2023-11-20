@@ -100,7 +100,8 @@ watch(
 footStore.$onAction(({ name, after }) => {
   if (name === 'instantQuery') {
     after((res) => {
-      if (res.data.resultData) {
+      if (!loadingRef.value && res.data.resultData) {
+        loadingRef.value = true
         const {
           data: {
             resultData: {
@@ -117,6 +118,7 @@ footStore.$onAction(({ name, after }) => {
         paginationReactive.itemCount = rows.length
         paginationReactive.page = 1
         displayPageCount.value = total
+        loadingRef.value = false
       }
     })
   }

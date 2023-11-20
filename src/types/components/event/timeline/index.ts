@@ -5,7 +5,8 @@ import type {
   TitleComponentOption,
   ToolboxComponentOption,
   TooltipComponentOption,
-  GeoComponentOption
+  GeoComponentOption,
+  VisualMapComponentOption
 } from 'echarts/components'
 import type { LineSeriesOption, HeatmapSeriesOption } from 'echarts/charts'
 
@@ -26,6 +27,7 @@ export type HotECOption = ComposeOption<
   | TooltipComponentOption
   | HeatmapSeriesOption
   | GeoComponentOption
+  | VisualMapComponentOption
 >
 
 export type timelineDataType = { key: string, value: number }

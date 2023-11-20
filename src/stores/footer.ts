@@ -13,7 +13,7 @@ export const useFooterStore = defineStore('footer', () => {
   const paginationReactive: PaginationProps = reactive({
     page: 1,
     // pageCount: 1,
-    pageSize: 20,
+    pageSize: 10,
     // pageSizes: [10, 20, 50, 100],
     itemCount: 0,
     // showSizePicker: true,

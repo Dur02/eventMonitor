@@ -47,19 +47,24 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const resetUserStore = () => {
+    name.value = ''
+    nickname.value = ''
+    avatar.value = ''
+    userId.value = ''
+    roles.value = []
+    permissions.value = []
+    localStorage.removeItem('token')
+  }
+
   const logout = async (): Promise<void> => {
     try {
       await logoutApi()
-      name.value = ''
-      nickname.value = ''
-      avatar.value = ''
-      userId.value = ''
-      roles.value = []
-      permissions.value = []
-      localStorage.removeItem('token')
+      resetUserStore()
       return Promise.resolve()
     } catch (e) {
-      return Promise.reject()
+      resetUserStore()
+      return Promise.resolve()
     }
   }
 

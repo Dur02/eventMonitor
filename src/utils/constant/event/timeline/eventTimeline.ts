@@ -1,4 +1,5 @@
 import type { HotECOption, LineECOption } from '@/types/components/event/timeline'
+import { max, map } from 'lodash/fp'
 
 export const lineOptions = [
   {
@@ -52,8 +53,8 @@ export const getLineOption = (xData: string[], yData: number[]): LineECOption =>
     trigger: 'axis',
   },
   grid: {
-    left: '2%',
-    right: '2%',
+    left: '5%',
+    right: '5%',
     bottom: '10%',
     top: '10%',
     containLabel: true
@@ -90,13 +91,14 @@ export const heatMapOptions = [
   }
 ]
 
-export const getHeatMapOptions = (xData: string[], yData: number[], data: Array<Array<number>>): HotECOption => ({
-  backgroundColor: '#0e1529',
+export const getHeatMapOptions = (xData: string[], yData: string[], data: Array<Array<string| number>>): HotECOption => ({
   tooltip: {
     show: true,
-    formatter: function (params) {
-      console.log(params)
-      return `${params}`
+    formatter: (params) => `${params.value[1]}-${params.value[0]}: ${params.value[2]}`
+  },
+  toolbox: {
+    feature: {
+      saveAsImage: {}
     }
   },
   dataZoom: [
@@ -117,67 +119,47 @@ export const getHeatMapOptions = (xData: string[], yData: number[], data: Array<
       yAxisIndex: [0]
     }
   ],
-  toolbox: {
-    feature: {
-      saveAsImage: {}
-    }
-  },
-  geo: [{
-    map:'world',
-    zoom: 1,
-    roam: true,
-    show:false,
-    id:'geo1',
-    itemStyle:{
-      areaColor:'rgb(0,0,0,0)'
-    },
-    height:'100%',
-    width:'100%'
-  }],
   grid: {
-    left: '2%',
-    right: '2%',
+    left: '5%',
+    right: '5%',
     bottom: '10%',
     top: '10%',
     containLabel: true
   },
-  calculable: true,
   animation: false,
   xAxis: {
     type: 'category',
-    axisTick:{
-      interval:0
-    },
-    axisLine: {
-      lineStyle: {
-        color: '#F1F1F3'
-      }
-    },
     data: xData
   },
   yAxis: {
     type: 'category',
-    axisLine: {
-      lineStyle: {
-        color: '#F1F1F3'
-      }
-    },
     data: yData
+  },
+  visualMap: {
+    show: false,
+    type: 'continuous',
+    min: 0,
+    max: max(map((item) => item[2])(data)),
+    calculable: true,
+    realtime: false,
+    inRange: {
+      color: ['blue', 'cyan', 'lime', 'yellow', 'red']
+    }
   },
   series: [
     {
-      id:'test',
-      name: "fs",
       type: 'heatmap',
-      coordinateSystem: 'cartesian2d',
       data: data,
-      // gridIndex:0,
-      // gradientColors: ['blue', 'cyan', 'lime', 'yellow', 'red'],
+      emphasis: {
+        itemStyle: {
+          borderColor: '#333',
+          borderWidth: 1
+        }
+      },
       blurSize: 10,
       pointSize: 10,
-      itemStyle: {
-        color: 'rgb(0,0,0,0)'
-      }
-    },
+      progressive: 1000,
+      animation: false
+    }
   ]
 })
