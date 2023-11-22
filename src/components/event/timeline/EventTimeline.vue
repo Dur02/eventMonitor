@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Ref, ShallowRef } from 'vue'
-import { ref, shallowRef, onMounted, watch } from 'vue'
+import type { Ref } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import type { EChartsType } from 'echarts/core'
 import * as echarts from 'echarts/core'
 import {
@@ -9,8 +9,8 @@ import {
   DataZoomComponent,
   TitleComponent,
   TooltipComponent,
-  GeoComponent,
-  VisualMapComponent
+  VisualMapComponent,
+  GeoComponent
 } from 'echarts/components'
 import { LineChart, HeatmapChart } from 'echarts/charts'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
@@ -28,8 +28,6 @@ import {
   getHeatMapOptions
 } from '@/utils/constant/event/timeline/eventTimeline'
 import type { timelineDataType } from '@/types/components/event/timeline'
-import deepCopy from '@/utils/function/deepcopy';
-import { eventDisplayRowsType } from '@/types/components/event/display';
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
@@ -38,29 +36,41 @@ const footStore = useFooterStore()
 const { selectedId, configType } = storeToRefs(footStore)
 
 const loadingRef: Ref<boolean> = ref(false)
-const allData: Ref<timelineDataType[] | null> = ref(null)
+let allData: timelineDataType[] | null = null
 
+let echartsLine: EChartsType | null = null
+let lineXDataDay: string[] | null = null
+let lineYDataDay: number[] | null = null
+let lineXDataWeek: string[] | null = null
+let lineYDataWeek: number[] | null = null
+let lineXDataMonth: string[] | null = null
+let lineYDataMonth: number[] | null = null
+let lineXDataYear: string[] | null = null
+let lineYDataYear: number[] | null = null
 const echartsLineRef: Ref<HTMLElement | null> = ref(null)
-const echartsLine: ShallowRef<EChartsType | null>= shallowRef(null)
 const lineOptionValue: Ref<string> = ref('day')
-const lineXData: Ref<string[] | null> = ref(null)
-const lineYData: Ref<number[] | null> = ref(null)
 
+let echartsHeatMap: EChartsType | null = null
+let heatMapXDataDay: string[] | null = null
+let heatMapYDataDay: string[] | null = null
+let heatMapDataDay: (string| number)[][] | null = null
+let heatMapXDataWeek: string[] | null = null
+let heatMapYDataWeek: string[] | null = null
+let heatMapDataWeek: (string| number)[][] | null = null
+let heatMapXDataMonth: string[] | null = null
+let heatMapYDataMonth: string[] | null = null
+let heatMapDataMonth: (string| number)[][] | null = null
 const echartsHeatMapRef: Ref<HTMLElement | null> = ref(null)
-const echartsHeatMap: ShallowRef<EChartsType | null>= shallowRef(null)
 const heatMapOptionValue: Ref<string> = ref('day')
-const heatMapXData: Ref<string[] | null> = ref(null)
-const heatMapYData: Ref<string[] | null> = ref(null)
-const heatMapData: Ref<Array<Array<string| number>> | null> = ref(null)
 
 const controller: AbortController = new AbortController()
 const lineResizeObserver = new ResizeObserver(() => {
   const lineWidth = echartsLineRef.value?.offsetWidth
-  echartsLine.value?.resize({ width: lineWidth, height: "auto" })
+  echartsLine?.resize({ width: lineWidth, height: "auto" })
 })
 const heatMapResizeObserver = new ResizeObserver(() => {
   const heatMapWidth = echartsHeatMapRef.value?.offsetWidth
-  echartsHeatMap.value?.resize({ width: heatMapWidth, height: "auto" })
+  echartsHeatMap?.resize({ width: heatMapWidth, height: "auto" })
 })
 
 const getYLineData = (a: string[]) => {
@@ -73,47 +83,49 @@ const getYLineData = (a: string[]) => {
       flow(
         slice(startArray[index], endArray[index] + 1),
         map((item: number) => sum += item)
-      )(map(({ value }: { value: number }) => value)(allData.value))
+      )(map(({ value }: { value: number }) => value)(allData))
       return sum
     })
   )(uniq(a))
 }
 
-const getLineData = () => {
-  switch (lineOptionValue.value) {
+const initLineData = () => {
+  lineXDataDay = flow(
+    map(({ key }: { key: string }) => key)
+  )(allData)
+  lineYDataDay = flow(
+    map(({ value }: { value: number }) => value)
+  )(allData)
+
+  const a = map(({ key }: { key: string }) => getWeek.value(key))(allData)
+  lineXDataWeek = uniq(a)
+  lineYDataWeek = getYLineData(a)
+
+  const b = map(({ key }: { key: string }) => `${getYear(key)}${getMonth(key)}`)(allData)
+  lineXDataMonth = uniq(b)
+  lineYDataMonth = getYLineData(b)
+
+  const c = map(({ key }: { key: string }) => `${getYear(key)}`)(allData)
+  lineXDataYear = uniq(c)
+  lineYDataYear = getYLineData(c)
+}
+
+const setLineOption = (value: string) => {
+  switch (value) {
     case 'day': {
-      lineXData.value = flow(
-        map(({ key }: { key: string }) => key)
-      )(allData.value)
-      lineYData.value = flow(
-        map(({ value }: { value: number }) => value)
-      )(allData.value)
-      console.log(lineXData.value)
-      console.log(lineYData.value)
+      echartsLine?.setOption(getLineOption(lineXDataDay!, lineYDataDay!))
       break
     }
     case 'week': {
-      const a = map(({ key }: { key: string }) => getWeek(key))(allData.value)
-      lineXData.value = uniq(a)
-      lineYData.value = getYLineData(a)
-      console.log(lineXData.value)
-      console.log(lineYData.value)
+      echartsLine?.setOption(getLineOption(lineXDataWeek!, lineYDataWeek!))
       break
     }
     case 'month': {
-      const a = map(({ key }: { key: string }) => `${getYear(key)}${getMonth(key)}`)(allData.value)
-      lineXData.value = uniq(a)
-      lineYData.value = getYLineData(a)
-      console.log(lineXData.value)
-      console.log(lineYData.value)
+      echartsLine?.setOption(getLineOption(lineXDataMonth!, lineYDataMonth!))
       break
     }
     default: {
-      const a = map(({ key }: { key: string }) => `${getYear(key)}`)(allData.value)
-      lineXData.value = uniq(a)
-      lineYData.value = getYLineData(a)
-      console.log(lineXData.value)
-      console.log(lineYData.value)
+      echartsLine?.setOption(getLineOption(lineXDataYear!, lineYDataYear!))
       break
     }
   }
@@ -121,69 +133,80 @@ const getLineData = () => {
 
 const handleLineChecked = (value: string) => {
   lineOptionValue.value = value
-  getLineData()
-  echartsLine.value?.clear()
-  echartsLine.value?.setOption(getLineOption(lineXData.value!, lineYData.value!))
+  echartsLine?.clear()
+  setLineOption(value)
 }
 
-const getAllHeatMapData = (a: string[]) => {
+const initHeatMapData = () => {
+  heatMapXDataDay = flow(
+    map(({ key }) => join('')(slice(4, 8)(key))),
+    uniq
+  )(allData)
+  heatMapYDataDay = flow(
+    map(({ key }) => getYear(key)),
+    uniq
+  )(allData)
+  heatMapDataDay = flow(
+    map(({ key, value }) => [
+      join('')(slice(4, 8)(key)),
+      getYear(key),
+      value
+    ]),
+  )(allData)
+
+  const a = map(({ key }: { key: string }) => getWeek.value(key))(allData)
   const weekData = getYLineData(a)
-  heatMapXData.value = flow(
+  heatMapXDataWeek = flow(
     uniq,
-    map((item) => join('')(slice(4, 6)(item))),
+    map((item: string) => join('')(slice(4, 6)(item))),
     uniq,
   )(a)
-  heatMapYData.value = flow(
+  heatMapYDataWeek = flow(
     uniq,
-    map((item) => join('')(slice(0, 4)(item))),
+    map((item: string) => join('')(slice(0, 4)(item))),
     uniq
   )(a)
-  heatMapData.value = flow(
-    mapWithIndex((item, index) => [
+  heatMapDataWeek = flow(
+    mapWithIndex((item: string, index: number) => [
       join('')(drop(4)(item)),
       join('')(dropRight(2)(item)),
       weekData[index]
     ])
   )(uniq(a))
+
+  const b = map(({ key }: { key: string }) => `${getYear(key)}${getMonth(key)}`)(allData)
+  const monthData = getYLineData(b)
+  heatMapXDataMonth = flow(
+    uniq,
+    map((item: string) => join('')(slice(4, 6)(item))),
+    uniq,
+  )(b)
+  heatMapYDataMonth = flow(
+    uniq,
+    map((item: string) => join('')(slice(0, 4)(item))),
+    uniq
+  )(b)
+  heatMapDataMonth = flow(
+    mapWithIndex((item: string, index: number) => [
+      join('')(drop(4)(item)),
+      join('')(dropRight(2)(item)),
+      monthData[index]
+    ])
+  )(uniq(b))
 }
 
-const getHeatMapData = () => {
-  switch (heatMapOptionValue.value) {
+const setHeatMapOption = (value: string) => {
+  switch (value) {
     case 'day': {
-      heatMapXData.value = flow(
-        map(({ key }) => join('')(slice(4, 8)(key))),
-        uniq
-      )(allData.value)
-      heatMapYData.value = flow(
-        map(({ key }) => getYear(key)),
-        uniq
-      )(allData.value)
-      heatMapData.value = flow(
-        map(({ key, value }) => [
-          join('')(slice(4, 8)(key)),
-          getYear(key),
-          value
-        ]),
-      )(allData.value)
-      console.log(heatMapXData.value)
-      console.log(heatMapYData.value)
-      console.log(heatMapData.value)
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataDay!, heatMapYDataDay!, heatMapDataDay!))
       break
     }
     case 'week': {
-      const a = map(({ key }: { key: string }) => getWeek(key))(allData.value)
-      getAllHeatMapData(a)
-      console.log(heatMapXData.value)
-      console.log(heatMapYData.value)
-      console.log(heatMapData.value)
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataWeek!, heatMapYDataWeek!, heatMapDataWeek!))
       break
     }
     default: {
-      const a = map(({ key }: { key: string }) => `${getYear(key)}${getMonth(key)}`)(allData.value)
-      getAllHeatMapData(a)
-      console.log(heatMapXData.value)
-      console.log(heatMapYData.value)
-      console.log(heatMapData.value)
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataMonth!, heatMapYDataMonth!, heatMapDataMonth!))
       break
     }
   }
@@ -191,9 +214,8 @@ const getHeatMapData = () => {
 
 const handleHeatMapChecked = (value: string) => {
   heatMapOptionValue.value = value
-  getHeatMapData()
-  echartsHeatMap.value?.clear()
-  echartsHeatMap.value?.setOption(getHeatMapOptions(heatMapXData.value!, heatMapYData.value!, heatMapData.value!))
+  echartsHeatMap?.clear()
+  setHeatMapOption(value)
 }
 
 const reloadTableData = async () => {
@@ -205,7 +227,7 @@ const reloadTableData = async () => {
           resultData
         }
       } = await getResultDataByConfigId({ configId: selectedId.value! })
-      allData.value = resultData
+      allData = resultData
     } catch (e) {
       //
     }
@@ -220,21 +242,21 @@ onMounted(() => {
     DataZoomComponent,
     TitleComponent,
     TooltipComponent,
-    GeoComponent,
     VisualMapComponent,
+    GeoComponent,
     LineChart,
     HeatmapChart,
     LabelLayout,
     UniversalTransition,
-    SVGRenderer
+    SVGRenderer,
   ])
 
-  echartsLine.value = echarts.init(echartsLineRef.value, null, { renderer: 'svg' })
-  echartsHeatMap.value = echarts.init(echartsHeatMapRef.value, null, { renderer: 'svg' })
+  echartsLine = echarts.init(echartsLineRef.value, null, { renderer: 'svg' })
+  echartsHeatMap = echarts.init(echartsHeatMapRef.value, null, { renderer: 'svg' })
 
   window.addEventListener('resize', () => {
-    echartsLine.value?.resize()
-    echartsHeatMap.value?.resize()
+    echartsLine?.resize()
+    echartsHeatMap?.resize()
   }, {
     signal: controller.signal
   })
@@ -247,12 +269,12 @@ watch(
   async () => {
     if (selectedId.value && configType.value === 'event_timeline_viz') {
       await reloadTableData()
-      getLineData()
-      echartsLine.value?.clear()
-      echartsLine.value?.setOption(getLineOption(lineXData.value!, lineYData.value!))
-      getHeatMapData()
-      echartsHeatMap.value?.clear()
-      echartsHeatMap.value?.setOption(getHeatMapOptions(heatMapXData.value!, heatMapYData.value!, heatMapData.value!))
+      initLineData()
+      echartsLine?.clear()
+      setLineOption(lineOptionValue.value)
+      initHeatMapData()
+      echartsHeatMap?.clear()
+      setHeatMapOption(heatMapOptionValue.value)
     }
   },
   {
@@ -265,13 +287,13 @@ footStore.$onAction(({ name, after }) => {
     after((res) => {
       if (!loadingRef.value && res.data.resultData) {
         loadingRef.value = true
-        allData.value = res.data.resultData
-        getLineData()
-        echartsLine.value?.clear()
-        echartsLine.value?.setOption(getLineOption(lineXData.value!, lineYData.value!))
-        getHeatMapData()
-        echartsHeatMap.value?.clear()
-        echartsHeatMap.value?.setOption(getHeatMapOptions(heatMapXData.value!, heatMapYData.value!, heatMapData.value!))
+        allData = res.data.resultData
+        initLineData()
+        echartsLine?.clear()
+        setLineOption(lineOptionValue.value)
+        initHeatMapData()
+        echartsHeatMap?.clear()
+        setHeatMapOption(heatMapOptionValue.value)
         loadingRef.value = false
       }
     })

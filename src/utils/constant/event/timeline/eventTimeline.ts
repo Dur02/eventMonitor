@@ -1,5 +1,6 @@
 import type { HotECOption, LineECOption } from '@/types/components/event/timeline'
 import { max, map } from 'lodash/fp'
+import 'echarts/extension/bmap/bmap'
 
 export const lineOptions = [
   {
@@ -30,9 +31,9 @@ export const getLineOption = (xData: string[], yData: number[]): LineECOption =>
           back: '区域缩放还原'
         }
       },
-      restore: {
-        title: '还原'
-      },
+      // restore: {
+      //   title: '还原'
+      // },
       saveAsImage: {
         title: '保存为图谱'
       },
@@ -94,7 +95,12 @@ export const heatMapOptions = [
 export const getHeatMapOptions = (xData: string[], yData: string[], data: Array<Array<string| number>>): HotECOption => ({
   tooltip: {
     show: true,
-    formatter: (params) => `${params.value[1]}-${params.value[0]}: ${params.value[2]}`
+    formatter: (params: any) => {
+      if (params?.value) {
+        return `${params.value[1]}-${params.value[0]}: ${params.value[2]}`
+      }
+      return ''
+    }
   },
   toolbox: {
     feature: {
@@ -137,29 +143,34 @@ export const getHeatMapOptions = (xData: string[], yData: string[], data: Array<
   },
   visualMap: {
     show: false,
-    type: 'continuous',
+    type: 'piecewise',
     min: 0,
-    max: max(map((item) => item[2])(data)),
-    calculable: true,
-    realtime: false,
-    inRange: {
-      color: ['blue', 'cyan', 'lime', 'yellow', 'red']
-    }
+    max: max(map((item: (string | number)[]): number => item[2] as number)(data)),
+    itemHeight: 1,
+    itemGap: 1,
+    pieces: [
+      // { value: 0, color: '#f5f7f9' },
+      { gt: 0, lte: 100, color: '#313695' },
+      { gt: 100, lte: 1000, color: '#598dc0' },
+      { gt: 1000, lte: 10000, color: '#177cb0' },
+      { gt: 10000, lte: 100000, color: '#e34a33' },
+      { gt: 100000, color: '#a50026' },
+    ]
   },
   series: [
     {
       type: 'heatmap',
+      coordinateSystem: 'cartesian2d',
       data: data,
       emphasis: {
         itemStyle: {
           borderColor: '#333',
-          borderWidth: 1
+          borderWidth: 1,
         }
       },
       blurSize: 10,
       pointSize: 10,
-      progressive: 1000,
-      animation: false
+      progressive: 1000
     }
   ]
 })
