@@ -429,7 +429,7 @@ watch(
               span="4"
               style="margin-left: 80px;"
             >
-              <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
+              <p style="margin: 5px 0">逻辑运算符:||表示“或”,例如A||B||C</p>
             </n-gi>
 <!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
@@ -490,7 +490,7 @@ watch(
               span="4"
               style="margin-left: 80px;"
             >
-              <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
+              <p style="margin: 5px 0">逻辑运算符:||表示“或”,例如A||B||C</p>
             </n-gi>
 <!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
@@ -652,7 +652,7 @@ watch(
               span="4"
               style="margin-left: 80px;"
             >
-              <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
+              <p style="margin: 5px 0">逻辑运算符:||表示“或”,例如A||B||C</p>
             </n-gi>
 <!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
@@ -711,7 +711,7 @@ watch(
               span="4"
               style="margin-left: 80px;"
             >
-              <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
+              <p style="margin: 5px 0">逻辑运算符:||表示“或”,例如A||B||C</p>
             </n-gi>
 <!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
@@ -852,7 +852,7 @@ watch(
               />
             </n-form-item-gi>
             <n-gi span="4" style="margin-left: 80px;">
-              <p style="margin: 5px 0">逻辑运算符:&&表示“且”,||表示“或”,!(英文)表示“非”,可以用()表示一个主题优先级,例如(A && B && !D)||C</p>
+              <p style="margin: 5px 0">逻辑运算符:||表示“或”,例如A||B||C</p>
             </n-gi>
             <n-form-item-gi span="3" label="地理全称">
               <n-input v-model:value="formValue.actiongeoFullname" />

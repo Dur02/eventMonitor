@@ -1,5 +1,5 @@
-import { drop, dropRight, flow, join, split, includes } from 'lodash/fp'
-import { computed } from 'vue';
+import { drop, dropRight, flow, join, split } from 'lodash/fp'
+import { computed } from 'vue'
 
 /*
  从 20230101 中获取年(不带年份）
@@ -26,7 +26,7 @@ export const getMonth = (date: string): string => flow(
  获取 20230101 是年内第几周
  例: 20230101 => 202301
  */
-export const getWeek = computed(() => (date: string): string => {
+export const getWeek = (date: string): string => {
   const currentDate: Date = new Date(Number(getYear(date)), Number(getMonth(date)) - 1, Number(getDay(date)))
   const beginDate: Date = new Date(Number(getYear(date)), 0, 1)
   // 星期从0-6,0代表星期天，6代表星期六
@@ -38,7 +38,7 @@ export const getWeek = computed(() => (date: string): string => {
   const millisDiff = currentDate.getTime() - beginDate.getTime()
   const dayDiff = Math.floor(( millisDiff + (beginWeek - endWeek) * (24 * 60 * 60 * 1000)) / 86400000)
   return `${getYear(date)}${Math.ceil(dayDiff / 7) < 10 ? '0' : ''}${Math.ceil(dayDiff / 7) + 1}`
-})
+}
 
 /*
  从 20230101 中获取日

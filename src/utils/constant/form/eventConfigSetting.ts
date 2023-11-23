@@ -1,10 +1,8 @@
 import type { FormRules, SelectGroupOption, SelectOption } from 'naive-ui'
 import type {
-  eventConfigFormInitialValueType,
   eventConfigRowsType,
   eventConfigSettingInitialValueType
-} from '@/types/components/config/event';
-import { compact, concat, flow } from 'lodash/fp'
+} from '@/types/components/config/event'
 import { joinArray } from '@/utils/function/arrayToString'
 import { splitString } from '@/utils/function/stringToArray'
 

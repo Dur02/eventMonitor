@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import type { EChartsType } from 'echarts/core'
 import * as echarts from 'echarts/core'
 import {
@@ -19,7 +19,7 @@ import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import { getResultDataByConfigId } from '@/api/eventAnalyse'
-import { flow, map, uniq, findIndex, findLastIndex, slice, join, drop, dropRight } from 'lodash/fp'
+import { flow, map, uniq, findIndex, findLastIndex, slice, join, drop, dropRight, includes } from 'lodash/fp'
 import { getWeek, getYear, getMonth } from '@/utils/function/date'
 import {
   lineOptions,
@@ -28,6 +28,7 @@ import {
   getHeatMapOptions
 } from '@/utils/constant/event/timeline/eventTimeline'
 import type { timelineDataType } from '@/types/components/event/timeline'
+import world from '@/utils/constant/echarts/world.json'
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
@@ -40,26 +41,27 @@ let allData: timelineDataType[] | null = null
 
 let echartsLine: EChartsType | null = null
 let lineXDataDay: string[] | null = null
-let lineYDataDay: number[] | null = null
 let lineXDataWeek: string[] | null = null
-let lineYDataWeek: number[] | null = null
 let lineXDataMonth: string[] | null = null
-let lineYDataMonth: number[] | null = null
 let lineXDataYear: string[] | null = null
+let lineYDataDay: number[] | null = null
+let lineYDataWeek: number[] | null = null
+let lineYDataMonth: number[] | null = null
 let lineYDataYear: number[] | null = null
 const echartsLineRef: Ref<HTMLElement | null> = ref(null)
 const lineOptionValue: Ref<string> = ref('day')
 
 let echartsHeatMap: EChartsType | null = null
-let heatMapXDataDay: string[] | null = null
-let heatMapYDataDay: string[] | null = null
-let heatMapDataDay: (string| number)[][] | null = null
-let heatMapXDataWeek: string[] | null = null
-let heatMapYDataWeek: string[] | null = null
-let heatMapDataWeek: (string| number)[][] | null = null
-let heatMapXDataMonth: string[] | null = null
-let heatMapYDataMonth: string[] | null = null
-let heatMapDataMonth: (string| number)[][] | null = null
+let heatMapXDataDay: string[] = []
+let heatMapXDataWeek: string[] = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+let heatMapXDataMonth: string[] = [
+  '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28',
+  '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53'
+]
+let heatMapYData: number[] = []
+let heatMapDataDay: number[][] = []
+let heatMapDataWeek: number[][] = []
+let heatMapDataMonth: number[][] = []
 const echartsHeatMapRef: Ref<HTMLElement | null> = ref(null)
 const heatMapOptionValue: Ref<string> = ref('day')
 
@@ -97,7 +99,7 @@ const initLineData = () => {
     map(({ value }: { value: number }) => value)
   )(allData)
 
-  const a = map(({ key }: { key: string }) => getWeek.value(key))(allData)
+  const a = map(({ key }: { key: string }) => getWeek(key))(allData)
   lineXDataWeek = uniq(a)
   lineYDataWeek = getYLineData(a)
 
@@ -137,15 +139,42 @@ const handleLineChecked = (value: string) => {
   setLineOption(value)
 }
 
+const getHeatMapData = (a: string[]) => {
+  const yLineData = getYLineData(a)
+  return flow(
+    mapWithIndex((item: string, index: number) => [
+      join('')(drop(4)(item)),
+      join('')(dropRight(2)(item)),
+      yLineData[index]
+    ])
+  )(uniq(a))
+}
+
 const initHeatMapData = () => {
-  heatMapXDataDay = flow(
-    map(({ key }) => join('')(slice(4, 8)(key))),
-    uniq
-  )(allData)
-  heatMapYDataDay = flow(
+  // 获取日粒度的X轴数据
+  for (let j = 1; j <= 12; j++) {
+    let maxDay
+    const Month31Day = [1, 3, 5, 7, 8, 10, 12]
+    const Month30Day = [4, 6, 9, 11]
+    if (includes(j)(Month31Day)) {
+      maxDay = 31
+    } else if (includes(j)(Month30Day)) {
+      maxDay = 30
+    } else {
+      maxDay = 29
+    }
+    for (let i = 1; i <= maxDay; i++) {
+      heatMapXDataDay.push(`${j < 10 ? `0${j}`: j}-${i < 10 ? `0${i}` : i}`)
+    }
+  }
+
+  // 获取Y轴数据
+  heatMapYData = flow(
     map(({ key }) => getYear(key)),
     uniq
   )(allData)
+
+  //获取日粒度的表格数据
   heatMapDataDay = flow(
     map(({ key, value }) => [
       join('')(slice(4, 8)(key)),
@@ -154,59 +183,58 @@ const initHeatMapData = () => {
     ]),
   )(allData)
 
-  const a = map(({ key }: { key: string }) => getWeek.value(key))(allData)
-  const weekData = getYLineData(a)
-  heatMapXDataWeek = flow(
-    uniq,
-    map((item: string) => join('')(slice(4, 6)(item))),
-    uniq,
-  )(a)
-  heatMapYDataWeek = flow(
-    uniq,
-    map((item: string) => join('')(slice(0, 4)(item))),
-    uniq
-  )(a)
-  heatMapDataWeek = flow(
-    mapWithIndex((item: string, index: number) => [
-      join('')(drop(4)(item)),
-      join('')(dropRight(2)(item)),
-      weekData[index]
-    ])
-  )(uniq(a))
+  //获取周粒度的表格数据
+  const a = map(({ key }: { key: string }) => getWeek(key))(allData)
+  heatMapDataWeek = getHeatMapData(a)
 
+  //获取月粒度的表格数据
   const b = map(({ key }: { key: string }) => `${getYear(key)}${getMonth(key)}`)(allData)
-  const monthData = getYLineData(b)
-  heatMapXDataMonth = flow(
-    uniq,
-    map((item: string) => join('')(slice(4, 6)(item))),
-    uniq,
-  )(b)
-  heatMapYDataMonth = flow(
-    uniq,
-    map((item: string) => join('')(slice(0, 4)(item))),
-    uniq
-  )(b)
-  heatMapDataMonth = flow(
-    mapWithIndex((item: string, index: number) => [
-      join('')(drop(4)(item)),
-      join('')(dropRight(2)(item)),
-      monthData[index]
-    ])
-  )(uniq(b))
+  heatMapXDataMonth = getHeatMapData(b)
 }
 
 const setHeatMapOption = (value: string) => {
+  // function convertToPx(dataitem: any) {
+  //   return echartsHeatMap!.convertToPixel({
+  //     seriesId: 'test'
+  //   }, dataitem)
+  // }
+  //
+  // function convertToGeo(dataitem: any) {
+  //   const pointobj: any = echartsHeatMap!.convertFromPixel({
+  //     geoId: 'geo1'
+  //   }, convertToPx(dataitem))
+  //   return [pointobj[0], pointobj[1]]
+  // }
+  //
+  // function convertData(data: Array<Array<string| number>>, x_start: number, x_end: number, y_start: number, y_end: number){
+  //   const convertedData = []
+  //   //横坐标对应的索引值范围
+  //   // x_start = Math.ceil(x_start)
+  //   // x_end = Math.ceil(x_end)
+  //   // //纵坐标对应的索引值范围
+  //   // y_start = Math.ceil(y_start)
+  //   // y_end = Math.ceil(y_end)
+  //
+  //   for(let i = 0;i < data.length; i++){
+  //     const geoCoord = convertToGeo([data[i][0],data[i][1]])
+  //     geoCoord.push(data[i][2])
+  //     convertedData.push(geoCoord)
+  //
+  //   }
+  //   return convertedData;
+  // }
+
   switch (value) {
     case 'day': {
-      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataDay!, heatMapYDataDay!, heatMapDataDay!))
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataDay!, heatMapYData!, heatMapDataDay!))
       break
     }
     case 'week': {
-      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataWeek!, heatMapYDataWeek!, heatMapDataWeek!))
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataWeek!, heatMapYData!, heatMapDataWeek!))
       break
     }
     default: {
-      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataMonth!, heatMapYDataMonth!, heatMapDataMonth!))
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataMonth!, heatMapYData!, heatMapDataMonth!))
       break
     }
   }
@@ -250,6 +278,7 @@ onMounted(() => {
     UniversalTransition,
     SVGRenderer,
   ])
+  echarts.registerMap('world', JSON.stringify(world))
 
   echartsLine = echarts.init(echartsLineRef.value, null, { renderer: 'svg' })
   echartsHeatMap = echarts.init(echartsHeatMapRef.value, null, { renderer: 'svg' })
@@ -298,6 +327,11 @@ footStore.$onAction(({ name, after }) => {
       }
     })
   }
+})
+
+onUnmounted(() => {
+  echartsLine?.dispose()
+  echartsHeatMap?.dispose()
 })
 </script>
 
