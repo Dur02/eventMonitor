@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref, onMounted, watch, onUnmounted } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import type { EChartsType } from 'echarts/core'
 import * as echarts from 'echarts/core'
 import {
@@ -19,13 +19,25 @@ import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import { getResultDataByConfigId } from '@/api/eventAnalyse'
-import { flow, map, uniq, findIndex, findLastIndex, slice, join, drop, dropRight, includes } from 'lodash/fp'
+import {
+  flow,
+  map,
+  uniq,
+  findIndex,
+  findLastIndex,
+  slice,
+  join,
+  drop,
+  dropRight,
+  includes
+} from 'lodash/fp'
 import { getWeek, getYear, getMonth } from '@/utils/function/date'
 import {
   lineOptions,
   getLineOption,
   heatMapOptions,
-  getHeatMapOptions
+  getHeatMapOptions,
+  getNewHeatMapOption
 } from '@/utils/constant/event/timeline/eventTimeline'
 import type { timelineDataType } from '@/types/components/event/timeline'
 import world from '@/utils/constant/echarts/world.json'
@@ -40,25 +52,46 @@ const loadingRef: Ref<boolean> = ref(false)
 let allData: timelineDataType[] | null = null
 
 let echartsLine: EChartsType | null = null
-let lineXDataDay: string[] | null = null
-let lineXDataWeek: string[] | null = null
-let lineXDataMonth: string[] | null = null
-let lineXDataYear: string[] | null = null
-let lineYDataDay: number[] | null = null
-let lineYDataWeek: number[] | null = null
-let lineYDataMonth: number[] | null = null
-let lineYDataYear: number[] | null = null
+let lineXDataDay: string[] = []
+let lineXDataWeek: string[] = []
+let lineXDataMonth: string[] = []
+let lineXDataYear: string[] = []
+let lineDataDay: number[] = []
+let lineDataWeek: number[] = []
+let lineDataMonth: number[] = []
+let lineDataYear: number[] = []
 const echartsLineRef: Ref<HTMLElement | null> = ref(null)
 const lineOptionValue: Ref<string> = ref('day')
 
+// 获取日粒度的X轴数据
+const getHeatMapXDataDay = () => {
+  const temp = []
+  for (let j = 1; j <= 12; j++) {
+    let maxDay
+    const Month31Day = [1, 3, 5, 7, 8, 10, 12]
+    const Month30Day = [4, 6, 9, 11]
+    if (includes(j)(Month31Day)) {
+      maxDay = 31
+    } else if (includes(j)(Month30Day)) {
+      maxDay = 30
+    } else {
+      maxDay = 29
+    }
+    for (let i = 1; i <= maxDay; i++) {
+      temp.push(`${j < 10 ? `0${j}`: j}-${i < 10 ? `0${i}` : i}`)
+    }
+  }
+  return temp
+}
+
 let echartsHeatMap: EChartsType | null = null
-let heatMapXDataDay: string[] = []
-let heatMapXDataWeek: string[] = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-let heatMapXDataMonth: string[] = [
-  '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28',
-  '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53'
+let heatMapXDataDay: string[] = getHeatMapXDataDay()
+const heatMapXDataWeek: string[] = [
+  '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28',
+  '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54'
 ]
-let heatMapYData: number[] = []
+const heatMapXDataMonth: string[] = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+let heatMapYData: string[] = []
 let heatMapDataDay: number[][] = []
 let heatMapDataWeek: number[][] = []
 let heatMapDataMonth: number[][] = []
@@ -75,7 +108,7 @@ const heatMapResizeObserver = new ResizeObserver(() => {
   echartsHeatMap?.resize({ width: heatMapWidth, height: "auto" })
 })
 
-const getYLineData = (a: string[]) => {
+const getLineData = (a: string[]) => {
   const startArray = map((item: any) => findIndex((o) => o === item)(a))(uniq(a))
   const endArray = map((item: any) => findLastIndex((o) => o === item)(a))(uniq(a))
 
@@ -95,39 +128,39 @@ const initLineData = () => {
   lineXDataDay = flow(
     map(({ key }: { key: string }) => key)
   )(allData)
-  lineYDataDay = flow(
+  lineDataDay = flow(
     map(({ value }: { value: number }) => value)
   )(allData)
 
   const a = map(({ key }: { key: string }) => getWeek(key))(allData)
   lineXDataWeek = uniq(a)
-  lineYDataWeek = getYLineData(a)
+  lineDataWeek = getLineData(a)
 
   const b = map(({ key }: { key: string }) => `${getYear(key)}${getMonth(key)}`)(allData)
   lineXDataMonth = uniq(b)
-  lineYDataMonth = getYLineData(b)
+  lineDataMonth = getLineData(b)
 
   const c = map(({ key }: { key: string }) => `${getYear(key)}`)(allData)
   lineXDataYear = uniq(c)
-  lineYDataYear = getYLineData(c)
+  lineDataYear = getLineData(c)
 }
 
 const setLineOption = (value: string) => {
   switch (value) {
     case 'day': {
-      echartsLine?.setOption(getLineOption(lineXDataDay!, lineYDataDay!))
+      echartsLine?.setOption(getLineOption(lineXDataDay!, lineDataDay!))
       break
     }
     case 'week': {
-      echartsLine?.setOption(getLineOption(lineXDataWeek!, lineYDataWeek!))
+      echartsLine?.setOption(getLineOption(lineXDataWeek!, lineDataWeek!))
       break
     }
     case 'month': {
-      echartsLine?.setOption(getLineOption(lineXDataMonth!, lineYDataMonth!))
+      echartsLine?.setOption(getLineOption(lineXDataMonth!, lineDataMonth!))
       break
     }
     default: {
-      echartsLine?.setOption(getLineOption(lineXDataYear!, lineYDataYear!))
+      echartsLine?.setOption(getLineOption(lineXDataYear!, lineDataYear!))
       break
     }
   }
@@ -140,7 +173,7 @@ const handleLineChecked = (value: string) => {
 }
 
 const getHeatMapData = (a: string[]) => {
-  const yLineData = getYLineData(a)
+  const yLineData = getLineData(a)
   return flow(
     mapWithIndex((item: string, index: number) => [
       join('')(drop(4)(item)),
@@ -151,23 +184,6 @@ const getHeatMapData = (a: string[]) => {
 }
 
 const initHeatMapData = () => {
-  // 获取日粒度的X轴数据
-  for (let j = 1; j <= 12; j++) {
-    let maxDay
-    const Month31Day = [1, 3, 5, 7, 8, 10, 12]
-    const Month30Day = [4, 6, 9, 11]
-    if (includes(j)(Month31Day)) {
-      maxDay = 31
-    } else if (includes(j)(Month30Day)) {
-      maxDay = 30
-    } else {
-      maxDay = 29
-    }
-    for (let i = 1; i <= maxDay; i++) {
-      heatMapXDataDay.push(`${j < 10 ? `0${j}`: j}-${i < 10 ? `0${i}` : i}`)
-    }
-  }
-
   // 获取Y轴数据
   heatMapYData = flow(
     map(({ key }) => getYear(key)),
@@ -177,64 +193,90 @@ const initHeatMapData = () => {
   //获取日粒度的表格数据
   heatMapDataDay = flow(
     map(({ key, value }) => [
-      join('')(slice(4, 8)(key)),
+      `${join('')(slice(4, 6)(key))}-${join('')(slice(6, 8)(key))}`,
       getYear(key),
-      value
+      value,
     ]),
+    map((item) => [
+      findIndex((o) => o === item[0])(heatMapXDataDay),
+      findIndex((o) => o === item[1])(heatMapYData),
+      item[2]
+    ])
+  )(allData)
+  echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataDay, heatMapYData, heatMapDataDay))
+  const customData = convertData(heatMapDataDay,0, heatMapXDataDay.length, 0, heatMapYData.length)
+
+  //获取周粒度的表格数据=
+  heatMapDataWeek = flow(
+    map(({ key }: { key: string }) => getWeek(key)),
+    getHeatMapData,
+    map((item: (string | number)[][]) => [
+      findIndex((o) => o === item[0])(heatMapXDataWeek),
+      findIndex((o) => o === item[1])(heatMapYData),
+      item[2]
+    ])
   )(allData)
 
-  //获取周粒度的表格数据
-  const a = map(({ key }: { key: string }) => getWeek(key))(allData)
-  heatMapDataWeek = getHeatMapData(a)
-
   //获取月粒度的表格数据
-  const b = map(({ key }: { key: string }) => `${getYear(key)}${getMonth(key)}`)(allData)
-  heatMapXDataMonth = getHeatMapData(b)
+  heatMapDataMonth = flow(
+    map(({ key }: { key: string }) => `${getYear(key)}${getMonth(key)}`),
+    getHeatMapData,
+    map((item: (string | number)[][]) => [
+      findIndex((o) => o === item[0])(heatMapXDataMonth),
+      findIndex((o) => o === item[1])(heatMapYData),
+      item[2]
+    ])
+  )(allData)
+}
+
+const convertToPx = (dataitem: number[]) => echartsHeatMap!.convertToPixel({
+  seriesId: 'test'
+}, dataitem)
+
+const convertToGeo = (dataitem: number[]) => {
+  const pointobj: any = echartsHeatMap!.convertFromPixel({
+    geoId: 'geo1'
+  }, convertToPx(dataitem))
+  return [pointobj[0], pointobj[1]]
+}
+
+const convertData = (data: number[][], x_start: number, x_end: number, y_start: number, y_end: number) => {
+  const convertedData = []
+  //横坐标对应的索引值范围
+  x_start = Math.ceil(x_start)
+  x_end = Math.ceil(x_end)
+  // //纵坐标对应的索引值范围
+  y_start = Math.ceil(y_start)
+  y_end = Math.ceil(y_end)
+
+  for(let i = 0;i < data.length; i++){
+    if (data[i][0] >= x_start && data[i][0] < x_end && data[i][1] >= y_start && data[i][1] < y_end) {
+      const geoCoord = convertToGeo([data[i][0],data[i][1]])
+      geoCoord.push(data[i][2])
+      convertedData.push(geoCoord)
+    }
+  }
+  return convertedData;
 }
 
 const setHeatMapOption = (value: string) => {
-  // function convertToPx(dataitem: any) {
-  //   return echartsHeatMap!.convertToPixel({
-  //     seriesId: 'test'
-  //   }, dataitem)
-  // }
-  //
-  // function convertToGeo(dataitem: any) {
-  //   const pointobj: any = echartsHeatMap!.convertFromPixel({
-  //     geoId: 'geo1'
-  //   }, convertToPx(dataitem))
-  //   return [pointobj[0], pointobj[1]]
-  // }
-  //
-  // function convertData(data: Array<Array<string| number>>, x_start: number, x_end: number, y_start: number, y_end: number){
-  //   const convertedData = []
-  //   //横坐标对应的索引值范围
-  //   // x_start = Math.ceil(x_start)
-  //   // x_end = Math.ceil(x_end)
-  //   // //纵坐标对应的索引值范围
-  //   // y_start = Math.ceil(y_start)
-  //   // y_end = Math.ceil(y_end)
-  //
-  //   for(let i = 0;i < data.length; i++){
-  //     const geoCoord = convertToGeo([data[i][0],data[i][1]])
-  //     geoCoord.push(data[i][2])
-  //     convertedData.push(geoCoord)
-  //
-  //   }
-  //   return convertedData;
-  // }
-
   switch (value) {
     case 'day': {
-      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataDay!, heatMapYData!, heatMapDataDay!))
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataDay, heatMapYData, heatMapDataDay))
+      const customData = convertData(heatMapDataDay,0, heatMapXDataDay.length, 0, heatMapYData.length)
+      echartsHeatMap?.setOption(getNewHeatMapOption(customData))
       break
     }
     case 'week': {
-      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataWeek!, heatMapYData!, heatMapDataWeek!))
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataWeek, heatMapYData, heatMapDataWeek))
+      const customData = convertData(heatMapDataWeek,0, heatMapXDataWeek.length, 0, heatMapYData.length)
+      echartsHeatMap?.setOption(getNewHeatMapOption(customData))
       break
     }
     default: {
-      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataMonth!, heatMapYData!, heatMapDataMonth!))
+      echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataMonth, heatMapYData, heatMapDataMonth))
+      const customData = convertData(heatMapDataMonth,0, heatMapXDataMonth.length, 0, heatMapYData.length)
+      echartsHeatMap?.setOption(getNewHeatMapOption(customData))
       break
     }
   }
@@ -243,6 +285,7 @@ const setHeatMapOption = (value: string) => {
 const handleHeatMapChecked = (value: string) => {
   heatMapOptionValue.value = value
   echartsHeatMap?.clear()
+  console.log(echartsHeatMap?.getOption())
   setHeatMapOption(value)
 }
 
@@ -329,9 +372,11 @@ footStore.$onAction(({ name, after }) => {
   }
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   echartsLine?.dispose()
   echartsHeatMap?.dispose()
+  lineResizeObserver.unobserve(echartsLineRef.value!)
+  heatMapResizeObserver.unobserve(echartsHeatMapRef.value!)
 })
 </script>
 
@@ -423,7 +468,7 @@ onUnmounted(() => {
 
   .echarts-line, .echarts-heatMap {
     width: 100%;
-    height: 500px;
+    height: 480px;
   }
 }
 </style>

@@ -37,7 +37,7 @@ export const getWeek = (date: string): string => {
   // 计算两个日期的天数差
   const millisDiff = currentDate.getTime() - beginDate.getTime()
   const dayDiff = Math.floor(( millisDiff + (beginWeek - endWeek) * (24 * 60 * 60 * 1000)) / 86400000)
-  return `${getYear(date)}${Math.ceil(dayDiff / 7) < 10 ? '0' : ''}${Math.ceil(dayDiff / 7) + 1}`
+  return `${getYear(date)}${Math.ceil(dayDiff / 7) + 1 < 10 ? '0' : ''}${Math.ceil(dayDiff / 7) + 1}`
 }
 
 /*
