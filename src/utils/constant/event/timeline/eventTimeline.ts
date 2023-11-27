@@ -1,4 +1,4 @@
-import type { HotECOption, LineECOption } from '@/types/components/event/timeline'
+import type { HotECOption, LineECOption, ScatterECOption } from '@/types/components/event/timeline'
 import { max, map } from 'lodash/fp'
 
 export const lineOptions = [
@@ -94,8 +94,8 @@ export const heatMapOptions = [
 export const getHeatMapOptions = (xData: string[], yData: string[], data: number[][]): HotECOption => ({
   tooltip: {
     show: true,
-    formatter: function (params: any): string {
-      if (params.value) {
+    formatter: (params: any) => {
+      if (params?.value) {
         return yData[params.value[1]] + '-' + xData[params.value[0]]+ ':' + params.value[2]
       }
       return ''
@@ -106,27 +106,31 @@ export const getHeatMapOptions = (xData: string[], yData: string[], data: number
       saveAsImage: {}
     }
   },
-  geo: [{
-    map: 'world',
-    zoom: 1,
-    roam: true,
-    show: false,
-    id: 'geo1',
-    itemStyle: {
-      areaColor: 'rgb(0,0,0,0)'
-    },
-    height: '100%',
-    width: '100%'
-  }],
+  // dataZoom: [
+  //   {
+  //     type: 'inside',
+  //     xAxisIndex: [0]
+  //   },
+  //   {
+  //     type: 'slider',
+  //     xAxisIndex: [0]
+  //   },
+  //   {
+  //     type: 'inside',
+  //     yAxisIndex: [0]
+  //   },
+  //   {
+  //     type: 'slider',
+  //     yAxisIndex: [0]
+  //   }
+  // ],
   grid: {
-    show: true,
-    top: '10%',
-    bottom: '15%',
     left: '5%',
     right: '5%',
-    borderColor: 'rgb(0,0,0,0)'
+    bottom: '10%',
+    top: '10%',
+    containLabel: true
   },
-  calculable: true,
   animation: false,
   xAxis: {
     type: 'category',
@@ -139,68 +143,84 @@ export const getHeatMapOptions = (xData: string[], yData: string[], data: number
   visualMap: [
     {
       show: false,
+      type: 'piecewise',
+      calculable: false,
       min: 0,
-      max: max(map((item: number[]): number => item[2])(data)),
-      top: 'bottom',
-      seriesIndex: 1,
-      calculable: true,
-      inRange: {
-        color: ['blue', 'cyan', 'lime', 'yellow', 'red'],
-        opacity: [0, 0, 0, 0, 0]
-      }
+      max: max(map((item: number[]): number => item[2])(data))
     }
   ],
+  geo: {
+    map: 'world',
+    zoom: 1,
+    roam: false,
+    show: false,
+    id: 'geo1',
+    itemStyle: {
+      areaColor: 'rgba(0, 0, 0, 0)'
+    },
+    height: '100%',
+    width: '100%'
+  },
   series: [
     {
       id: 'test',
-      name: 'fs',
+      name: "fs",
       type: 'heatmap',
       coordinateSystem: 'cartesian2d',
       data: data,
+      emphasis: {
+        itemStyle: {
+          borderColor: '#333',
+          borderWidth: 1,
+        }
+      },
       itemStyle: {
-        color: 'rgba(0, 0, 0, 0)'
-      }
-    },
+        color: 'rgba(0, 0, 0, 0)',
+        opacity: 0
+      },
+      progressive: 2000
+    }
   ]
 })
 
 export const getNewHeatMapOption = (data: number[][]): HotECOption => ({
   visualMap: [
     {
-      show: false,
-      min: 0,
-      max: max(map((item: number[]): number => item[2])(data)),
-      top: 'bottom',
-      seriesIndex: 1,
-      calculable: true,
       inRange: {
-        color: ['blue', 'cyan', 'lime', 'yellow', 'red'],
-        opacity: [0, 0, 0, 0, 0]
-      }
+        color: ['blue', 'cyan', 'lime', 'yellow', 'red']
+      },
+      // pieces: [
+      //   // { value: 0, color: '#f5f7f9' },
+      //   { gt: 0, lte: 100, color: 'blue' },
+      //   { gt: 100, lte: 1000, color: 'cyan' },
+      //   { gt: 1000, lte: 10000, color: 'lime' },
+      //   { gt: 10000, lte: 100000, color: 'yellow' },
+      //   { gt: 100000, color: 'red' },
+      // ]
     }
   ],
   dataZoom:[
     {
-      type: 'inside',
+      // type: 'inside',
       xAxisIndex: [0],
-      filterMode: 'none'
+      filterMode: 'empty'
     },
     {
-      type: 'inside',
+      // type: 'inside',
       yAxisIndex: [0],
-      filterMode: 'none'
+      filterMode: 'empty'
     },
     {
       id: 'dataZoomX',
       type: 'slider',
       xAxisIndex: [0],
-      filterMode: 'none'
+      filterMode: 'empty'
     },
     {
       id: 'dataZoomY',
       type: 'slider',
       yAxisIndex: [0],
-      filterMode: 'none'
+      filterMode: 'empty'
     }
   ],
   series: [
@@ -212,7 +232,104 @@ export const getNewHeatMapOption = (data: number[][]): HotECOption => ({
       geoIndex: 0,
       data: data,
       blurSize: 10,
-      pointSize: 8
+      pointSize: 8,
+      progressive: 2000
     },
   ],
+})
+
+export const getScatterOption = (xData, yData, data): ScatterECOption => ({
+  dataZoom: [
+    {
+      type: 'inside',
+      xAxisIndex: [0]
+    },
+    {
+      type: 'slider',
+      xAxisIndex: [0]
+    },
+    {
+      type: 'inside',
+      yAxisIndex: [0]
+    },
+    {
+      type: 'slider',
+      yAxisIndex: [0]
+    }
+  ],
+  tooltip: {
+    position: 'top',
+    formatter: (params: any) => {
+      if (params?.value) {
+        return yData[params.value[1]] + '-' + xData[params.value[0]]+ ':' + params.value[2]
+      }
+      return ''
+    }
+  },
+  grid: {
+    left: '5%',
+    right: '5%',
+    bottom: '10%',
+    top: '10%',
+    containLabel: true
+  },
+  xAxis: {
+    type: 'category',
+    data: xData
+  },
+  yAxis: {
+    type: 'category',
+    data: yData
+  },
+  color: [
+    {
+      type: 'radial',
+      x: 0.5,
+      y: 0.5,
+      r: 0.5,
+      colorStops: [{
+        offset: 0, color: 'yellow' // 0% 处的颜色
+      }, {
+        offset: 1, color: 'green' // 100% 处的颜色
+      }],
+      global: false // 缺省为 false
+    }
+  ],
+  series: [
+    {
+      name: 'Punch Card',
+      type: 'scatter',
+      symbol: 'circle',
+      symbolSize: 20,
+      // symbolSize: (params) => {
+      //   if (params[2] === 0) return 0
+      //   return 20
+      // },
+      data: data,
+      itemStyle: {
+        color: (params) => {
+          if (params.data[2] === 0) return 'rgba(0, 0, 0, 0)'
+          return {
+            type: 'radial',
+            x: 0.5,
+            y: 0.5,
+            r: 0.5,
+            colorStops: [
+              {
+                offset: 0, color: '#fcf16e' // 0% 处的颜色
+              },
+              {
+                offset: .5, color: '#afdd22' // 0% 处的颜色
+              },
+              {
+                offset: 1, color: '#3eede7' // 100% 处的颜色
+              }
+            ],
+            global: false // 缺省为 false
+          }
+        }
+      },
+      progressive: 2000
+    }
+  ]
 })

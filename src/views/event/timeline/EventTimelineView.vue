@@ -11,6 +11,5 @@ import EventTimeline from '@/components/event/timeline/EventTimeline.vue'
 <style scoped lang="scss">
 .charts-container {
   width: 100%;
-  height: 400px;
 }
 </style>

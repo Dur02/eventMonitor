@@ -7,12 +7,11 @@ import {
   GridComponent,
   ToolboxComponent,
   DataZoomComponent,
-  TitleComponent,
   TooltipComponent,
   VisualMapComponent,
-  GeoComponent
+  GeoComponent,
 } from 'echarts/components'
-import { LineChart, HeatmapChart } from 'echarts/charts'
+import { LineChart, HeatmapChart, ScatterChart } from 'echarts/charts'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
 import { SVGRenderer } from 'echarts/renderers'
 import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard } from 'naive-ui'
@@ -37,7 +36,8 @@ import {
   getLineOption,
   heatMapOptions,
   getHeatMapOptions,
-  getNewHeatMapOption
+  getNewHeatMapOption,
+  getScatterOption
 } from '@/utils/constant/event/timeline/eventTimeline'
 import type { timelineDataType } from '@/types/components/event/timeline'
 import world from '@/utils/constant/echarts/world.json'
@@ -98,6 +98,10 @@ let heatMapDataMonth: number[][] = []
 const echartsHeatMapRef: Ref<HTMLElement | null> = ref(null)
 const heatMapOptionValue: Ref<string> = ref('day')
 
+let echartsScatter: EChartsType | null = null
+const echartsScatterRef: Ref<HTMLElement | null> = ref(null)
+const scatterOptionValue: Ref<string> = ref('day')
+
 const controller: AbortController = new AbortController()
 const lineResizeObserver = new ResizeObserver(() => {
   const lineWidth = echartsLineRef.value?.offsetWidth
@@ -106,6 +110,10 @@ const lineResizeObserver = new ResizeObserver(() => {
 const heatMapResizeObserver = new ResizeObserver(() => {
   const heatMapWidth = echartsHeatMapRef.value?.offsetWidth
   echartsHeatMap?.resize({ width: heatMapWidth, height: "auto" })
+})
+const scatterResizeObserver = new ResizeObserver(() => {
+  const heatMapWidth = echartsScatterRef.value?.offsetWidth
+  echartsScatter?.resize({ width: heatMapWidth, height: "auto" })
 })
 
 const getLineData = (a: string[]) => {
@@ -203,8 +211,6 @@ const initHeatMapData = () => {
       item[2]
     ])
   )(allData)
-  echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataDay, heatMapYData, heatMapDataDay))
-  const customData = convertData(heatMapDataDay,0, heatMapXDataDay.length, 0, heatMapYData.length)
 
   //获取周粒度的表格数据=
   heatMapDataWeek = flow(
@@ -249,8 +255,8 @@ const convertData = (data: number[][], x_start: number, x_end: number, y_start: 
   y_start = Math.ceil(y_start)
   y_end = Math.ceil(y_end)
 
-  for(let i = 0;i < data.length; i++){
-    if (data[i][0] >= x_start && data[i][0] < x_end && data[i][1] >= y_start && data[i][1] < y_end) {
+  for(let i = 0; i < data.length; i++){
+    if (data[i][0] >= x_start && data[i][0] <= x_end && data[i][1] >= y_start && data[i][1] <= y_end) {
       const geoCoord = convertToGeo([data[i][0],data[i][1]])
       geoCoord.push(data[i][2])
       convertedData.push(geoCoord)
@@ -260,33 +266,96 @@ const convertData = (data: number[][], x_start: number, x_end: number, y_start: 
 }
 
 const setHeatMapOption = (value: string) => {
+  let customData
+  let axisdata
+  let x_start = 0
+  let x_end
+  let axisnums = heatMapYData
+  let y_start = 0
+  let y_end = heatMapYData.length - 1
+  let data
   switch (value) {
     case 'day': {
+      axisdata = heatMapXDataDay
+      x_end = heatMapXDataDay.length - 1
+      data = heatMapDataDay
       echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataDay, heatMapYData, heatMapDataDay))
-      const customData = convertData(heatMapDataDay,0, heatMapXDataDay.length, 0, heatMapYData.length)
+      customData = convertData(heatMapDataDay, 0, x_end, 0, y_end)
       echartsHeatMap?.setOption(getNewHeatMapOption(customData))
       break
     }
     case 'week': {
+      axisdata = heatMapXDataWeek
+      x_end = heatMapXDataWeek.length - 1
+      data = heatMapDataWeek
       echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataWeek, heatMapYData, heatMapDataWeek))
-      const customData = convertData(heatMapDataWeek,0, heatMapXDataWeek.length, 0, heatMapYData.length)
+      customData = convertData(heatMapDataWeek, 0, x_end, 0, y_end)
       echartsHeatMap?.setOption(getNewHeatMapOption(customData))
       break
     }
     default: {
+      axisdata = heatMapXDataMonth
+      x_end = heatMapXDataMonth.length - 1
+      data = heatMapDataMonth
       echartsHeatMap?.setOption(getHeatMapOptions(heatMapXDataMonth, heatMapYData, heatMapDataMonth))
-      const customData = convertData(heatMapDataMonth,0, heatMapXDataMonth.length, 0, heatMapYData.length)
+      customData = convertData(heatMapDataMonth, 0, x_end, 0, y_end)
       echartsHeatMap?.setOption(getNewHeatMapOption(customData))
+      break
+    }
+  }
+  echartsHeatMap?.on('dataZoom', (params: any) => {
+    if (params.dataZoomId === 'dataZoomX') {
+      x_start = (axisdata.length - 1) * params.start / 100
+      x_end = (axisdata.length - 1) * params.end / 100
+    } else {
+      y_start = (axisnums.length - 1) * params.start / 100
+      y_end = (axisnums.length - 1) * params.end / 100
+    }
+    customData = convertData(data, x_start, x_end, y_start, y_end)
+    echartsHeatMap?.setOption({
+      series: [
+        {
+          name: 'testheatmap',
+          type: 'heatmap',
+          id: 'testheatmap',
+          coordinateSystem: 'geo',
+          geoIndex: 0,
+          data: customData,
+          blurSize: 10,
+          pointSize: 8
+        }
+      ],
+    });
+  })
+}
+
+const handleHeatMapChecked = () => {
+  heatMapOptionValue.value = value
+  echartsHeatMap?.clear()
+  setHeatMapOption(value)
+}
+
+const setScatterOption = (value: string) => {
+  switch (value) {
+    case 'day': {
+      echartsScatter?.setOption(getScatterOption(heatMapXDataDay, heatMapYData, heatMapDataDay))
+      break
+    }
+    case 'week': {
+      echartsScatter?.setOption(getScatterOption(heatMapXDataWeek, heatMapYData, heatMapDataWeek))
+      break
+    }
+    default: {
+      echartsScatter?.setOption(getScatterOption(heatMapXDataMonth, heatMapYData, heatMapDataMonth))
       break
     }
   }
 }
 
-const handleHeatMapChecked = (value: string) => {
-  heatMapOptionValue.value = value
-  echartsHeatMap?.clear()
-  console.log(echartsHeatMap?.getOption())
-  setHeatMapOption(value)
+const handleScatterChecked = (value: string) => {
+  scatterOptionValue.value = value
+  echartsScatter?.clear()
+  setScatterOption(value)
 }
 
 const reloadTableData = async () => {
@@ -311,12 +380,12 @@ onMounted(() => {
     GridComponent,
     ToolboxComponent,
     DataZoomComponent,
-    TitleComponent,
     TooltipComponent,
     VisualMapComponent,
     GeoComponent,
     LineChart,
     HeatmapChart,
+    ScatterChart,
     LabelLayout,
     UniversalTransition,
     SVGRenderer,
@@ -325,6 +394,7 @@ onMounted(() => {
 
   echartsLine = echarts.init(echartsLineRef.value, null, { renderer: 'svg' })
   echartsHeatMap = echarts.init(echartsHeatMapRef.value, null, { renderer: 'svg' })
+  echartsScatter = echarts.init(echartsScatterRef.value, null, { renderer: 'svg' })
 
   window.addEventListener('resize', () => {
     echartsLine?.resize()
@@ -334,6 +404,7 @@ onMounted(() => {
   })
   lineResizeObserver.observe(echartsLineRef.value!)
   heatMapResizeObserver.observe(echartsHeatMapRef.value!)
+  scatterResizeObserver.observe(echartsScatterRef.value!)
 })
 
 watch(
@@ -341,12 +412,26 @@ watch(
   async () => {
     if (selectedId.value && configType.value === 'event_timeline_viz') {
       await reloadTableData()
+
       initLineData()
       echartsLine?.clear()
       setLineOption(lineOptionValue.value)
+      echartsLine?.on('click', (param) => {
+        console.log(param)
+      })
+
       initHeatMapData()
       echartsHeatMap?.clear()
       setHeatMapOption(heatMapOptionValue.value)
+      echartsHeatMap?.on('click', (param) => {
+        console.log(param)
+      })
+
+      echartsScatter?.clear()
+      setScatterOption(scatterOptionValue.value)
+      echartsScatter?.on('click', (param) => {
+        console.log(param)
+      })
     }
   },
   {
@@ -360,12 +445,27 @@ footStore.$onAction(({ name, after }) => {
       if (!loadingRef.value && res.data.resultData) {
         loadingRef.value = true
         allData = res.data.resultData
+
         initLineData()
         echartsLine?.clear()
         setLineOption(lineOptionValue.value)
+        echartsLine?.on('click', (param) => {
+          console.log(param)
+        })
+
         initHeatMapData()
         echartsHeatMap?.clear()
         setHeatMapOption(heatMapOptionValue.value)
+        echartsHeatMap?.on('click', (param) => {
+          console.log(param)
+        })
+
+        echartsScatter?.clear()
+        setScatterOption(scatterOptionValue.value)
+        echartsScatter?.on('click', (param) => {
+          console.log(param)
+        })
+
         loadingRef.value = false
       }
     })
@@ -440,6 +540,35 @@ onBeforeUnmount(() => {
       </n-grid>
       <div class="echarts-heatMap" ref="echartsHeatMapRef" />
     </n-card>
+    <n-card class="chart-container">
+      <n-grid
+        class="header-container"
+        x-gap="12"
+        :cols="3"
+      >
+        <n-gi :offset="1">
+          <h3 class="charts-title">事件时间线分析</h3>
+        </n-gi>
+        <n-gi>
+          <n-radio-group
+            class="charts-radio"
+            v-model:value="scatterOptionValue"
+            @update:value="handleScatterChecked"
+          >
+            <n-space justify="end">
+              <n-radio
+                v-for="item in heatMapOptions"
+                :key="item.value"
+                :value="item.value"
+              >
+                {{ item.label }}
+              </n-radio>
+            </n-space>
+          </n-radio-group>
+        </n-gi>
+      </n-grid>
+      <div class="echarts-scatter" ref="echartsScatterRef" />
+    </n-card>
   </n-spin>
 </template>
 
@@ -448,9 +577,14 @@ onBeforeUnmount(() => {
   //background: v-bind("isLight ? '#fff' : '#000'");
   transition: background .3s;
   padding: 10px;
+  margin: 15px 0;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
 
   &:last-of-type {
-    margin-top: 10px;
+    margin-bottom: 0;
   }
 
   .header-container {
@@ -466,7 +600,7 @@ onBeforeUnmount(() => {
     }
   }
 
-  .echarts-line, .echarts-heatMap {
+  .echarts-line, .echarts-heatMap, .echarts-scatter {
     width: 100%;
     height: 480px;
   }

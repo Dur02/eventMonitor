@@ -2,19 +2,17 @@ import type { ComposeOption } from 'echarts/core'
 import type {
   DataZoomComponentOption,
   GridComponentOption,
-  TitleComponentOption,
   ToolboxComponentOption,
   TooltipComponentOption,
   VisualMapComponentOption,
-  GeoComponentOption,
+  GeoComponentOption
 } from 'echarts/components'
-import type { LineSeriesOption, HeatmapSeriesOption } from 'echarts/charts'
+import type { LineSeriesOption, HeatmapSeriesOption, ScatterSeriesOption } from 'echarts/charts'
 
 export type LineECOption = ComposeOption<
   | GridComponentOption
   | ToolboxComponentOption
   | DataZoomComponentOption
-  | TitleComponentOption
   | TooltipComponentOption
   | LineSeriesOption
 >
@@ -23,11 +21,17 @@ export type HotECOption = ComposeOption<
   | GridComponentOption
   | ToolboxComponentOption
   | DataZoomComponentOption
-  | TitleComponentOption
   | VisualMapComponentOption
   | TooltipComponentOption
   | GeoComponentOption
   | HeatmapSeriesOption
+>
+
+export type ScatterECOption = ComposeOption<
+  | DataZoomComponentOption
+  | TooltipComponentOption
+  | GridComponentOption
+  | ScatterSeriesOption
 >
 
 export type timelineDataType = { key: string, value: number }
