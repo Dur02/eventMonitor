@@ -31,6 +31,7 @@ export type ScatterECOption = ComposeOption<
   | DataZoomComponentOption
   | TooltipComponentOption
   | GridComponentOption
+  | ToolboxComponentOption
   | ScatterSeriesOption
 >
 

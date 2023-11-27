@@ -36,9 +36,9 @@ export const getLineOption = (xData: string[], data: number[]): LineECOption => 
       saveAsImage: {
         title: '保存为图谱'
       },
-      dataView: {
-        title: '数据视图'
-      }
+      // dataView: {
+      //   title: '数据视图'
+      // }
     }
   },
   dataZoom: [
@@ -239,6 +239,26 @@ export const getNewHeatMapOption = (data: number[][]): HotECOption => ({
 })
 
 export const getScatterOption = (xData, yData, data): ScatterECOption => ({
+  toolbox: {
+    feature: {
+      dataZoom: {
+        yAxisIndex: 'none',
+        title: {
+          zoom: '区域缩放',
+          back: '区域缩放还原'
+        }
+      },
+      // restore: {
+      //   title: '还原'
+      // },
+      saveAsImage: {
+        title: '保存为图谱'
+      },
+      // dataView: {
+      //   title: '数据视图'
+      // }
+    }
+  },
   dataZoom: [
     {
       type: 'inside',
