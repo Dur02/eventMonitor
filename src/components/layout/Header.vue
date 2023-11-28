@@ -6,8 +6,10 @@ import ChangePassword from '@/components/modal/ChangePassword.vue'
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
 import { options } from '@/utils/constant/layout/header'
+import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
+const { nickname } = storeToRefs(userStore)
 const { logout } = userStore
 
 const showModal = ref<boolean>(false)
@@ -42,25 +44,28 @@ const handleSelect = async (key: string | number): void => {
         全球政治安全监测分析系统
       </n-text>
     </n-h2>
-    <n-space
-      align="center"
-      class="avatar-container"
-    >
-      用户名
-      <n-dropdown
-        :options="options"
-        @select="handleSelect"
+    <n-space vertical align="end" :size="[14, 0]">
+      时钟时钟时钟时钟时钟时钟时钟时钟时钟时钟时钟
+      <n-space
+        align="center"
+        class="avatar-container"
       >
-        <n-avatar
-          :size="28"
-          round
+        {{ nickname }}
+        <n-dropdown
+          :options="options"
+          @select="handleSelect"
         >
-          <n-icon
-            :component="Person"
-            :size="20"
-          />
-        </n-avatar>
-      </n-dropdown>
+          <n-avatar
+            :size="28"
+            round
+          >
+            <n-icon
+              :component="Person"
+              :size="20"
+            />
+          </n-avatar>
+        </n-dropdown>
+      </n-space>
     </n-space>
   </n-layout-header>
   <change-password
@@ -81,7 +86,7 @@ const handleSelect = async (key: string | number): void => {
 
   .title {
     margin: 0 0 0 100px;
-    //height: 2.5em;
+    height: 100%;
     font-size: 2.5em;
     font-weight: 1000;
   }

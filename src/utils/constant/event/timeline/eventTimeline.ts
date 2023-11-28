@@ -238,7 +238,7 @@ export const getNewHeatMapOption = (data: number[][]): HotECOption => ({
   ],
 })
 
-export const getScatterOption = (xData, yData, data): ScatterECOption => ({
+export const getScatterOption = (xData: string[], yData: string[], data: number[][]): ScatterECOption => ({
   toolbox: {
     feature: {
       dataZoom: {
@@ -327,7 +327,7 @@ export const getScatterOption = (xData, yData, data): ScatterECOption => ({
       // },
       data: data,
       itemStyle: {
-        color: (params) => {
+        color: (params: any) => {
           if (params.data[2] === 0) return 'rgba(0, 0, 0, 0)'
           return {
             type: 'radial',

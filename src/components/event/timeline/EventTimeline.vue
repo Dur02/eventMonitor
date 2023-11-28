@@ -13,8 +13,8 @@ import {
 } from 'echarts/components'
 import { LineChart, HeatmapChart, ScatterChart } from 'echarts/charts'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
-import { SVGRenderer } from 'echarts/renderers'
-import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard } from 'naive-ui'
+import { CanvasRenderer } from 'echarts/renderers'
+import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard, NButton } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import { getResultDataByConfigId } from '@/api/eventAnalyse'
@@ -41,6 +41,23 @@ import {
 } from '@/utils/constant/event/timeline/eventTimeline'
 import type { timelineDataType } from '@/types/components/event/timeline'
 import world from '@/utils/constant/echarts/world.json'
+import { useDebounce } from '@/utils/function/debounce'
+
+echarts.use([
+  GridComponent,
+  ToolboxComponent,
+  DataZoomComponent,
+  TooltipComponent,
+  VisualMapComponent,
+  GeoComponent,
+  LineChart,
+  HeatmapChart,
+  ScatterChart,
+  LabelLayout,
+  UniversalTransition,
+  CanvasRenderer,
+])
+echarts.registerMap('world', JSON.stringify(world))
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
@@ -103,17 +120,15 @@ const echartsScatterRef: Ref<HTMLElement | null> = ref(null)
 const scatterOptionValue: Ref<string> = ref('day')
 
 const controller: AbortController = new AbortController()
-const lineResizeObserver = new ResizeObserver(() => {
-  const lineWidth = echartsLineRef.value?.offsetWidth
-  echartsLine?.resize({ width: lineWidth, height: "auto" })
-})
-const heatMapResizeObserver = new ResizeObserver(() => {
-  const heatMapWidth = echartsHeatMapRef.value?.offsetWidth
-  echartsHeatMap?.resize({ width: heatMapWidth, height: "auto" })
-})
-const scatterResizeObserver = new ResizeObserver(() => {
-  const heatMapWidth = echartsScatterRef.value?.offsetWidth
-  echartsScatter?.resize({ width: heatMapWidth, height: "auto" })
+const resizeObserver = new ResizeObserver(() => {
+  useDebounce(() => {
+    const lineWidth = echartsLineRef.value?.offsetWidth
+    echartsLine?.resize({ width: lineWidth, height: "auto" })
+    const heatMapWidth = echartsHeatMapRef.value?.offsetWidth
+    echartsHeatMap?.resize({ width: heatMapWidth, height: "auto" })
+    const scatterWidth = echartsScatterRef.value?.offsetWidth
+    echartsScatter?.resize({ width: scatterWidth, height: "auto" })
+  })
 })
 
 const getLineData = (a: string[]) => {
@@ -212,7 +227,7 @@ const initHeatMapData = () => {
     ])
   )(allData)
 
-  //获取周粒度的表格数据=
+  //获取周粒度的表格数据
   heatMapDataWeek = flow(
     map(({ key }: { key: string }) => getWeek(key)),
     getHeatMapData,
@@ -266,14 +281,14 @@ const convertData = (data: number[][], x_start: number, x_end: number, y_start: 
 }
 
 const setHeatMapOption = (value: string) => {
-  let customData
-  let axisdata
+  let customData: number[][]
+  let axisdata: string[]
   let x_start = 0
-  let x_end
+  let x_end: number
   let axisnums = heatMapYData
   let y_start = 0
   let y_end = heatMapYData.length - 1
-  let data
+  let data: number[][]
   switch (value) {
     case 'day': {
       axisdata = heatMapXDataDay
@@ -329,7 +344,7 @@ const setHeatMapOption = (value: string) => {
   })
 }
 
-const handleHeatMapChecked = () => {
+const handleHeatMapChecked = (value: string) => {
   heatMapOptionValue.value = value
   echartsHeatMap?.clear()
   setHeatMapOption(value)
@@ -375,36 +390,49 @@ const reloadTableData = async () => {
   }
 }
 
+const initAllChart = () => {
+  initLineData()
+  echartsLine?.clear()
+  setLineOption(lineOptionValue.value)
+  echartsLine?.on('click', (param) => {
+    console.log(param)
+  })
+
+  initHeatMapData()
+  echartsHeatMap?.clear()
+  setHeatMapOption(heatMapOptionValue.value)
+  echartsHeatMap?.on('click', (param) => {
+    console.log(param)
+  })
+
+  echartsScatter?.clear()
+  setScatterOption(scatterOptionValue.value)
+  echartsScatter?.on('click', (param) => {
+    console.log(param)
+  })
+}
+
+const destroyAll = () => {
+  echartsLine?.dispose()
+  echartsHeatMap?.dispose()
+  echartsScatter?.dispose()
+  resizeObserver.unobserve(echartsLineRef.value!)
+  controller.abort()
+}
+
 onMounted(() => {
-  echarts.use([
-    GridComponent,
-    ToolboxComponent,
-    DataZoomComponent,
-    TooltipComponent,
-    VisualMapComponent,
-    GeoComponent,
-    LineChart,
-    HeatmapChart,
-    ScatterChart,
-    LabelLayout,
-    UniversalTransition,
-    SVGRenderer,
-  ])
-  echarts.registerMap('world', JSON.stringify(world))
+  echartsLine = echarts.init(echartsLineRef.value, null, { renderer: 'canvas' })
+  echartsHeatMap = echarts.init(echartsHeatMapRef.value, null, { renderer: 'canvas' })
+  echartsScatter = echarts.init(echartsScatterRef.value, null, { renderer: 'canvas' })
 
-  echartsLine = echarts.init(echartsLineRef.value, null, { renderer: 'svg' })
-  echartsHeatMap = echarts.init(echartsHeatMapRef.value, null, { renderer: 'svg' })
-  echartsScatter = echarts.init(echartsScatterRef.value, null, { renderer: 'svg' })
-
-  window.addEventListener('resize', () => {
-    echartsLine?.resize()
-    echartsHeatMap?.resize()
+  window.addEventListener('beforeunload', () => {
+    console.log('beforeunload')
+    destroyAll()
   }, {
     signal: controller.signal
   })
-  lineResizeObserver.observe(echartsLineRef.value!)
-  heatMapResizeObserver.observe(echartsHeatMapRef.value!)
-  scatterResizeObserver.observe(echartsScatterRef.value!)
+
+  resizeObserver.observe(echartsLineRef.value!)
 })
 
 watch(
@@ -412,26 +440,7 @@ watch(
   async () => {
     if (selectedId.value && configType.value === 'event_timeline_viz') {
       await reloadTableData()
-
-      initLineData()
-      echartsLine?.clear()
-      setLineOption(lineOptionValue.value)
-      echartsLine?.on('click', (param) => {
-        console.log(param)
-      })
-
-      initHeatMapData()
-      echartsHeatMap?.clear()
-      setHeatMapOption(heatMapOptionValue.value)
-      echartsHeatMap?.on('click', (param) => {
-        console.log(param)
-      })
-
-      echartsScatter?.clear()
-      setScatterOption(scatterOptionValue.value)
-      echartsScatter?.on('click', (param) => {
-        console.log(param)
-      })
+      initAllChart()
     }
   },
   {
@@ -445,27 +454,7 @@ footStore.$onAction(({ name, after }) => {
       if (!loadingRef.value && res.data.resultData) {
         loadingRef.value = true
         allData = res.data.resultData
-
-        initLineData()
-        echartsLine?.clear()
-        setLineOption(lineOptionValue.value)
-        echartsLine?.on('click', (param) => {
-          console.log(param)
-        })
-
-        initHeatMapData()
-        echartsHeatMap?.clear()
-        setHeatMapOption(heatMapOptionValue.value)
-        echartsHeatMap?.on('click', (param) => {
-          console.log(param)
-        })
-
-        echartsScatter?.clear()
-        setScatterOption(scatterOptionValue.value)
-        echartsScatter?.on('click', (param) => {
-          console.log(param)
-        })
-
+        initAllChart()
         loadingRef.value = false
       }
     })
@@ -473,15 +462,13 @@ footStore.$onAction(({ name, after }) => {
 })
 
 onBeforeUnmount(() => {
-  echartsLine?.dispose()
-  echartsHeatMap?.dispose()
-  lineResizeObserver.unobserve(echartsLineRef.value!)
-  heatMapResizeObserver.unobserve(echartsHeatMapRef.value!)
+  destroyAll()
 })
 </script>
 
 <template>
   <n-spin :show="loadingRef">
+    <n-button @click="destroyAll">测试</n-button>
     <n-card class="chart-container">
       <n-grid
         class="header-container"

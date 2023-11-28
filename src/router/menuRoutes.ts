@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import renderIcon from '@/utils/function/renderIcon'
-import { NavigateCircle, NotificationsSharp, Settings } from '@vicons/ionicons5'
+import { NavigateCircle, NotificationsSharp, Newspaper, Settings } from '@vicons/ionicons5'
 import EventFooterSlot from '@/components/event/footerSlot/EventFooterSlot.vue'
 import { eventInstantQuery, getEventConfigListByConfigName } from '@/api/eventAnalyse'
 
@@ -71,6 +71,27 @@ export default [
         },
         component: () => import('../views/graph/timeline/GraphTimelineView.vue')
       },
+    ]
+  },
+  {
+    path: '/news',
+    name: 'news',
+    meta: {
+      breadcrumb: '新闻库分析',
+      icon: renderIcon(Newspaper),
+    },
+    redirect: { name: 'newsDisplay' },
+    component: () => import('../views/layout/LayoutView.vue'),
+    children: [
+      {
+        path: 'display',
+        name: 'newsDisplay',
+        meta: {
+          breadcrumb: '新闻展示',
+          hasFooter: false
+        },
+        component: () => import('../views/news/display/NewsDisplayView.vue')
+      }
     ]
   },
   {

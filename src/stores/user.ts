@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import type { LoginData } from '@/types/api/user'
 import { login as LoginApi, getUserInfo, logout as logoutApi } from '@/api/user'
 
-export const useUserStore = defineStore('user', () => {
+export const  useUserStore = defineStore('user', () => {
   const name: Ref<string> = ref('')
   const nickname: Ref<string> = ref('')
   const userId: Ref<string | number> = ref<string | number>('')
