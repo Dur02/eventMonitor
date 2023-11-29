@@ -301,20 +301,6 @@ export const getScatterOption = (xData: string[], yData: string[], data: number[
     type: 'category',
     data: yData
   },
-  color: [
-    {
-      type: 'radial',
-      x: 0.5,
-      y: 0.5,
-      r: 0.5,
-      colorStops: [{
-        offset: 0, color: 'yellow' // 0% 处的颜色
-      }, {
-        offset: 1, color: 'green' // 100% 处的颜色
-      }],
-      global: false // 缺省为 false
-    }
-  ],
   series: [
     {
       name: 'Punch Card',

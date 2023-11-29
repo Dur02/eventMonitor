@@ -7,6 +7,7 @@ import router from '@/router'
 import { useUserStore } from '@/stores/user'
 import { options } from '@/utils/constant/layout/header'
 import { storeToRefs } from 'pinia'
+import Clock from '@/components/layout/Clock.vue'
 
 const userStore = useUserStore()
 const { nickname } = storeToRefs(userStore)
@@ -45,7 +46,7 @@ const handleSelect = async (key: string | number): void => {
       </n-text>
     </n-h2>
     <n-space vertical align="end" :size="[14, 0]">
-      时钟时钟时钟时钟时钟时钟时钟时钟时钟时钟时钟
+      <Clock />
       <n-space
         align="center"
         class="avatar-container"

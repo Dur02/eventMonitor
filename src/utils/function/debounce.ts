@@ -7,6 +7,10 @@ export const useDebounce = (() => {
   let timer: number = 0
   return (callback: (...args: any[]) => any, wait: number = 200) => {
     clearTimeout(timer)
-    timer = setTimeout(callback, wait)
+    timer = setTimeout(() => {
+      callback()
+      clearTimeout(timer)
+      timer = 0
+    }, wait)
   }
 })()
