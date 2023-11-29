@@ -9,14 +9,14 @@ export const commonLightThemeOverrider: GlobalThemeOverrides = {
     paddingMedium: '10px 20px',
     colorModal: 'rgb(255, 255, 255)'
   },
+  DataTable: {
+    borderColor: '#d3d7d4'
+  },
   Drawer: {
     color: 'rgb(255, 255, 255)',
   },
-  // Form: {
-  //   blankHeightMedium: '10px'
-  // },
-  Layout: {
-    colorEmbedded: '#f5f7f9'
+  Checkbox: {
+    colorDisabled: '#e3e3e3'
   }
 }
 
@@ -28,14 +28,14 @@ export const commonDarkThemeOverrider: GlobalThemeOverrides = {
     paddingMedium: '10px 20px',
     colorModal: 'rgb(24, 24, 28)'
   },
+  DataTable: {
+
+  },
   Drawer: {
     color: 'rgb(24, 24, 28)',
   },
-  // Form: {
-  //   blankHeightMedium: '10px'
-  // },
-  Layout: {
-    // colorEmbedded: '#f5f7f9'
+  Checkbox: {
+    colorDisabled: '#c2c2c3'
   }
 }
 

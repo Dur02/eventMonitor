@@ -14,7 +14,7 @@ import {
 import { LineChart, HeatmapChart, ScatterChart } from 'echarts/charts'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
-import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard } from 'naive-ui'
+import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard, NSkeleton } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import { getResultDataByConfigId } from '@/api/eventAnalyse'

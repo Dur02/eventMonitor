@@ -151,7 +151,6 @@ footStore.$onAction(({ name, after }) => {
       <n-data-table
         remote
         border
-        striped
         :scroll-x="7000"
         size="small"
         :single-line="false"
