@@ -46,7 +46,7 @@ const props = defineProps<{
 
 const emits = defineEmits(['DrawerClose', 'AfterLeave'])
 
-const scrollBarRef: Ref<ScrollbarInst | null> = ref(null)
+const scrollbarRef: Ref<ScrollbarInst | null> = ref(null)
 const configSetting: any = ref(null)
 const configForm: any = ref(null)
 const configType: Ref<string[]> = ref([])
@@ -83,7 +83,7 @@ const handleCreate = () => {
         btnLoading.value = false
       } else {
         message.error('表单填写错误')
-        scrollBarRef.value?.scrollTo({ top: 0 })
+        scrollbarRef.value?.scrollTo({ top: 0 })
       }
     })
   })
@@ -109,7 +109,7 @@ const handleUpdate = () => {
         btnLoading.value = false
       } else {
         message.error('表单填写错误')
-        scrollBarRef.value?.scrollTo({ top: 0 })
+        scrollbarRef.value?.scrollTo({ top: 0 })
       }
     })
   })
@@ -140,7 +140,7 @@ const handleUpdate = () => {
         {{ drawerTitle }}
       </template>
       <n-scrollbar
-        ref="scrollBarRef"
+        ref="scrollbarRef"
         class="scroll-box"
         :style="{
           maxHeight: '440px',

@@ -110,7 +110,9 @@ export const allColumns: DataTableColumns<eventDisplayRowsType> = [
   {
     title: '情感值',
     key: 'avgtone',
-    align
+    ellipsis,
+    align,
+    ellipsisComponent
   },
   {
     title: '角色一编码',
@@ -371,7 +373,7 @@ export const allColumns: DataTableColumns<eventDisplayRowsType> = [
     title: '角色二地理ID',
     key: 'actor2geoFeatureid',
     ellipsis,
-    // align,
+    align,
     ellipsisComponent
   },
   {

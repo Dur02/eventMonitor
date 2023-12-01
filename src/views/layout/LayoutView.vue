@@ -4,8 +4,7 @@ import CustomHeader from '@/components/layout/Header.vue'
 import CustomSider from '@/components/layout/Sider.vue'
 import CustomSecondaryHeader from '@/components/layout/SecondaryHeader.vue'
 import CustomContent from '@/components/layout/Content.vue'
-import CustomFooter from '@/components/layout/Footer.vue'
-import { ref, watch } from 'vue'
+import CustomNormalFooter from '@/components/layout/Footer.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -18,17 +17,17 @@ const route = useRoute()
     <n-layout
       position="absolute"
     >
-      <custom-header />
+      <CustomHeader />
       <n-layout
         position="absolute"
         has-sider
         style="top: 70px;"
       >
-        <custom-sider/>
+        <CustomSider/>
         <n-layout>
-          <custom-secondary-header />
-          <custom-content />
-          <custom-footer v-if="route.meta.hasFooter" />
+          <CustomSecondaryHeader />
+          <CustomContent />
+          <CustomNormalFooter v-if="route.meta.footerType === 'normal'" />
         </n-layout>
       </n-layout>
     </n-layout>

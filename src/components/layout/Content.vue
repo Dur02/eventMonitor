@@ -9,7 +9,7 @@ const route = useRoute()
 watch(
   () => route.name,
   () => {
-    bottom.value = route.meta.hasFooter as boolean ? '50px' : '0px'
+    bottom.value = route.meta.footerType !== 'none' ? '50px' : '0px'
   },
   {
     immediate: true

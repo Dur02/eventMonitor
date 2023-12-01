@@ -2,7 +2,7 @@
 import type { Ref } from 'vue'
 import type { FormInst } from 'naive-ui'
 import type { eventConfigFormInitialValueType, searchFormType } from '@/types/components/config/event'
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import {
   NButton,
   NDataTable,
@@ -22,6 +22,7 @@ import { useConstantStore } from '@/stores/constant'
 import { useEventConfigStore } from '@/stores/eventConfig'
 import deepCopy from '@/utils/function/deepcopy'
 import type { eventConfigSettingInitialValueType } from '@/types/components/config/event'
+import { renderOption } from '@/utils/function/renderOption'
 
 const constantStore = useConstantStore()
 const { eventConfigTypeList } = storeToRefs(constantStore)
@@ -33,13 +34,13 @@ const {
   changeLastSearchValue,
   setCheckedRowKeys,
   reloadTableData,
-  handleMultipleDelete: handleStoreDeleteInStore
+  handleMultipleDelete: handleStoreDeleteInStore,
+  resetAll
 } = eventConfigStore
 
 const searchBtnLoading: Ref<boolean> = ref(false)
 const refreshBtnLoading: Ref<boolean> = ref(false)
 const multipleDeleteBtnLoading: Ref<boolean> = ref(false)
-const formRef: Ref<FormInst | null> = ref(null)
 const drawerShow: Ref<boolean>  = ref(false)
 const drawerTitle: Ref<string> = ref('')
 const settingDisabled: Ref<boolean>  = ref(false)
@@ -140,12 +141,15 @@ onMounted(async () => {
     setTableLoading(false)
   }
 })
+
+onBeforeUnmount(() => {
+  resetAll()
+})
 </script>
 
 <template>
   <n-spin :show="tableLoading">
     <n-form
-      ref="formRef"
       class=""
       inline
       :label-width="68"
@@ -166,6 +170,7 @@ onMounted(async () => {
           v-model:value="searchFormValue.configType"
           :options="eventConfigTypeList"
           placeholder="请选择"
+          :render-option="renderOption"
           clearable
           style="width: 180px;"
           @update:value="handleSearch"
@@ -178,7 +183,7 @@ onMounted(async () => {
           :options="configStatus"
           placeholder="请选择"
           clearable
-          style="width: 180px;"
+          style="width: 100px;"
           @update:value="handleSearch"
           @clear="handleInputClear"
         />

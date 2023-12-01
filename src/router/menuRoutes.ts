@@ -20,8 +20,8 @@ export default [
         name: 'eventDisplay',
         meta: {
           breadcrumb: '事件展示',
-          hasFooter: true,
-          type: 'event_show_viz',
+          footerType: 'normal',
+          configType: 'event_show_viz',
           footerForm: EventFooterSlot,
           requestFunc: getEventConfigListByConfigName,
           instantQuery: eventInstantQuery
@@ -33,8 +33,8 @@ export default [
         name: 'eventTimeline',
         meta: {
           breadcrumb: '事件时间线',
-          hasFooter: true,
-          type: 'event_timeline_viz',
+          footerType: 'normal',
+          configType: 'event_timeline_viz',
           footerForm: EventFooterSlot,
           requestFunc: getEventConfigListByConfigName,
           instantQuery: eventInstantQuery
@@ -58,7 +58,7 @@ export default [
         name: 'graphDisplay',
         meta: {
           breadcrumb: '图谱展示',
-          hasFooter: false
+          footerType: 'none',
         },
         component: () => import('../views/graph/display/GraphDisplayView.vue')
       },
@@ -67,7 +67,7 @@ export default [
         name: 'graphTimeline',
         meta: {
           breadcrumb: '图谱时间线',
-          hasFooter: false
+          footerType: 'none',
         },
         component: () => import('../views/graph/timeline/GraphTimelineView.vue')
       },
@@ -88,7 +88,11 @@ export default [
         name: 'newsDisplay',
         meta: {
           breadcrumb: '新闻展示',
-          hasFooter: false
+          footerType: 'normal',
+          configType: 'event_news_show_viz',
+          footerForm: EventFooterSlot,
+          requestFunc: getEventConfigListByConfigName,
+          instantQuery: eventInstantQuery
         },
         component: () => import('../views/news/display/NewsDisplayView.vue')
       }

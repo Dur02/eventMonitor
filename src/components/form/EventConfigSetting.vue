@@ -13,7 +13,6 @@ import {
   NSelect,
   NInputNumber
 } from 'naive-ui'
-// import { formThemeOverrides, } from '@/utils/themeOverrides/common'
 import { priorityOption, monitorOption, eventConfigSettingRules } from '@/utils/constant/form/eventConfigSetting'
 import { Menu as MenuIcon } from '@vicons/ionicons5'
 import { useConstantStore } from '@/stores/constant'

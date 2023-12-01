@@ -22,7 +22,7 @@ import deepCopy from '@/utils/function/deepcopy'
 const mapWithIndex = map.convert({ cap: false })
 
 const footStore = useFooterStore()
-const { selectedId, configType, isSearchNow } = storeToRefs(footStore)
+const { selectedId, configType } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
 const columnsRef: Ref<DataTableColumns<eventDisplayRowsType>> = ref(allColumns)
@@ -33,11 +33,8 @@ const loadingRef: Ref<boolean> = ref(false)
 const displayPageCount: Ref<number> = ref(0)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
-  // pageCount: 1,
   pageSize: 30,
-  // pageSizes: [10, 20, 50, 100],
   itemCount: 0,
-  // showSizePicker: true,
   showQuickJumper: true,
   suffix (): VNodeChild {
     return `共${displayPageCount.value}条`

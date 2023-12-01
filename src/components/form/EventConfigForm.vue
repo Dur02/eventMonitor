@@ -21,7 +21,6 @@ import {
 } from 'naive-ui'
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
-// import { formThemeOverrides } from '@/utils/themeOverrides/common'
 import { rootOptions, eventConfigFormRules } from '@/utils/constant/form/eventConfigForm'
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
@@ -55,7 +54,6 @@ const {
 const { getAllEventCodeList } = eventStore
 
 const formValue: Ref<eventConfigFormInitialValueType> = ref(deepCopy(props.initialValue) as eventConfigFormInitialValueType)
-// const displayDate: Ref<string[]> = ref([])
 const formRef: Ref<FormInst | null> = ref(null)
 const rootOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 const baseOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
@@ -149,7 +147,6 @@ watch(
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
       formValue.value.sqldate = [start.getTime(), end.getTime()]
     }
-    // displayDate.value = [formatTimeStamp(formValue.value.sqldate[0]), formatTimeStamp(formValue.value.sqldate[1])]
   },
   {
     immediate: true

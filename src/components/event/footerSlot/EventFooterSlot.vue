@@ -24,7 +24,7 @@ const { getConfigList, setSelectedId, instantQuery } = footerStore
 
 const buttonLoading = ref(false)
 const formDisabled = ref(false)
-const scrollBarRef: Ref<ScrollbarInst | null> = ref(null)
+const scrollbarRef: Ref<ScrollbarInst | null> = ref(null)
 const formValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
 const configFormRef: Ref<any | null> = ref(null)
 const configSaveRef: Ref<any | null> = ref(null)
@@ -43,10 +43,10 @@ const handleCreate = async (e: MouseEvent) => {
             ...getConfigFormValue(configFormRef.value)
           })
           setSelectedId(null)
-          if (configSaveRef.value?.formValue.isSave && route.meta.requestFunc && route.meta.type && route.meta.instantQuery) {
+          if (configSaveRef.value?.formValue.isSave && route.meta.requestFunc && route.meta.configType && route.meta.instantQuery) {
             await getConfigList(
               route.meta.requestFunc as Function,
-              route.meta.type as string,
+              route.meta.configType as string,
               route.meta.instantQuery as Function,
               1,
               paginationReactive.value.pageSize!
@@ -59,7 +59,7 @@ const handleCreate = async (e: MouseEvent) => {
         buttonLoading.value = false
       } else {
         message.error('表单填写错误')
-        scrollBarRef.value?.scrollTo({ top: 0 })
+        scrollbarRef.value?.scrollTo({ top: 0 })
       }
     })
   })

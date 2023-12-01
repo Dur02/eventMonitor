@@ -4,7 +4,7 @@ import type {
   eventConfigFormInitialValueType,
   eventConfigSettingInitialValueType
 } from '@/types/components/config/event'
-import { h, computed } from 'vue'
+import { h, computed, ref } from 'vue'
 import {
   NButton,
   NIcon,
@@ -256,61 +256,68 @@ export const allColumns = (
       render: (rowData) => {
         return h(
           NSpace,
-          { justify: 'start' },
+          {
+            justify: 'start',
+            style: {
+              marginTop: '6px'
+            }
+          },
           { default: () => [
-            h(
-              NTooltip,
-              null,
-              {
-                trigger: () => h(
-                  NButton,
-                  {
-                    text: true,
-                    style: {
-                      fontSize: '20px',
-                    },
-                    disabled: !(rowData.runStatus === 0 || rowData.runStatus === 3),
-                    onClick: async () => {
-                      try {
-                        const runStatus = await updateSingle(rowData.id)
-                        handleUpdateDrawer(
-                          '',
-                          eventConfigSettingInitialValue,
-                          eventConfigFormInitialValue,
-                          false,
-                          false,
-                          false,
-                          null
-                        )
-                        switch (runStatus === 0 || runStatus === 3) {
-                          case true: {
-                            await runTask(rowData.id)
-                            message.success('操作成功')
-                            break
-                          }
-                          default: {
-                            message.error('执行状态已改变,操作失败')
-                            break
+              h(
+                NTooltip,
+                null,
+                {
+                  trigger: () => {
+                    return h(
+                      NButton,
+                      {
+                        text: true,
+                        style: {
+                          fontSize: '20px',
+                        },
+                        disabled: !(rowData.runStatus === 0 || rowData.runStatus === 3),
+                        onClick: async () => {
+                          try {
+                            const runStatus = await updateSingle(rowData.id)
+                            handleUpdateDrawer(
+                              '',
+                              eventConfigSettingInitialValue,
+                              eventConfigFormInitialValue,
+                              false,
+                              false,
+                              false,
+                              null
+                            )
+                            switch (runStatus === 0 || runStatus === 3) {
+                              case true: {
+                                await runTask(rowData.id)
+                                message.success('操作成功')
+                                break
+                              }
+                              default: {
+                                message.error('执行状态已改变,操作失败')
+                                break
+                              }
+                            }
+                          } catch (e) {
+                            //
                           }
                         }
-                      } catch (e) {
-                        //
-                      }
-                    }
-                  },
-                  {
-                    default: () => h(
-                      NIcon,
-                      {
-                        component: PlayCircleOutline,
                       },
-                      {}
+                      {
+                        default: () => h(
+                          NIcon,
+                          {
+                            component: PlayCircleOutline,
+                          },
+                          {}
+                        )
+                      }
                     )
-                  }
-                ),
-                default: () => '执行'
-              }
-            ),
+                  },
+                  default: () => '执行'
+                }
+              ),
             h(
               NTooltip,
               null,
@@ -469,7 +476,10 @@ export const allColumns = (
                     onClick: async () => {
                       handleUpdateDrawer(
                         '创建配置',
-                        getConfigSettingInitialValue(rowData),
+                        {
+                          ...getConfigSettingInitialValue(rowData),
+                          remark: '配置复制产生'
+                        },
                         getConfigFormInitialValue(rowData),
                         true,
                         false,

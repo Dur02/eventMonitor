@@ -29,11 +29,8 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
   })
   const paginationReactive: PaginationProps = reactive({
     page: 1,
-    // pageCount: 1,
     pageSize: 10,
-    // pageSizes: [10, 20, 50, 100],
     itemCount: 0,
-    // showSizePicker: true,
     showQuickJumper: true,
     suffix ({ itemCount }: PaginationInfo): VNodeChild {
       return `共${itemCount}条`
@@ -119,17 +116,23 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
   }
 
   const runTask = async (id: number) => {
-    if (!tableLoading.value) {
-      tableLoading.value = true
-      try {
-        await runTaskApi({ configId: id })
-        tableLoading.value = false
-        await reloadTableData(paginationReactive.page!)
-      } catch (e) {
-        tableLoading.value = false
-        return Promise.reject()
-      }
-      tableLoading.value = false
+    try {
+      dataRef.value = flow(
+        map((item: any) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              runStatus: 1
+            }
+          }
+          return item
+        })
+      )(deepCopy(dataRef.value))
+      await runTaskApi({ configId: id })
+      await reloadTableData(paginationReactive.page!)
+    } catch (e) {
+      await reloadTableData(paginationReactive.page!)
+      return Promise.reject()
     }
     return Promise.resolve()
   }
@@ -143,6 +146,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
         await reloadTableData(paginationReactive.page!)
       } catch (e) {
         tableLoading.value = false
+        await reloadTableData(paginationReactive.page!)
         return Promise.reject()
       }
       tableLoading.value = false
@@ -192,6 +196,20 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     return Promise.resolve()
   }
 
+  const resetAll = () => {
+    tableLoading.value= false
+    dataRef.value= []
+    checkedRowKeysRef.value = []
+    lastSearchValue.value = {
+      configName: '',
+      configType: null,
+      runStatus: null,
+      createByName: ''
+    }
+    paginationReactive.page = 1
+    paginationReactive.itemCount = 0
+  }
+
   return {
     tableLoading,
     dataRef,
@@ -208,5 +226,6 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     stopTask,
     handleSingleDelete,
     handleMultipleDelete,
+    resetAll
   }
 })

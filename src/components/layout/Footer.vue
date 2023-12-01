@@ -69,11 +69,11 @@ const handleSearchNow = () => {
 }
 
 const reloadConfigList = async (page: number, pageSize: number) => {
-  if (route.meta.requestFunc && route.meta.type && route.meta.instantQuery) {
+  if (route.meta.requestFunc && route.meta.configType && route.meta.instantQuery) {
     try {
       await getConfigList(
         route.meta.requestFunc as Function,
-        route.meta.type as string,
+        route.meta.configType as string,
         route.meta.instantQuery as Function,
         page,
         pageSize

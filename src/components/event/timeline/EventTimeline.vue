@@ -37,7 +37,7 @@ import {
   heatMapOptions,
   getHeatMapOptions,
   getNewHeatMapOption,
-  getScatterOption
+  // getScatterOption
 } from '@/utils/constant/event/timeline/eventTimeline'
 import type { timelineDataType } from '@/types/components/event/timeline'
 import world from '@/utils/constant/echarts/world.json'
@@ -115,9 +115,9 @@ let heatMapDataMonth: number[][] = []
 const echartsHeatMapRef: Ref<HTMLElement | null> = ref(null)
 const heatMapOptionValue: Ref<string> = ref('day')
 
-let echartsScatter: EChartsType | null = null
-const echartsScatterRef: Ref<HTMLElement | null> = ref(null)
-const scatterOptionValue: Ref<string> = ref('day')
+// let echartsScatter: EChartsType | null = null
+// const echartsScatterRef: Ref<HTMLElement | null> = ref(null)
+// const scatterOptionValue: Ref<string> = ref('day')
 
 const controller: AbortController = new AbortController()
 const resizeObserver = new ResizeObserver(() => {
@@ -126,8 +126,8 @@ const resizeObserver = new ResizeObserver(() => {
     echartsLine?.resize({ width: lineWidth, height: "auto" })
     const heatMapWidth = echartsHeatMapRef.value?.offsetWidth
     echartsHeatMap?.resize({ width: heatMapWidth, height: "auto" })
-    const scatterWidth = echartsScatterRef.value?.offsetWidth
-    echartsScatter?.resize({ width: scatterWidth, height: "auto" })
+    // const scatterWidth = echartsScatterRef.value?.offsetWidth
+    // echartsScatter?.resize({ width: scatterWidth, height: "auto" })
   })
 })
 
@@ -264,11 +264,11 @@ const convertToGeo = (dataitem: number[]) => {
 const convertData = (data: number[][], x_start: number, x_end: number, y_start: number, y_end: number) => {
   const convertedData = []
   //横坐标对应的索引值范围
-  x_start = Math.ceil(x_start)
-  x_end = Math.ceil(x_end)
+  x_start = Math.round(x_start)
+  x_end = Math.round(x_end)
   // //纵坐标对应的索引值范围
-  y_start = Math.ceil(y_start)
-  y_end = Math.ceil(y_end)
+  y_start = Math.round(y_start)
+  y_end = Math.round(y_end)
 
   for(let i = 0; i < data.length; i++){
     if (data[i][0] >= x_start && data[i][0] <= x_end && data[i][1] >= y_start && data[i][1] <= y_end) {
@@ -350,28 +350,28 @@ const handleHeatMapChecked = (value: string) => {
   setHeatMapOption(value)
 }
 
-const setScatterOption = (value: string) => {
-  switch (value) {
-    case 'day': {
-      echartsScatter?.setOption(getScatterOption(heatMapXDataDay, heatMapYData, heatMapDataDay))
-      break
-    }
-    case 'week': {
-      echartsScatter?.setOption(getScatterOption(heatMapXDataWeek, heatMapYData, heatMapDataWeek))
-      break
-    }
-    default: {
-      echartsScatter?.setOption(getScatterOption(heatMapXDataMonth, heatMapYData, heatMapDataMonth))
-      break
-    }
-  }
-}
+// const setScatterOption = (value: string) => {
+//   switch (value) {
+//     case 'day': {
+//       echartsScatter?.setOption(getScatterOption(heatMapXDataDay, heatMapYData, heatMapDataDay))
+//       break
+//     }
+//     case 'week': {
+//       echartsScatter?.setOption(getScatterOption(heatMapXDataWeek, heatMapYData, heatMapDataWeek))
+//       break
+//     }
+//     default: {
+//       echartsScatter?.setOption(getScatterOption(heatMapXDataMonth, heatMapYData, heatMapDataMonth))
+//       break
+//     }
+//   }
+// }
 
-const handleScatterChecked = (value: string) => {
-  scatterOptionValue.value = value
-  echartsScatter?.clear()
-  setScatterOption(value)
-}
+// const handleScatterChecked = (value: string) => {
+//   scatterOptionValue.value = value
+//   echartsScatter?.clear()
+//   setScatterOption(value)
+// }
 
 const reloadTableData = async () => {
   if (!loadingRef.value) {
@@ -405,17 +405,17 @@ const initAllChart = () => {
     console.log(param)
   })
 
-  echartsScatter?.clear()
-  setScatterOption(scatterOptionValue.value)
-  echartsScatter?.on('click', (param) => {
-    console.log(param)
-  })
+  // echartsScatter?.clear()
+  // setScatterOption(scatterOptionValue.value)
+  // echartsScatter?.on('click', (param) => {
+  //   console.log(param)
+  // })
 }
 
 const destroyAll = () => {
   echartsLine?.dispose()
   echartsHeatMap?.dispose()
-  echartsScatter?.dispose()
+  // echartsScatter?.dispose()
   resizeObserver.unobserve(echartsLineRef.value!)
   controller.abort()
 }
@@ -423,10 +423,9 @@ const destroyAll = () => {
 onMounted(() => {
   echartsLine = echarts.init(echartsLineRef.value, null, { renderer: 'canvas' })
   echartsHeatMap = echarts.init(echartsHeatMapRef.value, null, { renderer: 'canvas' })
-  echartsScatter = echarts.init(echartsScatterRef.value, null, { renderer: 'canvas' })
+  // echartsScatter = echarts.init(echartsScatterRef.value, null, { renderer: 'canvas' })
 
   window.addEventListener('beforeunload', () => {
-    console.log('beforeunload')
     destroyAll()
   }, {
     signal: controller.signal
@@ -526,35 +525,35 @@ onBeforeUnmount(() => {
       </n-grid>
       <div class="echarts-heatMap" ref="echartsHeatMapRef" />
     </n-card>
-    <n-card class="chart-container">
-      <n-grid
-        class="header-container"
-        x-gap="12"
-        :cols="3"
-      >
-        <n-gi :offset="1">
-          <h3 class="charts-title">事件时间线分析</h3>
-        </n-gi>
-        <n-gi>
-          <n-radio-group
-            class="charts-radio"
-            v-model:value="scatterOptionValue"
-            @update:value="handleScatterChecked"
-          >
-            <n-space justify="end">
-              <n-radio
-                v-for="item in heatMapOptions"
-                :key="item.value"
-                :value="item.value"
-              >
-                {{ item.label }}
-              </n-radio>
-            </n-space>
-          </n-radio-group>
-        </n-gi>
-      </n-grid>
-      <div class="echarts-scatter" ref="echartsScatterRef" />
-    </n-card>
+<!--    <n-card class="chart-container">-->
+<!--      <n-grid-->
+<!--        class="header-container"-->
+<!--        x-gap="12"-->
+<!--        :cols="3"-->
+<!--      >-->
+<!--        <n-gi :offset="1">-->
+<!--          <h3 class="charts-title">事件时间线分析</h3>-->
+<!--        </n-gi>-->
+<!--        <n-gi>-->
+<!--          <n-radio-group-->
+<!--            class="charts-radio"-->
+<!--            v-model:value="scatterOptionValue"-->
+<!--            @update:value="handleScatterChecked"-->
+<!--          >-->
+<!--            <n-space justify="end">-->
+<!--              <n-radio-->
+<!--                v-for="item in heatMapOptions"-->
+<!--                :key="item.value"-->
+<!--                :value="item.value"-->
+<!--              >-->
+<!--                {{ item.label }}-->
+<!--              </n-radio>-->
+<!--            </n-space>-->
+<!--          </n-radio-group>-->
+<!--        </n-gi>-->
+<!--      </n-grid>-->
+<!--      <div class="echarts-scatter" ref="echartsScatterRef" />-->
+<!--    </n-card>-->
   </n-spin>
 </template>
 
@@ -588,7 +587,7 @@ onBeforeUnmount(() => {
 
   .echarts-line, .echarts-heatMap, .echarts-scatter {
     width: 100%;
-    height: 480px;
+    height: 470px;
   }
 }
 </style>

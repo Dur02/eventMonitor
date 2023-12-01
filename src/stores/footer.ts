@@ -12,11 +12,8 @@ export const useFooterStore = defineStore('footer', () => {
   // totalPage = (total + pageSize - 1)/pageSize
   const paginationReactive: PaginationProps = reactive({
     page: 1,
-    // pageCount: 1,
     pageSize: 10,
-    // pageSizes: [10, 20, 50, 100],
     itemCount: 0,
-    // showSizePicker: true,
     showQuickJumper: true,
     suffix ({ itemCount }: PaginationInfo): VNodeChild {
       return `共${itemCount}条`
