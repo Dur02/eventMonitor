@@ -126,6 +126,7 @@ const reloadTableData = async (page: number) => {
         endPubtime: lastSearchValue.value.publicTime ? formatTimeStamp(lastSearchValue.value.publicTime[1]) : null,
       })
       setNewData(page, total, rows)
+      scrollbarRef.value?.scrollTo({ top: 0 })
     } catch (e) {
       //
     }
@@ -150,7 +151,6 @@ watch(
   async () => {
     if (selectedId.value && configType.value === 'event_news_show_viz') {
       await reloadTableData(1)
-      scrollbarRef.value?.scrollTo({ top: 0 })
     }
   },
   {
@@ -172,7 +172,6 @@ footStore.$onAction(({ name, after }) => {
           }
         } = res
         setNewData(1, total, rows)
-        scrollbarRef.value?.scrollTo({ top: 0 })
         newLoadingRef.value = false
       }
     })
