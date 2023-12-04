@@ -141,7 +141,6 @@ const handleUpdate = () => {
       </template>
       <n-scrollbar
         ref="scrollbarRef"
-        class="scroll-box"
         :style="{
           maxHeight: '440px',
           border: 'var(--n-header-border-bottom)',

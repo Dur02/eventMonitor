@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref, VNodeChild } from 'vue'
 import { nextTick, reactive, ref, watch } from 'vue'
-import { searchNews } from '@/api/news'
+import { getNewsDetail, searchNews } from '@/api/news'
 import type { PaginationInfo, PaginationProps, ScrollbarInst } from 'naive-ui'
 import {
   NSpace,
@@ -28,6 +28,10 @@ import { isExactOptions, orderByOptions, typeOptions } from '@/utils/constant/ne
 import deepCopy from '@/utils/function/deepcopy'
 import { formatTimeStamp } from '@/utils/function/date';
 import { intersection } from 'lodash';
+import NewsEvent from '@/components/modal/NewsEvent.vue'
+import type { eventDisplayRowsType } from '@/types/components/event/display'
+import NewsGraph from '@/components/modal/NewsGraph.vue';
+import NewsDetail from '@/components/modal/NewsDetail.vue';
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
@@ -52,6 +56,12 @@ const lastSearchValue: Ref<NewsSearchValueType> = ref({
   isExact: 1,
   queryContent: ''
 })
+const newsDetailDisplay: Ref<boolean> = ref(false)
+const newsDetailData: Ref<object> = ref({})
+const newsEventDisplay: Ref<boolean> = ref(false)
+const newsEventData: Ref<never[]> = ref([])
+const newsGraphDisplay: Ref<boolean> = ref(false)
+const newsGraphData: Ref<never[]> = ref([])
 const scrollbarRef: Ref<ScrollbarInst | null> = ref(null)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
@@ -134,16 +144,73 @@ const reloadTableData = async (page: number) => {
   }
 }
 
-const handleTitleClick = () => {
-  console.log('title')
+const handleTitleClick = async (urlHash: string) => {
+  try {
+    const {
+      data: {
+        resultData
+      }
+    } = await getNewsDetail(urlHash)
+    newsDetailDisplay.value = true
+    const splitArr = split('/')(resultData.url)
+    if (splitArr[2]) {
+      newsDetailData.value = {
+        ...resultData,
+        site: splitArr[0] + '//' + splitArr[2]
+      }
+    } else {
+      newsDetailData.value = {
+        ...resultData,
+        site: ''
+      }
+    }
+  } catch (e) {
+    //
+  }
 }
 
-const handleEventClick = () => {
-  console.log('event')
+const handleDetailClose = (bool: boolean): void => {
+  newsDetailDisplay.value = bool
 }
 
-const handleGraphClick = () => {
-  console.log('graph')
+const afterDetailClose = () => {
+  newsDetailData.value = {}
+}
+
+const handleEventClick = (event: never[]) => {
+  if (event.length !== 0) {
+    newsEventDisplay.value = true
+    newsEventData.value = mapWithIndex((item: eventDisplayRowsType, index: number) => ({
+      ...item,
+      numbers: index + 1
+    }))(event)
+  }
+}
+
+const handleEventClose = (bool: boolean): void => {
+  newsEventDisplay.value = bool
+}
+
+const afterEventClose = () => {
+  newsEventData.value = []
+}
+
+const handleGraphClick = (graph: never[]) => {
+  if (graph.length !== 0) {
+    newsGraphDisplay.value = true
+    newsGraphData.value = mapWithIndex((item: any, index: number) => ({
+      ...item,
+      numbers: index + 1
+    }))(graph)
+  }
+}
+
+const handleGraphClose = (bool: boolean): void => {
+  newsGraphDisplay.value = bool
+}
+
+const afterGraphClose = () => {
+  newsGraphData.value = []
 }
 
 watch(
@@ -269,6 +336,7 @@ footStore.$onAction(({ name, after }) => {
     <n-space v-if="data.length !== 0" vertical :size="[0, 10]">
       <n-card
         v-for="item in data"
+        :key="item.urlHash"
         class="news-card"
       >
         <n-space vertical :size="[0, 20]">
@@ -285,7 +353,7 @@ footStore.$onAction(({ name, after }) => {
           >
             <h2
               class="news-title"
-              @click="handleTitleClick"
+              @click="() => handleTitleClick(item.urlHash)"
             >
               {{ item.numbers }}: {{ i18nValue === 'ZhCN' ? item.titleZh : item.title }}
             </h2>
@@ -314,7 +382,7 @@ footStore.$onAction(({ name, after }) => {
                 underline
                 class="bolder-text"
                 :class="{ 'clickable-text': item.event.length }"
-                @click="handleEventClick"
+                @click="() => handleEventClick(item.event)"
               >
                 {{ item.event.length }}
               </n-text>
@@ -327,7 +395,7 @@ footStore.$onAction(({ name, after }) => {
                 underline
                 class="bolder-text"
                 :class="{ 'clickable-text': item.gkg.length }"
-                @click="handleGraphClick"
+                @click="() => handleGraphClick(item.gkg)"
               >
                 {{ item.gkg.length }}
               </n-text>
@@ -363,6 +431,24 @@ footStore.$onAction(({ name, after }) => {
     :item-count="paginationReactive.itemCount"
     show-quick-jumper
     @update:page="reloadTableData"
+  />
+  <NewsEvent
+    :show-modal="newsEventDisplay"
+    :event="newsEventData"
+    @modalClose="handleEventClose"
+    @afterModalClose="afterEventClose"
+  />
+  <NewsGraph
+    :show-modal="newsGraphDisplay"
+    :graph="newsGraphData"
+    @modalClose="handleGraphClose"
+    @afterModalClose="afterGraphClose"
+  />
+  <NewsDetail
+    :show-modal="newsDetailDisplay"
+    :detail="newsDetailData"
+    @modalClose="handleDetailClose"
+    @afterModalClose="afterDetailClose"
   />
 </template>
 

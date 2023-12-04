@@ -31,7 +31,7 @@ const ellipsis: EllipsisProps = {
   lineClamp: 1,
 }
 
-export const allColumns: DataTableColumns<eventDisplayRowsType> = [
+export const eventDisplayColumns: DataTableColumns<eventDisplayRowsType> = [
   {
     title: '序号',
     key: 'numbers',

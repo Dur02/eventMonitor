@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { NAvatar, NDropdown, NH2, NIcon, NLayoutHeader, NSpace, NText, NImage } from 'naive-ui'
+import { NAvatar, NDropdown, NH2, NIcon, NLayoutHeader, NSpace, NText } from 'naive-ui'
 import { Person } from '@vicons/ionicons5'
 import ChangePassword from '@/components/modal/ChangePassword.vue'
 import router from '@/router'
@@ -19,7 +19,7 @@ const updateShowModal = (bool: boolean): void => {
   showModal.value = bool
 }
 
-const handleSelect = async (key: string | number): void => {
+const handleSelect = async (key: string | number): Promise<void> => {
   switch (key) {
     case 'changePassword':
       // 打开修改密码Dialog
@@ -69,7 +69,7 @@ const handleSelect = async (key: string | number): void => {
       </n-space>
     </n-space>
   </n-layout-header>
-  <change-password
+  <ChangePassword
     :showModal="showModal"
     @ModalClose="updateShowModal"
   />

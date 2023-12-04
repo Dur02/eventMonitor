@@ -4,10 +4,7 @@ import { NModal, NForm, NFormItem, NInput, NButton, NCol, NRow, useMessage } fro
 import type { FormInst, FormItemInst, FormItemRule, FormRules } from 'naive-ui'
 import type { ModelType } from '@/types/components/modal/changePassword'
 
-function validatePasswordStartWith (
-  rule: FormItemRule,
-  value: string
-): boolean {
+const validatePasswordStartWith = (rule: FormItemRule, value: string): boolean => {
   return (
     !!model.value.password &&
     model.value.password.startsWith(value) &&
@@ -15,7 +12,7 @@ function validatePasswordStartWith (
   )
 }
 
-function validatePasswordSame (rule: FormItemRule, value: string): boolean {
+const validatePasswordSame = (rule: FormItemRule, value: string): boolean => {
   return value === model.value.password
 }
 
@@ -49,9 +46,6 @@ defineProps<{
   showModal: boolean
 }>()
 
-// const emits = defineEmits<{
-//   ModalClose: [showModal: boolean]
-// }>()
 const emits = defineEmits(['ModalClose'])
 
 const model = ref<ModelType>({
@@ -93,7 +87,6 @@ const handleValidateButtonClick = (e: MouseEvent): void => {
 <template>
   <n-modal
     :show="showModal"
-    class="modal-container"
     preset="card"
     title="修改密码"
     size="small"

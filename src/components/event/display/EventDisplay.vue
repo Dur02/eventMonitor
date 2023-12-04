@@ -13,7 +13,7 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
-import { allColumns } from '@/utils/constant/event/display/eventDisplay'
+import { eventDisplayColumns } from '@/utils/constant/event/display/eventDisplay'
 import { map, filter, includes, slice } from 'lodash/fp'
 import { getResultDataByConfigId } from '@/api/eventAnalyse'
 import deepCopy from '@/utils/function/deepcopy'
@@ -25,8 +25,8 @@ const footStore = useFooterStore()
 const { selectedId, configType } = storeToRefs(footStore)
 
 const table: Ref<DataTableInst | null> = ref(null)
-const columnsRef: Ref<DataTableColumns<eventDisplayRowsType>> = ref(allColumns)
-const selectedColumn: Ref<string[]> = ref(map(({ key }) => key)(allColumns))
+const columnsRef: Ref<DataTableColumns<eventDisplayRowsType>> = ref(eventDisplayColumns)
+const selectedColumn: Ref<string[]> = ref(map(({ key }) => key)(eventDisplayColumns))
 const allData: Ref<eventDisplayRowsType[]> = ref([])
 const dataRef: Ref<eventDisplayRowsType[]> = ref([])
 const loadingRef: Ref<boolean> = ref(false)
@@ -41,13 +41,24 @@ const paginationReactive: PaginationProps = reactive({
   }
 })
 
-const getSelectOption = (): Array<SelectOption | SelectGroupOption> => map(({ title, key }) => ({ label: title, value: key }))(allColumns)
+const getSelectOption = (): Array<SelectOption | SelectGroupOption> => map(({ title, key }) => ({ label: title, value: key }))(eventDisplayColumns)
 
 const handleSelect = (selectedArray: Array<string>) => {
   if (selectedArray.length !== 0) {
     selectedColumn.value = selectedArray
-    columnsRef.value = filter(({ key }) => includes(key)(selectedArray))(allColumns)
+    columnsRef.value = filter(({ key }) => includes(key)(selectedArray))(eventDisplayColumns)
   }
+}
+
+const setData = (rows: any, page: number, total: number) => {
+  allData.value = mapWithIndex((item: eventDisplayRowsType, index: number) => ({
+    ...item,
+    numbers: index + (page - 1) * paginationReactive.pageSize! + 1
+  }))(rows)
+  dataRef.value = slice(0, paginationReactive.pageSize!)(deepCopy(allData.value))
+  paginationReactive.itemCount = (rows as Array<object>).length
+  paginationReactive.page = page
+  displayPageCount.value = total
 }
 
 const reloadTableData = async (page: number) => {
@@ -62,14 +73,7 @@ const reloadTableData = async (page: number) => {
           }
         }
       } = await getResultDataByConfigId({ configId: selectedId.value! })
-      allData.value = mapWithIndex((item: eventDisplayRowsType, index: number) => ({
-        ...item,
-        numbers: index + (page - 1) * paginationReactive.pageSize! + 1
-      }))(rows)
-      dataRef.value = slice(0, paginationReactive.pageSize!)(deepCopy(allData.value))
-      paginationReactive.itemCount = (rows as Array<object>).length
-      paginationReactive.page = 1
-      displayPageCount.value = total
+      setData(rows, page, total)
     } catch (e) {
       //
     }
@@ -107,14 +111,7 @@ footStore.$onAction(({ name, after }) => {
             }
           }
         } = res
-        allData.value = mapWithIndex((item: eventDisplayRowsType, index: number) => ({
-          ...item,
-          numbers: index + 1
-        }))(rows)
-        dataRef.value = slice(0, paginationReactive.pageSize!)(deepCopy(allData.value))
-        paginationReactive.itemCount = rows.length
-        paginationReactive.page = 1
-        displayPageCount.value = total
+        setData(rows, 1, total)
         loadingRef.value = false
       }
     })

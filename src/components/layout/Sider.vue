@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import type { MenuInst, MenuOption } from 'naive-ui'
 import { NLayoutSider, NMenu } from 'naive-ui'
 import type { RouteLocationNormalizedLoaded, Router, RouteRecordRaw } from 'vue-router'
@@ -37,12 +37,20 @@ onMounted((): void => {
 
   // 通过menuRoutes生成菜单栏
   menuOptions.value = mapChildren(menuRoutes)
-  selectedMenu.value = route.name as string
-
-  nextTick(() => {
-    menuInstRef.value?.showOption(route.name as string)
-  })
 })
+
+watch(
+  () => route.name,
+  () => {
+    selectedMenu.value = route.name as string
+    nextTick(() => {
+      menuInstRef.value?.showOption(route.name as string)
+    })
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
