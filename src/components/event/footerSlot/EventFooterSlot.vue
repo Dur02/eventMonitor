@@ -70,12 +70,14 @@ watch(
   () => {
     switch (isSearchNow.value) {
       case true: {
-        formDisabled.value = false
-        formValue.value = deepCopy(eventConfigFormInitialValue)
-        const end = new Date()
-        const start = new Date()
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-        formValue.value.sqldate = [start.getTime(), end.getTime()]
+        if (selectedId.value) {
+          formDisabled.value = false
+          formValue.value = deepCopy(eventConfigFormInitialValue)
+          const end = new Date()
+          const start = new Date()
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+          formValue.value.sqldate = [start.getTime(), end.getTime()]
+        }
         break
       }
       default: {

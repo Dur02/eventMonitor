@@ -21,23 +21,26 @@ import {
   NSkeleton
 } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { flow, map, split } from 'lodash/fp'
+import { flow, map, split, find, propEq } from 'lodash/fp'
 import { useFooterStore } from '@/stores/footer'
 import type { NewsSearchValueType } from '@/types/components/news/display'
 import { isExactOptions, orderByOptions, typeOptions } from '@/utils/constant/news/display/newsDisplay'
 import deepCopy from '@/utils/function/deepcopy'
-import { formatTimeStamp } from '@/utils/function/date';
-import { intersection } from 'lodash';
+import { formatTimeStamp } from '@/utils/function/date'
+import { intersection } from 'lodash'
 import NewsEvent from '@/components/modal/NewsEvent.vue'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
-import NewsGraph from '@/components/modal/NewsGraph.vue';
-import NewsDetail from '@/components/modal/NewsDetail.vue';
+import NewsGraph from '@/components/modal/NewsGraph.vue'
+import NewsDetail from '@/components/modal/NewsDetail.vue'
+import { useRoute } from 'vue-router'
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
 
+const route = useRoute()
+
 const footStore = useFooterStore()
-const { selectedId, configType } = storeToRefs(footStore)
+const { selectedId, configType, configList } = storeToRefs(footStore)
 
 const newLoadingRef: Ref<boolean> = ref(false)
 const i18nValue: Ref<'ZhCN' | 'EN'> = ref('ZhCN')
@@ -67,10 +70,6 @@ const paginationReactive: PaginationProps = reactive({
   page: 1,
   pageSize: 30,
   itemCount: 0,
-  showQuickJumper: true,
-  suffix ({ itemCount }: PaginationInfo): VNodeChild {
-    return `共${itemCount}条`
-  }
 })
 const data: Ref<any[]> = ref([])
 
@@ -78,7 +77,9 @@ const handleSearch = async () => {
   if (!searchLoadingRef.value) {
     searchLoadingRef.value = true
     lastSearchValue.value = deepCopy(searchValue.value)
-    await reloadTableData(1)
+    await reloadTableData(1, {
+      ...find(propEq('id', selectedId.value))(configList.value)
+    })
     searchLoadingRef.value = false
   }
 }
@@ -116,7 +117,7 @@ const setNewData = (page: number, total: number, rows: any[]) => {
   paginationReactive.itemCount = total
 }
 
-const reloadTableData = async (page: number) => {
+const reloadTableData = async (page: number, event: any) => {
   if (!newLoadingRef.value) {
     newLoadingRef.value = true
     paginationReactive.page = page
@@ -134,6 +135,7 @@ const reloadTableData = async (page: number) => {
         ...lastSearchValue.value,
         beginPubtime: lastSearchValue.value.publicTime ? formatTimeStamp(lastSearchValue.value.publicTime[0]) : null,
         endPubtime: lastSearchValue.value.publicTime ? formatTimeStamp(lastSearchValue.value.publicTime[1]) : null,
+        event
       })
       setNewData(page, total, rows)
       scrollbarRef.value?.scrollTo({ top: 0 })
@@ -216,8 +218,10 @@ const afterGraphClose = () => {
 watch(
   () => selectedId.value,
   async () => {
-    if (selectedId.value && configType.value === 'event_news_show_viz') {
-      await reloadTableData(1)
+    if (route.meta.footerType === 'repository' || (selectedId.value && configType.value === 'event_news_show_viz')) {
+      await reloadTableData(1, {
+        ...find(propEq('id', selectedId.value))(configList.value)
+      })
     }
   },
   {
@@ -225,21 +229,14 @@ watch(
   }
 )
 
+// todo: 此处使用后端的即时查询接口出现bug
 footStore.$onAction(({ name, after }) => {
   if (name === 'instantQuery') {
-    after((res) => {
-      if (!newLoadingRef.value && res.data.resultData) {
-        newLoadingRef.value = true
-        const {
-          data: {
-            resultData: {
-              rows,
-              total
-            }
-          }
-        } = res
-        setNewData(1, total, rows)
-        newLoadingRef.value = false
+    after(async (res) => {
+      if (!newLoadingRef.value && !res.code) {
+        await reloadTableData(1, {
+          ...res
+        })
       }
     })
   }
@@ -431,7 +428,11 @@ footStore.$onAction(({ name, after }) => {
     :item-count="paginationReactive.itemCount"
     show-quick-jumper
     @update:page="reloadTableData"
-  />
+  >
+    <template #suffix="{ itemCount }">
+      共{{ itemCount }}条
+    </template>
+  </n-pagination>
   <NewsEvent
     :show-modal="newsEventDisplay"
     :event="newsEventData"
@@ -445,6 +446,7 @@ footStore.$onAction(({ name, after }) => {
     @afterModalClose="afterGraphClose"
   />
   <NewsDetail
+    :i18nValue="i18nValue"
     :show-modal="newsDetailDisplay"
     :detail="newsDetailData"
     @modalClose="handleDetailClose"

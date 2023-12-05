@@ -5,7 +5,7 @@ import { NResult, NButton } from 'naive-ui'
 const router = useRouter()
 
 const backToHome = () => {
-  router.push({ path: '/home' })
+  router.push({ path: '/' })
 }
 </script>
 
@@ -13,7 +13,6 @@ const backToHome = () => {
   <n-result
     status="404"
     title="404 资源不存在"
-    description="生活总归带点荒谬"
     size="huge"
     style="height: 100vh;display: flex; flex-direction: column;justify-content: center;"
   >
@@ -21,7 +20,7 @@ const backToHome = () => {
       <n-button
         @click="backToHome"
       >
-        找点乐子吧
+        返回首页
       </n-button>
     </template>
   </n-result>

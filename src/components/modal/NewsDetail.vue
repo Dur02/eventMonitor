@@ -4,6 +4,7 @@ import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia';
 
 defineProps<{
+  i18nValue: string,
   showModal: boolean,
   detail: any
 }>()
@@ -14,7 +15,6 @@ const systemStore = useSystemStore()
 const { isLight } = storeToRefs(systemStore)
 
 const openNewWindow = (link: string) => {
-  console.log('14122')
   if (link) {
     window.open(link, '_blank')
   }
@@ -35,7 +35,7 @@ const afterModalClose = (): void => {
     :show="showModal"
     size="small"
     preset="card"
-    style="max-width: 1000px;max-height: 1000px;"
+    style="width: 1000px;"
     display-directive="if"
     @update:show="handleModalClose"
     @after-leave="afterModalClose"
@@ -46,12 +46,13 @@ const afterModalClose = (): void => {
       <h2
         class="news-title"
       >
-        {{ detail.title }}
+        {{ i18nValue === 'ZhCN' ? detail.titleZh: detail.title }}
       </h2>
       <n-space justify="space-between">
         <n-text>
           <n-ellipsis style="max-width: 700px;">
-            作者：
+            <span>作者：</span>
+
             <n-a
               v-for="(item, index) in detail.author"
               class="author-name"
@@ -76,7 +77,7 @@ const afterModalClose = (): void => {
       </n-space>
       <n-text>
         <n-ellipsis :line-clamp="1">
-          对应url：
+          <span>对应url：</span>
           <n-a
             @click="openNewWindow(detail.url)"
           >
@@ -97,7 +98,7 @@ const afterModalClose = (): void => {
         }"
       >
         <n-text>
-          {{ detail.content }}
+          {{ i18nValue === 'ZhCN' ? detail.contentZh: detail.content }}
         </n-text>
       </n-scrollbar>
       <n-text>

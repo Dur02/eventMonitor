@@ -5,6 +5,7 @@ import CustomSider from '@/components/layout/Sider.vue'
 import CustomSecondaryHeader from '@/components/layout/SecondaryHeader.vue'
 import CustomContent from '@/components/layout/Content.vue'
 import CustomNormalFooter from '@/components/layout/Footer.vue'
+import CustomRepositoryFooter from '@/components/layout/RepositoryFooter.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -28,6 +29,7 @@ const route = useRoute()
           <CustomSecondaryHeader />
           <CustomContent />
           <CustomNormalFooter v-if="route.meta.footerType === 'normal'" />
+          <CustomRepositoryFooter v-if="route.meta.footerType === 'repository'" />
         </n-layout>
       </n-layout>
     </n-layout>

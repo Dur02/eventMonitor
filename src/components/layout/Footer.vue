@@ -4,20 +4,16 @@ import { ArrowBackSharp, ArrowForward, CaretDownCircle, CaretUpCircle } from '@v
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
 import type { Ref } from 'vue'
-import { ref, watch } from 'vue'
-import { useSystemStore } from '@/stores/system'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
-import { layoutFooterLightThemeOverrides, layoutFooterDarkThemeOverrides } from '@/utils/constant/layout/footer'
 import CommonForm from '@/components/layout/CommonForm.vue'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 
 const footerStore = useFooterStore()
 const { isSearchNow, paginationReactive, selectedId, configList, footerExpand } = storeToRefs(footerStore)
-const { getConfigList, setSelectedId, setIsSearchNow, setFooterExpand } = footerStore
-const systemStore = useSystemStore()
-const { isLight } = storeToRefs(systemStore)
+const { getConfigList, setSelectedId, setIsSearchNow, setFooterExpand, resetAll } = footerStore
 
 const footerForm: any = ref(null)
 const scrollContainer: any = ref(null)
@@ -93,6 +89,10 @@ watch(
     immediate: true
   }
 )
+
+onBeforeUnmount(() => {
+  resetAll()
+})
 </script>
 
 <template>
@@ -101,7 +101,6 @@ watch(
     :class="footerExpand ? 'expand' : ''"
     position="absolute"
     bordered
-    :theme-overrides="isLight ? layoutFooterLightThemeOverrides : layoutFooterDarkThemeOverrides"
   >
     <div class="footer-bar">
       <n-button

@@ -14,10 +14,6 @@ export const useFooterStore = defineStore('footer', () => {
     page: 1,
     pageSize: 10,
     itemCount: 0,
-    showQuickJumper: true,
-    suffix ({ itemCount }: PaginationInfo): VNodeChild {
-      return `共${itemCount}条`
-    }
   })
   const selectedId: Ref<number | null> = ref(null)
   const configList: Ref<any> = ref([])
@@ -51,6 +47,10 @@ export const useFooterStore = defineStore('footer', () => {
     }
   }
 
+  const setConfigType = (newValue: string) => {
+    configType.value = newValue
+  }
+
   const setSelectedId = (newValue: number | null) => {
     selectedId.value = newValue
   }
@@ -75,7 +75,14 @@ export const useFooterStore = defineStore('footer', () => {
       configName: string | null
     }
   )=> {
-    if (instantQueryFunc.value) {
+    if (configType === 'event_news_show_viz' && !isSaveConfig) {
+      return Promise.resolve({
+        configType,
+        isSaveConfig,
+        configName,
+        ...data
+      })
+    } else if (instantQueryFunc.value) {
       try {
         const res = (instantQueryFunc.value)({
           configType,
@@ -90,6 +97,18 @@ export const useFooterStore = defineStore('footer', () => {
     }
   }
 
+  const resetAll = () => {
+    configType.value = ''
+    requestFunc.value = null
+    instantQueryFunc.value = null
+    isSearchNow.value = false
+    footerExpand.value = false
+    paginationReactive.page = 1
+    paginationReactive.itemCount = 0
+    selectedId.value = null
+    configList.value = []
+  }
+
   return {
     configType,
     requestFunc,
@@ -99,9 +118,11 @@ export const useFooterStore = defineStore('footer', () => {
     selectedId,
     configList,
     getConfigList,
+    setConfigType,
     setSelectedId,
     setIsSearchNow,
     setFooterExpand,
-    instantQuery
+    instantQuery,
+    resetAll
   }
 })
