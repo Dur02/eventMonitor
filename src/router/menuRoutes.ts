@@ -1,6 +1,8 @@
 import type { RouteRecordRaw } from 'vue-router'
 import renderIcon from '@/utils/function/renderIcon'
-import { NavigateCircle, NotificationsSharp, Newspaper, Settings } from '@vicons/ionicons5'
+import { Newspaper, Settings } from '@vicons/ionicons5'
+import { Event } from '@vicons/carbon'
+import { AutoGraphOutlined } from '@vicons/material'
 import EventFooterSlot from '@/components/event/footerSlot/EventFooterSlot.vue'
 import { eventInstantQuery, getEventConfigListByConfigName } from '@/api/eventAnalyse'
 
@@ -10,7 +12,7 @@ export default [
     name: 'event',
     meta: {
       breadcrumb: '事件库分析',
-      icon: renderIcon(NotificationsSharp),
+      icon: renderIcon(Event),
     },
     redirect: { name: 'eventDisplay' },
     component: () => import('../views/layout/LayoutView.vue'),
@@ -24,7 +26,8 @@ export default [
           configType: 'event_show_viz',
           footerForm: EventFooterSlot,
           requestFunc: getEventConfigListByConfigName,
-          instantQuery: eventInstantQuery
+          instantQuery: eventInstantQuery,
+          queryType: 'all',
         },
         component: () => import('../views/event/display/EventDisplayView.vue')
       },
@@ -37,7 +40,8 @@ export default [
           configType: 'event_timeline_viz',
           footerForm: EventFooterSlot,
           requestFunc: getEventConfigListByConfigName,
-          instantQuery: eventInstantQuery
+          instantQuery: eventInstantQuery,
+          queryType: 'all',
         },
         component: () => import('../views/event/timeline/EventTimelineView.vue')
       },
@@ -48,7 +52,7 @@ export default [
     name: 'graph',
     meta: {
       breadcrumb: '图谱库分析',
-      icon: renderIcon(NavigateCircle),
+      icon: renderIcon(AutoGraphOutlined),
     },
     redirect: { name: 'graphDisplay' },
     component: () => import('../views/layout/LayoutView.vue'),
@@ -88,23 +92,24 @@ export default [
         name: 'newsDisplay',
         meta: {
           breadcrumb: '新闻展示',
-          footerType: 'normal',
           configType: 'event_news_show_viz',
+          footerType: 'normal',
           footerForm: EventFooterSlot,
           requestFunc: getEventConfigListByConfigName,
-          instantQuery: eventInstantQuery
+          instantQuery: eventInstantQuery,
+          queryType: 'page',
         },
         component: () => import('../views/news/display/NewsDisplayView.vue')
       },
-      // {
-      //   path: 'repository',
-      //   name: 'newsRepository',
-      //   meta: {
-      //     breadcrumb: '新闻全库',
-      //     footerType: 'repository',
-      //   },
-      //   component: () => import('../views/news/display/NewsDisplayView.vue')
-      // }
+      {
+        path: 'repository',
+        name: 'newsRepository',
+        meta: {
+          breadcrumb: '新闻全库',
+          footerType: 'repository',
+        },
+        component: () => import('../views/news/display/NewsDisplayView.vue')
+      }
     ]
   },
   {

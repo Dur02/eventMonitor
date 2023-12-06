@@ -68,31 +68,38 @@ export const useFooterStore = defineStore('footer', () => {
       configType,
       isSaveConfig,
       configName,
+      queryType,
       ...data
     }: {
       configType: string,
       isSaveConfig: number,
+      queryType: string,
       configName: string | null
     }
   )=> {
-    if (configType === 'event_news_show_viz' && !isSaveConfig) {
+    // 需要分页即时查询且不需要保存时
+    if (queryType === 'page' && !isSaveConfig) {
       return Promise.resolve({
         configType,
         isSaveConfig,
         configName,
         ...data
       })
-    } else if (instantQueryFunc.value) {
-      try {
-        const res = (instantQueryFunc.value)({
-          configType,
-          isSaveConfig,
-          configName,
-          ...data
-        })
-        return Promise.resolve(res)
-      } catch (e) {
-        return Promise.reject()
+    }
+    // 需要查询全部数据或需要保存时
+    if (queryType === 'all' || isSaveConfig) {
+      if (instantQueryFunc.value) {
+        try {
+          const res = (instantQueryFunc.value)({
+            configType,
+            isSaveConfig,
+            configName,
+            ...data
+          })
+          return Promise.resolve(res)
+        } catch (e) {
+          return Promise.reject()
+        }
       }
     }
   }

@@ -6,11 +6,11 @@ import { NButton, useMessage } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
-import EventConfigForm from '@/components/form/EventConfigForm.vue'
+import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
 import { eventConfigFormInitialValue, getConfigFormValue, getConfigFormInitialValue } from '@/utils/constant/form/eventConfigForm'
 import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
 import { flow, find, propEq } from 'lodash/fp'
-import EventConfigSave from '@/components/form/EventConfigSave.vue'
+import EventConfigSave from '@/components/form/event/EventConfigSave.vue'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
 
@@ -40,10 +40,12 @@ const handleCreate = async (e: MouseEvent) => {
             configType: configType.value,
             isSaveConfig: configSaveRef.value?.formValue.isSave,
             configName: configSaveRef.value?.formValue.configName,
+            queryType: route.meta.queryType,
             ...getConfigFormValue(configFormRef.value)
           })
           setSelectedId(null)
-          if (configSaveRef.value?.formValue.isSave && route.meta.requestFunc && route.meta.configType && route.meta.instantQuery) {
+          // && route.meta.requestFunc && route.meta.configType && route.meta.instantQuery
+          if (configSaveRef.value?.formValue.isSave) {
             await getConfigList(
               route.meta.requestFunc as Function,
               route.meta.configType as string,

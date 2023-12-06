@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Ref, VNodeChild } from 'vue'
+import type { Ref } from 'vue'
 import { nextTick, reactive, ref, watch } from 'vue'
 import { getNewsDetail, searchNews } from '@/api/news'
-import type { PaginationInfo, PaginationProps, ScrollbarInst } from 'naive-ui'
+import type { PaginationProps, ScrollbarInst } from 'naive-ui'
 import {
   NSpace,
   NCard,
@@ -69,17 +69,19 @@ const scrollbarRef: Ref<ScrollbarInst | null> = ref(null)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
   pageSize: 30,
-  itemCount: 0,
+  itemCount: 0
 })
+const currentEvent = ref({})
 const data: Ref<any[]> = ref([])
 
 const handleSearch = async () => {
   if (!searchLoadingRef.value) {
     searchLoadingRef.value = true
     lastSearchValue.value = deepCopy(searchValue.value)
-    await reloadTableData(1, {
+    currentEvent.value = {
       ...find(propEq('id', selectedId.value))(configList.value)
-    })
+    }
+    await reloadTableData(1)
     searchLoadingRef.value = false
   }
 }
@@ -117,7 +119,7 @@ const setNewData = (page: number, total: number, rows: any[]) => {
   paginationReactive.itemCount = total
 }
 
-const reloadTableData = async (page: number, event: any) => {
+const reloadTableData = async (page: number) => {
   if (!newLoadingRef.value) {
     newLoadingRef.value = true
     paginationReactive.page = page
@@ -135,7 +137,7 @@ const reloadTableData = async (page: number, event: any) => {
         ...lastSearchValue.value,
         beginPubtime: lastSearchValue.value.publicTime ? formatTimeStamp(lastSearchValue.value.publicTime[0]) : null,
         endPubtime: lastSearchValue.value.publicTime ? formatTimeStamp(lastSearchValue.value.publicTime[1]) : null,
-        event
+        event: currentEvent.value
       })
       setNewData(page, total, rows)
       scrollbarRef.value?.scrollTo({ top: 0 })
@@ -218,10 +220,11 @@ const afterGraphClose = () => {
 watch(
   () => selectedId.value,
   async () => {
-    if (route.meta.footerType === 'repository' || (selectedId.value && configType.value === 'event_news_show_viz')) {
-      await reloadTableData(1, {
+    if (route.meta.footerType === 'normal' && selectedId.value && configType.value === 'event_news_show_viz') {
+      currentEvent.value = {
         ...find(propEq('id', selectedId.value))(configList.value)
-      })
+      }
+      await reloadTableData(1)
     }
   },
   {
@@ -229,14 +232,46 @@ watch(
   }
 )
 
-// todo: 此处使用后端的即时查询接口出现bug
+watch(
+  () => route.name,
+  async () => {
+    newLoadingRef.value = false
+    searchLoadingRef.value = false
+    searchValue.value = {
+      publicTime: null,
+      orderBy: 'DESC',
+      type: 2,
+      isExact: 1,
+      queryContent: ''
+    }
+    lastSearchValue.value = {
+      publicTime: null,
+      orderBy: 'DESC',
+      type: 2,
+      isExact: 1,
+      queryContent: ''
+    }
+    scrollbarRef.value?.scrollTo({ top: 0 })
+    paginationReactive.page = 1
+    paginationReactive.itemCount = 0
+    currentEvent.value = {}
+    i18nValue.value = 'ZhCN'
+    data.value = []
+    if (route.meta.footerType === 'repository') {
+      await reloadTableData(1)
+    }
+  },
+  {
+    immediate: true
+  }
+)
+
 footStore.$onAction(({ name, after }) => {
   if (name === 'instantQuery') {
     after(async (res) => {
-      if (!newLoadingRef.value && !res.code) {
-        await reloadTableData(1, {
-          ...res
-        })
+      if (res.configType === 'event_news_show_viz') {
+        currentEvent.value = res
+        await reloadTableData(1)
       }
     })
   }

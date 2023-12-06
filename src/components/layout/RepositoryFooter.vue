@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { NButton, NLayoutFooter } from 'naive-ui'
+import { NButton, NLayoutFooter, NTabs, NTabPane, NScrollbar } from 'naive-ui'
 import type { Ref } from 'vue'
-import { ref } from 'vue'
+import { onUpdated, ref } from 'vue'
+import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
+import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
+import { eventConfigFormInitialValue } from '@/utils/constant/form/eventConfigForm'
+import GraphConfigForm from '@/components/form/graph/GraphConfigForm.vue';
 
 const footerExpand: Ref<boolean> = ref(false)
+const configFormRef: Ref<any | null> = ref(null)
+const eventConfigFormValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
 
 const changeExpand = () => {
-
+  footerExpand.value = !footerExpand.value
 }
 </script>
 
@@ -26,6 +32,43 @@ const changeExpand = () => {
         全库搜索
       </n-button>
     </div>
+    <n-tabs
+      class="form-tab"
+      placement="left"
+      size="medium"
+      type="line"
+    >
+      <n-tab-pane
+        name="event"
+        tab="事件表单"
+        display-directive="show:lazy"
+      >
+        <n-scrollbar style="max-height: 100%;">
+          <event-config-form
+            ref="configFormRef"
+            :initialValue="eventConfigFormValue"
+            :configType="['event_news_show_viz']"
+            :formDisabled="false"
+            style="padding: 5px 13px;"
+          />
+        </n-scrollbar>
+      </n-tab-pane>
+      <n-tab-pane
+        name="gkg"
+        tab="图谱表单"
+        display-directive="show:lazy"
+      >
+        <n-scrollbar style="max-height: 100%;">
+          <graph-config-form
+            ref="configFormRef"
+            :initialValue="{}"
+            :configType="['event_news_show_viz']"
+            :formDisabled="false"
+            style="padding: 5px 13px;"
+          />
+        </n-scrollbar>
+      </n-tab-pane>
+    </n-tabs>
   </n-layout-footer>
 </template>
 
@@ -48,6 +91,11 @@ const changeExpand = () => {
     justify-content: space-between;
     align-items: start;
     height: 41px;
+  }
+
+  .form-tab {
+    height: calc(100% - 40px);
+    border: 1px solid var(--n-border-color);
   }
 }
 </style>

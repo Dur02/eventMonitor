@@ -167,11 +167,11 @@ watch(
     label-width="80"
     :show-require-mark="false"
   >
-    <p style="margin: 0 0 5px 110px;">当前数据库时间范围: 1971-01-01 至 {{ formatTimeStamp(new Date().getTime()) }}</p>
+    <p style="margin: 0 0 5px 100px;">当前数据库时间范围: 1971-01-01 至 {{ formatTimeStamp(new Date().getTime()) }}</p>
     <n-form-item
       path="sqldate"
       label-style="font-weight: 600;"
-      label-width="110"
+      label-width="100"
     >
       <template #label>
         <div class="icon-label">
@@ -193,7 +193,7 @@ watch(
     <n-form-item
       path="dataSource"
       label-style="font-weight: 600;"
-      label-width="110"
+      label-width="100"
     >
       <template #label>
         <div class="icon-label">
@@ -221,7 +221,7 @@ watch(
     <n-form-item
       path="weightBasis"
       label-style="font-weight: 600;"
-      label-width="110"
+      label-width="100"
     >
       <template #label>
         <div class="icon-label">
@@ -252,7 +252,7 @@ watch(
     <n-form-item
       path="statisticsBasis"
       label-style="font-weight: 600;"
-      label-width="110"
+      label-width="100"
     >
       <template #label>
         <div class="icon-label">
@@ -278,7 +278,7 @@ watch(
     <n-form-item
       :show-feedback="false"
       label-style="font-weight: 600;"
-      label-width="110"
+      label-width="100"
     >
       <template #label>
         <div class="icon-label">
@@ -738,7 +738,7 @@ watch(
     <n-form-item
       :show-feedback="false"
       label-style="font-weight: 600;"
-      label-width="110"
+      label-width="100"
     >
       <template #label>
         <div class="icon-label">
@@ -933,7 +933,7 @@ watch(
     <n-form-item
       :show-feedback="false"
       label-style="font-weight: 600;"
-      label-width="110"
+      label-width="100"
     >
       <template #label>
         <div class="icon-label">
