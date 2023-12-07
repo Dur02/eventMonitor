@@ -19,7 +19,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
 
   if (localStorage.getItem('token')) {
     if (whiteList.indexOf(to.path) !== -1) {
-      next({ path: '/event' })
+      next({ path: '/common' })
       loadingBar.finish()
     } else {
       if (roles.value.length === 0) {

@@ -1,6 +1,6 @@
 import type { FormRules } from 'naive-ui'
 
-export const eventConfigSaveRules: FormRules = {
+export const configSaveRules: FormRules = {
   isSave: [
     {
       type: 'number',

@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import { ref } from 'vue'
 import type { FormInst } from 'naive-ui'
 import { NForm, NFormItem, NIcon, NRadioGroup, NRadio, NInput, NSpace } from 'naive-ui'
-import { eventConfigSaveRules } from '@/utils/constant/form/eventConfigSave'
+import { configSaveRules } from '@/utils/constant/form/common/configSave'
 import { Calendar } from '@vicons/ionicons5'
 
 const formRef: Ref<FormInst | null> = ref(null)
@@ -28,7 +28,7 @@ defineExpose({
   <n-form
     ref="formRef"
     class="form"
-    :rules="eventConfigSaveRules"
+    :rules="configSaveRules"
     :model="formValue"
     size="medium"
     label-placement="left"

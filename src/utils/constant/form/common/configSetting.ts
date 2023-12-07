@@ -1,8 +1,6 @@
 import type { FormRules, SelectGroupOption, SelectOption } from 'naive-ui'
-import type {
-  eventConfigRowsType,
-  eventConfigSettingInitialValueType
-} from '@/types/components/config/event'
+import type { eventConfigRowsType } from '@/types/components/config/event'
+import type { configSettingInitialValueType } from '@/types/components/form/common/configSetting'
 import { joinArray } from '@/utils/function/arrayToString'
 import { splitString } from '@/utils/function/stringToArray'
 
@@ -28,7 +26,7 @@ export const monitorOption: Array<SelectOption | SelectGroupOption> = [
   }
 ]
 
-export const eventConfigSettingRules: FormRules = {
+export const configSettingRules: FormRules = {
   configName: [
     {
       required: true,
@@ -50,7 +48,7 @@ export const eventConfigSettingRules: FormRules = {
   ]
 }
 
-export const eventConfigSettingInitialValue: eventConfigSettingInitialValueType = {
+export const configSettingInitialValue: configSettingInitialValueType = {
   configName: '',
   configType: null,
   remark: '',

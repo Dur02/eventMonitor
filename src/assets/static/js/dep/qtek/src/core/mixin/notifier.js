@@ -10,7 +10,7 @@ define(function() {
      */
     var notifier = {
         /**
-         * Trigger event
+         * Trigger common
          * @param  {string} name
          */
         trigger: function(name) {
@@ -58,7 +58,7 @@ define(function() {
             }
         },
         /**
-         * Register event handler
+         * Register common handler
          * @param  {string} name
          * @param  {Function} action
          * @param  {Object} [context]
@@ -83,7 +83,7 @@ define(function() {
         },
 
         /**
-         * Register event, event will only be triggered once and then removed
+         * Register common, common will only be triggered once and then removed
          * @param  {string} name
          * @param  {Function} action
          * @param  {Object} [context]
@@ -180,7 +180,7 @@ define(function() {
         },
 
         /**
-         * If registered the event handler
+         * If registered the common handler
          * @param  {string}  name
          * @param  {Function}  action
          * @return {boolean}

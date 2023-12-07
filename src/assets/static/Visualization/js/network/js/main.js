@@ -5,7 +5,7 @@ var config={};
 
 //For debug allow a eventAnalyse=file.json parameter to specify the eventAnalyse
 function GetQueryStringParams(sParam,defaultVal) {
-    var sPageURL = ""+window.location;//.search.substring(1);//This might be causing error in Safari?
+    var sPageURL = ""+window.location;//.common.substring(1);//This might be causing error in Safari?
     if (sPageURL.indexOf("?")==-1) return defaultVal;
     sPageURL=sPageURL.substr(sPageURL.indexOf("?")+1);
     var sURLVariables = sPageURL.split('&');
@@ -172,9 +172,9 @@ function setupGUI(config) {
     $GP.info_close.click(nodeNormal);
     $GP.info_close2.click(nodeNormal);
     $GP.form = $("#mainpanel").find("form");
-    $GP.search = new Search($GP.form.find("#search"));
+    $GP.search = new Search($GP.form.find("#common"));
     if (!config.features.search) {
-		$("#search").hide();
+		$("#common").hide();
 	}
 	if (!config.features.groupSelectorAttribute) {
 		$("#attributeselect").hide();
@@ -321,7 +321,7 @@ function configSigmaElements(config) {
 }
 
 function Search(a) {
-    this.input = a.find("input[name=search]");
+    this.input = a.find("input[name=common]");
     this.state = a.find(".state");
     this.results = a.find(".results");
     this.exactMatch = !1;
@@ -362,7 +362,7 @@ function Search(a) {
         this.searching = !0;
         this.lastSearch = a;
         this.results.empty();
-        if (2 >= a.length) this.results.html("<i>You must search for a name with a minimum of 3 letters.</i>");
+        if (2 >= a.length) this.results.html("<i>You must common for a name with a minimum of 3 letters.</i>");
         else {
 	        sigInst.iterNodes(function (a) {
 	            if (g.test(a.label.toLowerCase())) {

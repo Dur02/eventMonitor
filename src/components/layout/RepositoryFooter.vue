@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { NButton, NLayoutFooter, NTabs, NTabPane, NScrollbar } from 'naive-ui'
 import type { Ref } from 'vue'
-import { onUpdated, ref } from 'vue'
+import { ref } from 'vue'
 import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
-import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
-import { eventConfigFormInitialValue } from '@/utils/constant/form/eventConfigForm'
+import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
+import { eventConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
 import GraphConfigForm from '@/components/form/graph/GraphConfigForm.vue';
 
 const footerExpand: Ref<boolean> = ref(false)
@@ -44,7 +44,7 @@ const changeExpand = () => {
         display-directive="show:lazy"
       >
         <n-scrollbar style="max-height: 100%;">
-          <event-config-form
+          <EventConfigForm
             ref="configFormRef"
             :initialValue="eventConfigFormValue"
             :configType="['event_news_show_viz']"

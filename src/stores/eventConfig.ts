@@ -10,7 +10,8 @@ import {
 } from '@/api/eventConfiguration'
 import type { PaginationInfo, PaginationProps, DataTableRowKey } from 'naive-ui'
 import { flow, map } from 'lodash/fp'
-import type { eventConfigRowsType, searchFormType } from '@/types/components/config/event'
+import type { searchFormType } from '@/types/components/config/common'
+import type { eventConfigRowsType } from '@/types/components/config/event'
 import { runTask as runTaskApi } from '@/api/eventAnalyse'
 import deepCopy from '@/utils/function/deepcopy'
 

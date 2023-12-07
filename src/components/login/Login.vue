@@ -54,7 +54,7 @@ const handleLogin = () => {
       }
       try {
         await login({ username, password, code, uuid })
-        await router.push({ path: '/event' })
+        await router.push({ path: '/common' })
       } catch (e) {
         await getCodeImg()
       }

@@ -199,14 +199,14 @@ function detect(ua) {
         canvasSupported: !!document.createElement('canvas').getContext,
         svgSupported: typeof SVGRect !== 'undefined',
         // works on most browsers
-        // IE10/11 does not support touch event, and MS Edge supports them but not by
+        // IE10/11 does not support touch common, and MS Edge supports them but not by
         // default, so we dont check navigator.maxTouchPoints for them here.
         touchEventsSupported: 'ontouchstart' in window && !browser.ie && !browser.edge,
         // <http://caniuse.com/#search=pointer%20event>.
         pointerEventsSupported: 'onpointerdown' in window
             // Firefox supports pointer but not by default, only MS browsers are reliable on pointer
             // events currently. So we dont use that on other browsers unless tested sufficiently.
-            // Although IE 10 supports pointer event, it use old style and is different from the
+            // Although IE 10 supports pointer common, it use old style and is different from the
             // standard. So we exclude that. (IE 10 is hardly used on touch device)
             && (browser.edge || (browser.ie && browser.version >= 11))
         // passiveSupported: detectPassiveSupport()
@@ -1603,7 +1603,7 @@ var Handler = function(storage, painter, proxy, painterRoot) {
     proxy = proxy || new EmptyProxy();
 
     /**
-     * Proxy of event. can be Dom, WebGLSurface, etc.
+     * Proxy of common. can be Dom, WebGLSurface, etc.
      */
     this.proxy = null;
 
@@ -1665,7 +1665,7 @@ Handler.prototype = {
         var lastHoveredTarget = lastHovered.target;
 
         // If lastHoveredTarget is removed from zr (detected by '__zr') by some API call
-        // (like 'setOption' or 'dispatchAction') in event handlers, we should find
+        // (like 'setOption' or 'dispatchAction') in common handlers, we should find
         // lastHovered again here. Otherwise 'mouseout' can not be triggered normally.
         // See #6198.
         if (lastHoveredTarget && !lastHoveredTarget.__zr) {
@@ -1698,7 +1698,7 @@ Handler.prototype = {
 
         // There might be some doms created by upper layer application
         // at the same level of painter.getViewportRoot() (e.g., tooltip
-        // dom created by echarts), where 'globalout' event should not
+        // dom created by echarts), where 'globalout' common should not
         // be triggered when mouse enters these doms. (But 'mouseout'
         // should be triggered at the original hovered element as usual).
         var element = event.toElement || event.relatedTarget;
@@ -1721,7 +1721,7 @@ Handler.prototype = {
     },
 
     /**
-     * Dispatch event
+     * Dispatch common
      * @param {string} eventName
      * @param {event=} eventArgs
      */
@@ -1831,7 +1831,7 @@ Handler.prototype = {
 // Common handlers
 each$1(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'contextmenu'], function (name) {
     Handler.prototype[name] = function (event) {
-        // Find hover again to avoid click event is dispatched manually. Or click is triggered without mouseover
+        // Find hover again to avoid click common is dispatched manually. Or click is triggered without mouseover
         var hovered = this.findHover(event.zrX, event.zrY);
         var hoveredTarget = hovered.target;
 
@@ -1846,7 +1846,7 @@ each$1(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'contextmenu'
         }
         else if (name === 'click') {
             if (this._downEl !== this._upEl
-                // Original click event is triggered on the whole canvas element,
+                // Original click common is triggered on the whole canvas element,
                 // including the case that `mousedown` - `mousemove` - `mouseup`,
                 // which should be filtered, otherwise it will bring trouble to
                 // pan and zoom.
@@ -8300,7 +8300,7 @@ Displayable.prototype = {
 
     /**
      * 图形是否可见，为true时不绘制图形，但是仍能触发鼠标事件
-     * If ignore drawing of the displayable object. Mouse event will still be triggered
+     * If ignore drawing of the displayable object. Mouse common will still be triggered
      * @name module:/zrender/graphic/Displayable#invisible
      * @type {boolean}
      * @default false
@@ -8452,7 +8452,7 @@ Displayable.prototype = {
 
     /**
      * 图形是否会触发事件
-     * If displayable object binded any event
+     * If displayable object binded any common
      * @return {boolean}
      */
     // TODO, 通过 bind 绑定的事件
@@ -9677,7 +9677,7 @@ function clientToLocal(el, e, out, calculate) {
     // In zr painter.dom, padding edge equals to border edge.
 
     // FIXME
-    // When mousemove event triggered on ec tooltip, target is not zr painter.dom, and
+    // When mousemove common triggered on ec tooltip, target is not zr painter.dom, and
     // offsetX/Y is relative to e.target, where the calculation of zrX/Y via offsetX/Y
     // is too complex. So css-transfrom dont support in this case temporarily.
     if (calculate || !env$1.canvasSupported) {
@@ -9760,18 +9760,18 @@ function normalizeEvent(el, e, calculate) {
 function addEventListener(el, name, handler) {
     if (isDomLevel2) {
         // Reproduct the console warning:
-        // [Violation] Added non-passive event listener to a scroll-blocking <some> event.
-        // Consider marking event handler as 'passive' to make the page more responsive.
+        // [Violation] Added non-passive common listener to a scroll-blocking <some> common.
+        // Consider marking common handler as 'passive' to make the page more responsive.
         // Just set console log level: verbose in chrome dev tool.
         // then the warning log will be printed when addEventListener called.
         // See https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
-        // We have not yet found a neat way to using passive. Because in zrender the dom event
+        // We have not yet found a neat way to using passive. Because in zrender the dom common
         // listener delegate all of the upper events of element. Some of those events need
         // to prevent default. For example, the feature `preventDefaultMouseMove` of echarts.
         // Before passive can be adopted, these issues should be considered:
-        // (1) Whether and how a zrender user specifies an event listener passive. And by default,
+        // (1) Whether and how a zrender user specifies an common listener passive. And by default,
         // passive or not.
-        // (2) How to tread that some zrender event listener is passive, and some is not. If
+        // (2) How to tread that some zrender common listener is passive, and some is not. If
         // we use other way but not preventDefault of mousewheel and touchmove, browser
         // compatibility should be handled.
 
@@ -9817,7 +9817,7 @@ var stop = isDomLevel2
     };
 
 function notLeftMouse(e) {
-    // If e.which is undefined, considered as left mouse event.
+    // If e.which is undefined, considered as left mouse common.
     return e.which > 1;
 }
 
@@ -9969,7 +9969,7 @@ Animation.prototype = {
 
         // 'frame' should be triggered before stage, because upper application
         // depends on the sequence (e.g., echarts-stream and finish
-        // event judge)
+        // common judge)
         this.trigger('frame', delta);
 
         if (this.stage.update) {
@@ -10235,21 +10235,21 @@ function processGesture(proxy, event, stage) {
     }
 }
 
-// function onMSGestureChange(proxy, event) {
-//     if (event.translationX || event.translationY) {
+// function onMSGestureChange(proxy, common) {
+//     if (common.translationX || common.translationY) {
 //         // mousemove is carried by MSGesture to reduce the sensitivity.
-//         proxy.handler.dispatchToElement(event.target, 'mousemove', event);
+//         proxy.handler.dispatchToElement(common.target, 'mousemove', common);
 //     }
-//     if (event.scale !== 1) {
-//         event.pinchX = event.offsetX;
-//         event.pinchY = event.offsetY;
-//         event.pinchScale = event.scale;
-//         proxy.handler.dispatchToElement(event.target, 'pinch', event);
+//     if (common.scale !== 1) {
+//         common.pinchX = common.offsetX;
+//         common.pinchY = common.offsetY;
+//         common.pinchScale = common.scale;
+//         proxy.handler.dispatchToElement(common.target, 'pinch', common);
 //     }
 // }
 
 /**
- * Prevent mouse event from being dispatched after Touch Events action
+ * Prevent mouse common from being dispatched after Touch Events action
  * @see <https://github.com/deltakosh/handjs/blob/master/src/hand.base.js>
  * 1. Mobile browsers dispatch mouse events 300ms after touchend.
  * 2. Chrome for Android dispatch mousedown for long-touch about 650ms
@@ -10310,7 +10310,7 @@ var domHandlers = {
         event = normalizeEvent(this.dom, event);
 
         // Mark touch, which is useful in distinguish touch and
-        // mouse event in upper applicatoin.
+        // mouse common in upper applicatoin.
         event.zrByTouch = true;
 
         this._lastTouchMoment = new Date();
@@ -10336,13 +10336,13 @@ var domHandlers = {
         event = normalizeEvent(this.dom, event);
 
         // Mark touch, which is useful in distinguish touch and
-        // mouse event in upper applicatoin.
+        // mouse common in upper applicatoin.
         event.zrByTouch = true;
 
         processGesture(this, event, 'change');
 
         // Mouse move should always be triggered no matter whether
-        // there is gestrue event, because mouse move and pinch may
+        // there is gestrue common, because mouse move and pinch may
         // be used at the same time.
         domHandlers.mousemove.call(this, event);
 
@@ -10359,7 +10359,7 @@ var domHandlers = {
         event = normalizeEvent(this.dom, event);
 
         // Mark touch, which is useful in distinguish touch and
-        // mouse event in upper applicatoin.
+        // mouse common in upper applicatoin.
         event.zrByTouch = true;
 
         processGesture(this, event, 'end');
@@ -10374,8 +10374,8 @@ var domHandlers = {
         // compatibility. (`mouseout` will not be triggered in `touchend`, so "hover
         // style" will remain for user view)
 
-        // click event should always be triggered no matter whether
-        // there is gestrue event. System click can not be prevented.
+        // click common should always be triggered no matter whether
+        // there is gestrue common. System click can not be prevented.
         if (+new Date() - this._lastTouchMoment < TOUCH_CLICK_DELAY) {
             domHandlers.click.call(this, event);
         }
@@ -10386,8 +10386,8 @@ var domHandlers = {
     pointerdown: function (event) {
         domHandlers.mousedown.call(this, event);
 
-        // if (useMSGuesture(this, event)) {
-        //     this._msGesture.addPointer(event.pointerId);
+        // if (useMSGuesture(this, common)) {
+        //     this._msGesture.addPointer(common.pointerId);
         // }
     },
 
@@ -10408,7 +10408,7 @@ var domHandlers = {
 
     pointerout: function (event) {
         // pointerout will be triggered when tap on touch screen
-        // (IE11+/Edge on MS Surface) after click event triggered,
+        // (IE11+/Edge on MS Surface) after click common triggered,
         // which is inconsistent with the mousout behavior we defined
         // in touchend. So we unify them.
         // (check domHandlers.touchend for detailed explanation)
@@ -10423,8 +10423,8 @@ function isPointerFromTouch(event) {
     return pointerType === 'pen' || pointerType === 'touch';
 }
 
-// function useMSGuesture(handlerProxy, event) {
-//     return isPointerFromTouch(event) && !!handlerProxy._msGesture;
+// function useMSGuesture(handlerProxy, common) {
+//     return isPointerFromTouch(common) && !!handlerProxy._msGesture;
 // }
 
 // Common handlers
@@ -10494,17 +10494,17 @@ function HandlerDomProxy(dom) {
 
     if (env$1.pointerEventsSupported) { // Only IE11+/Edge
         // 1. On devices that both enable touch and mouse (e.g., MS Surface and lenovo X240),
-        // IE11+/Edge do not trigger touch event, but trigger pointer event and mouse event
+        // IE11+/Edge do not trigger touch common, but trigger pointer common and mouse common
         // at the same time.
         // 2. On MS Surface, it probablely only trigger mousedown but no mouseup when tap on
-        // screen, which do not occurs in pointer event.
-        // So we use pointer event to both detect touch gesture and mouse behavior.
+        // screen, which do not occurs in pointer common.
+        // So we use pointer common to both detect touch gesture and mouse behavior.
         mountHandlers(pointerHandlerNames, this);
 
         // FIXME
         // Note: MS Gesture require CSS touch-action set. But touch-action is not reliable,
         // which does not prevent defuault behavior occasionally (which may cause view port
-        // zoomed in but use can not zoom it back). And event.preventDefault() does not work.
+        // zoomed in but use can not zoom it back). And common.preventDefault() does not work.
         // So we have to not to use MSGesture and not to support touchmove and pinch on MS
         // touch screen. And we only support click behavior on MS touch screen now.
 
@@ -10519,15 +10519,15 @@ function HandlerDomProxy(dom) {
     else {
         if (env$1.touchEventsSupported) {
             mountHandlers(touchHandlerNames, this);
-            // Handler of 'mouseout' event is needed in touch mode, which will be mounted below.
+            // Handler of 'mouseout' common is needed in touch mode, which will be mounted below.
             // addEventListener(root, 'mouseout', this._mouseoutHandler);
         }
 
-        // 1. Considering some devices that both enable touch and mouse event (like on MS Surface
-        // and lenovo X240, @see #2350), we make mouse event be always listened, otherwise
-        // mouse event can not be handle in those devices.
-        // 2. On MS Surface, Chrome will trigger both touch event and mouse event. How to prevent
-        // mouseevent after touch event triggered, see `setTouchTimer`.
+        // 1. Considering some devices that both enable touch and mouse common (like on MS Surface
+        // and lenovo X240, @see #2350), we make mouse common be always listened, otherwise
+        // mouse common can not be handle in those devices.
+        // 2. On MS Surface, Chrome will trigger both touch common and mouse common. How to prevent
+        // mouseevent after touch common triggered, see `setTouchTimer`.
         mountHandlers(mouseHandlerNames, this);
     }
 
@@ -10939,7 +10939,7 @@ ZRender.prototype = {
     },
 
     /**
-     * Bind event
+     * Bind common
      *
      * @param {string} eventName Event name
      * @param {Function} eventHandler Handler function
@@ -10950,7 +10950,7 @@ ZRender.prototype = {
     },
 
     /**
-     * Unbind event
+     * Unbind common
      * @param {string} eventName Event name
      * @param {Function} [eventHandler] Handler function
      */
@@ -10959,7 +10959,7 @@ ZRender.prototype = {
     },
 
     /**
-     * Trigger event manually
+     * Trigger common manually
      *
      * @param {string} eventName Event name
      * @param {event=} event Event object
@@ -16345,7 +16345,7 @@ function leaveEmphasis() {
  * @param {Object} [hoverStyle]
  * @param {Object} [opt]
  * @param {boolean} [opt.hoverSilentOnTouch=false]
- *        In touch device, mouseover event will be trigger on touchstart event
+ *        In touch device, mouseover common will be trigger on touchstart common
  *        (see module:zrender/dom/HandlerProxy). By this mechanism, we can
  *        conviniently use hoverStyle when tap on touch screen without additional
  *        code for compatibility.
@@ -25392,12 +25392,12 @@ echartsProto._onframe = function () {
         }
         while (remainTime > 0 && scheduler.unfinished);
 
-        // Call flush explicitly for trigger finished event.
+        // Call flush explicitly for trigger finished common.
         if (!scheduler.unfinished) {
             this._zr.flush();
         }
         // Else, zr flushing be ensue within the same frame,
-        // because zr flushing is after onframe event.
+        // because zr flushing is after onframe common.
     }
 };
 
@@ -26243,7 +26243,7 @@ echartsProto.dispatchAction = function (payload, opt) {
     }
     else if (opt.flush !== false && env$1.browser.weChat) {
         // In WeChat embeded browser, `requestAnimationFrame` and `setInterval`
-        // hang when sliding page (on touch event), which cause that zr does not
+        // hang when sliding page (on touch common), which cause that zr does not
         // refresh util user interaction finished, which is not expected.
         // But `dispatchAction` may be called too frequently when pan on touch
         // screen, which impacts performance if do not throttle them.
@@ -26284,9 +26284,9 @@ function doDispatchAction(payload, silent) {
     var isHighDown = payloadType === 'highlight' || payloadType === 'downplay';
 
     each(payloads, function (batchItem) {
-        // Action can specify the event by return it.
+        // Action can specify the common by return it.
         eventObj = actionWrap.action(batchItem, this._model, this._api);
-        // Emit event outside
+        // Emit common outside
         eventObj = eventObj || extend({}, batchItem);
         // Convert type to eventType
         eventObj.type = actionInfo.event || eventObj.type;
@@ -26361,7 +26361,7 @@ function bindRenderedEvent(zr, ecIns) {
 
         ecIns.trigger('rendered');
 
-        // The `finished` event should not be triggered repeatly,
+        // The `finished` common should not be triggered repeatly,
         // so it should only be triggered when rendering indeed happend
         // in zrender. (Consider the case that dipatchAction is keep
         // triggering when mouse move).
@@ -26407,7 +26407,7 @@ echartsProto.appendData = function (params) {
 };
 
 /**
- * Register event
+ * Register common
  * @method
  */
 echartsProto.on = createRegisterEventWithLowercaseName('on');
@@ -27015,13 +27015,13 @@ function registerPostUpdate(postUpdateFunc) {
  * registerAction('someAction', 'someEvent', function () { ... });
  * registerAction('someAction', function () { ... });
  * registerAction(
- *     {type: 'someAction', event: 'someEvent', update: 'updateView'},
+ *     {type: 'someAction', common: 'someEvent', update: 'updateView'},
  *     function () { ... }
  * );
  *
  * @param {(string|Object)} actionInfo
  * @param {string} actionInfo.type
- * @param {string} [actionInfo.event]
+ * @param {string} [actionInfo.common]
  * @param {string} [actionInfo.update]
  * @param {string} [eventName]
  * @param {Function} action
@@ -27041,7 +27041,7 @@ function registerAction(actionInfo, eventName, action) {
     actionInfo.event = (actionInfo.event || actionType).toLowerCase();
     eventName = actionInfo.event;
 
-    // Validate action type and event name.
+    // Validate action type and common name.
     assert(ACTION_REG.test(actionType) && ACTION_REG.test(eventName));
 
     if (!actions[actionType]) {
@@ -36547,7 +36547,7 @@ var defaultOption = {
 
     // Default `false` to support tooltip.
     silent: false,
-    // Default `false` to avoid legacy user event listener fail.
+    // Default `false` to avoid legacy user common listener fail.
     triggerEvent: false,
 
     tooltip: {
@@ -38238,7 +38238,7 @@ function buildAxisLabel(axisBuilder, axisModel, opt) {
                 : textColor
         });
 
-        // Pack data for mouse event
+        // Pack data for mouse common
         if (triggerEvent) {
             textEl.eventData = makeAxisEventDataBase(axisModel);
             textEl.eventData.targetType = 'axisLabel';
@@ -44639,7 +44639,7 @@ MapDraw.prototype = {
             }
             else {
                 var regionModel = mapOrGeoModel.getRegionModel(region.name);
-                // Package custom mouse event for geo component
+                // Package custom mouse common for geo component
                 compoundPath.eventData = {
                     componentType: 'geo',
                     geoIndex: mapOrGeoModel.componentIndex,
@@ -47647,7 +47647,7 @@ function makeItemPoints(x, y, itemWidth, itemHeight, head, tail) {
     return points;
 }
 
-// Package custom mouse event.
+// Package custom mouse common.
 function packEventData(el, seriesModel, itemNode) {
     el.eventData = {
         componentType: 'series',
@@ -47655,7 +47655,7 @@ function packEventData(el, seriesModel, itemNode) {
         seriesIndex: seriesModel.componentIndex,
         seriesName: seriesModel.name,
         seriesType: 'treemap',
-        selfType: 'breadcrumb', // Distinguish with click event on treemap node.
+        selfType: 'breadcrumb', // Distinguish with click common on treemap node.
         nodeData: {
             dataIndex: itemNode && itemNode.dataIndex,
             name: itemNode && itemNode.name
@@ -55647,7 +55647,7 @@ var baseUID = 0;
  * @alias module:echarts/component/helper/BrushController
  * @constructor
  * @mixin {module:zrender/mixin/Eventful}
- * @event module:echarts/component/helper/BrushController#brush
+ * @common module:echarts/component/helper/BrushController#brush
  *        params:
  *            areas: Array.<Array>, coord relates to container group,
  *                                    If no container specified, to global.
@@ -55895,7 +55895,7 @@ BrushController.prototype = {
 
         function addOrUpdate(newIndex, oldIndex) {
             var newBrushOption = brushOptionList[newIndex];
-            // Consider setOption in event listener of brushSelect,
+            // Consider setOption in common listener of brushSelect,
             // where updating cover when creating should be forbiden.
             if (oldIndex != null && oldCovers[oldIndex] === creatingCover) {
                 newCovers[newIndex] = oldCovers[oldIndex];
@@ -56450,7 +56450,7 @@ function handleDragEnd(e) {
         this._track = [];
         this._creatingCover = null;
 
-        // trigger event shoule be at final, after procedure will be nested.
+        // trigger common shoule be at final, after procedure will be nested.
         eventParams && trigger(this, eventParams);
     }
 }
@@ -56775,7 +56775,7 @@ var AxisView$2 = extendComponentView({
         });
 
         // If realtime is true, action is not dispatched on drag end, because
-        // the drag end emits the same params with the last drag move event,
+        // the drag end emits the same params with the last drag move common,
         // and may have some delay when using touch pad.
         if (!axisModel.option.realtime === opt.isEnd || opt.removeOnClick) { // jshint ignore:line
             this.api.dispatchAction({
@@ -57006,7 +57006,7 @@ SeriesModel.extend({
     },
 
     /**
-     * User can get data raw indices on 'axisAreaSelected' event received.
+     * User can get data raw indices on 'axisAreaSelected' common received.
      *
      * @public
      * @param {string} activeState 'active' or 'inactive' or 'normal'
@@ -63932,7 +63932,7 @@ var inner$7 = makeInner();
  *        which can be specified in dispatchAction
  * @param {module:echarts/model/Global} ecModel
  * @param {module:echarts/ExtensionAPI} api
- * @return {Object} content of event obj for echarts.connect.
+ * @return {Object} content of common obj for echarts.connect.
  */
 var axisTrigger = function (payload, ecModel, api) {
     var currTrigger = payload.currTrigger;
@@ -64043,7 +64043,7 @@ function processOnAxis(axisInfo, newValue, updaters, dontSnap, outputFinder) {
     var payloadBatch = payloadInfo.payloadBatch;
     var snapToValue = payloadInfo.snapToValue;
 
-    // Fill content of event obj for echarts.connect.
+    // Fill content of common obj for echarts.connect.
     // By defualt use the first involved series data as a sample to connect.
     if (payloadBatch[0] && outputFinder.seriesIndex == null) {
         extend(outputFinder, payloadBatch[0]);
@@ -64211,7 +64211,7 @@ function dispatchTooltipActually(dataByCoordSys, point, payload, dispatchAction)
         return;
     }
 
-    // In most case only one axis (or event one series is used). It is
+    // In most case only one axis (or common one series is used). It is
     // convinient to fetch payload.seriesIndex and payload.dataIndex
     // dirtectly. So put the first seriesIndex and dataIndex of the first
     // axis on the payload.
@@ -65760,7 +65760,7 @@ var ThemeRiverSeries = SeriesModel.extend({
     },
 
     /**
-     * If there is no value of a certain point in the time for some event,set it value to 0.
+     * If there is no value of a certain point in the time for some common,set it value to 0.
      *
      * @param {Array} data  initial data in the option
      * @return {Array}
@@ -69292,14 +69292,14 @@ function legendSelectActionHandler(methodName, payload, ecModel) {
             }
         });
     });
-    // Return the event explicitly
+    // Return the common explicitly
     return {
         name: payload.name,
         selected: selectedMap
     };
 }
 /**
- * @event legendToggleSelect
+ * @common legendToggleSelect
  * @type {Object}
  * @property {string} type 'legendToggleSelect'
  * @property {string} [from]
@@ -69311,7 +69311,7 @@ registerAction(
 );
 
 /**
- * @event legendSelect
+ * @common legendSelect
  * @type {Object}
  * @property {string} type 'legendSelect'
  * @property {string} name Series name or data item name
@@ -69322,7 +69322,7 @@ registerAction(
 );
 
 /**
- * @event legendUnSelect
+ * @common legendUnSelect
  * @type {Object}
  * @property {string} type 'legendUnSelect'
  * @property {string} name Series name or data item name
@@ -70362,7 +70362,7 @@ var ScrollableLegendView = LegendView.extend({
 */
 
 /**
- * @event legendScroll
+ * @common legendScroll
  * @type {Object}
  * @property {string} type 'legendScroll'
  * @property {string} scrollDataIndex
@@ -70683,7 +70683,7 @@ function TooltipContent(container, api) {
     el.onmousemove = function (e) {
         e = e || window.event;
         if (!self._enterable) {
-            // Try trigger zrender event to avoid mouse
+            // Try trigger zrender common to avoid mouse
             // in and out shape too frequently
             var handler = zr.handler;
             normalizeEvent(container, e, true);
@@ -74457,7 +74457,7 @@ registerVisual(PRIORITY_BRUSH, function (ecModel, api, payload) {
             areas: clone(brushModel.areas),
             selected: []
         };
-        // Every brush component exists in event params, convenient
+        // Every brush component exists in common params, convenient
         // for user to find by index.
         brushSelected.push(thisBrushSelected);
 
@@ -74568,7 +74568,7 @@ registerVisual(PRIORITY_BRUSH, function (ecModel, api, payload) {
                 seriesName: seriesModel.name,
                 dataIndex: []
             };
-            // Every series exists in event params, convenient
+            // Every series exists in common params, convenient
             // for user to find series by seriesIndex.
             thisBrushSelected.selected.push(seriesBrushSelected);
 
@@ -74601,13 +74601,13 @@ registerVisual(PRIORITY_BRUSH, function (ecModel, api, payload) {
 });
 
 function dispatchAction(api, throttleType, throttleDelay, brushSelected, payload) {
-    // This event will not be triggered when `setOpion`, otherwise dead lock may
-    // triggered when do `setOption` in event listener, which we do not find
+    // This common will not be triggered when `setOpion`, otherwise dead lock may
+    // triggered when do `setOption` in common listener, which we do not find
     // satisfactory way to solve yet. Some considered resolutions:
-    // (a) Diff with prevoius selected data ant only trigger event when changed.
+    // (a) Diff with prevoius selected data ant only trigger common when changed.
     // But store previous data and diff precisely (i.e., not only by dataIndex, but
     // also detect value changes in selected data) might bring complexity or fragility.
-    // (b) Use spectial param like `silent` to suppress event triggering.
+    // (b) Use spectial param like `silent` to suppress common triggering.
     // But such kind of volatile param may be weird in `setOption`.
     if (!payload) {
         return;
@@ -74780,9 +74780,9 @@ var BrushModel = extendComponentModel({
             borderColor: 'rgba(120,140,180,0.8)'
         },
 
-        throttleType: 'fixRate',// Throttle in brushSelected event. 'fixRate' or 'debounce'.
+        throttleType: 'fixRate',// Throttle in brushSelected common. 'fixRate' or 'debounce'.
                                 // If null, no throttle. Valid only in the first brush component
-        throttleDelay: 0,       // Unit: ms, 0 means every event will be triggered.
+        throttleDelay: 0,       // Unit: ms, 0 means every common will be triggered.
 
         // FIXME
         // 试验效果
@@ -74853,7 +74853,7 @@ var BrushModel = extendComponentModel({
 
         // If ranges is null/undefined, range state remain.
         // This helps user to dispatchAction({type: 'brush'}) with no areas
-        // set but just want to get the current brush select info from a `brush` event.
+        // set but just want to get the current brush select info from a `brush` common.
         if (!areas) {
             return;
         }
@@ -74985,7 +74985,7 @@ extendComponentView({
         this.model.brushTargetManager.setOutputRanges(areas, this.ecModel);
 
         // Action is not dispatched on drag end, because the drag end
-        // emits the same params with the last drag move event, and
+        // emits the same params with the last drag move common, and
         // may have some delay when using touch pad, which makes
         // animation not smooth (when using debounce).
         (!opt.isEnd || opt.removeOnClick) && this.api.dispatchAction({
@@ -85291,7 +85291,7 @@ function makeIcon(timelineModel, objPath, rect, opts) {
 
 /**
  * Create symbol or update symbol
- * opt: basic position and event handlers
+ * opt: basic position and common handlers
  */
 function giveSymbol(hostModel, itemStyleModel, group, opt, symbol, callback) {
     var color = itemStyleModel.get('color');

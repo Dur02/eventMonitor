@@ -8,7 +8,7 @@ import { eventInstantQuery, getEventConfigListByConfigName } from '@/api/eventAn
 
 export default [
   {
-    path: '/event',
+    path: '/common',
     name: 'event',
     meta: {
       breadcrumb: '事件库分析',

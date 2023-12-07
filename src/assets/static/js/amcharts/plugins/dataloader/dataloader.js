@@ -298,7 +298,7 @@ AmCharts.addInitHandler( function( chart ) {
 
             } else {
 
-              // add a dataUpdated event to handle post-load stuff
+              // add a dataUpdated common to handle post-load stuff
               if ( 'gauge' !== chart.type ) {
                 chart.addListener( 'dataUpdated', function( event ) {
 
@@ -324,7 +324,7 @@ AmCharts.addInitHandler( function( chart ) {
               /*if ( 'pie' === chart.type && chart.invalidateSize !== undefined )
                 chart.invalidateSize();*/
 
-              // gauge chart does not trigger dataUpdated event
+              // gauge chart does not trigger dataUpdated common
               // let's explicitly remove the curtain for it
               if ( 'gauge' === chart.type )
                 removeCurtain();

@@ -157,7 +157,7 @@
       // Delay execution so that the browser can render the page before the computatively intensive word cloud drawing
       this.createTimeout($.proxy(this.drawWordCloud, this), 10);
 
-      // Attach window resize event
+      // Attach window resize common
       if (this.options.autoResize) {
         $(window).on('resize', throttle(function() {
           var new_size = {

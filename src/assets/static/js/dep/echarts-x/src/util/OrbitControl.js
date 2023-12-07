@@ -111,7 +111,7 @@ define(function (require) {
 
         /**
          * Initialize.
-         * Mouse event binding
+         * Mouse common binding
          */
         init: function () {
             this._animating = false;
@@ -127,7 +127,7 @@ define(function (require) {
 
         /**
          * Dispose.
-         * Mouse event unbinding
+         * Mouse common unbinding
          */
         dispose: function () {
             this.layer.unbind(EVENT.MOUSEDOWN, this._mouseDownHandler); 

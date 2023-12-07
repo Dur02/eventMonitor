@@ -1,10 +1,11 @@
 import type { DataTableColumns, EllipsisProps, ConfigProviderProps } from 'naive-ui'
 import type {
   eventConfigRowsType,
-  eventConfigFormInitialValueType,
-  eventConfigSettingInitialValueType
 } from '@/types/components/config/event'
-import { h, computed, ref } from 'vue'
+import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
+import type { configSettingInitialValueType } from '@/types/components/form/common/configSetting'
+import { h, computed } from 'vue'
+import type { SelectOption } from 'naive-ui'
 import {
   NButton,
   NIcon,
@@ -14,7 +15,7 @@ import {
   NPopconfirm,
   createDiscreteApi,
   lightTheme,
-  darkTheme,
+  darkTheme
 } from 'naive-ui'
 import pinia from '@/stores/pinia'
 import { storeToRefs } from 'pinia'
@@ -26,19 +27,13 @@ import {
   propEq
 } from 'lodash/fp'
 import { CalendarEdit20Filled } from '@vicons/fluent'
-import { useConstantStore } from '@/stores/constant'
-import { useEventConfigStore } from '@/stores/eventConfig'
 import { useSystemStore } from '@/stores/system'
 import { eventConfigExport } from '@/api/eventAnalyse'
-import { eventConfigFormInitialValue, getConfigFormInitialValue } from '@/utils/constant/form/eventConfigForm'
-import { eventConfigSettingInitialValue, getConfigSettingInitialValue } from '@/utils/constant/form/eventConfigSetting'
+import { eventConfigFormInitialValue, getConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
+import { configSettingInitialValue, getConfigSettingInitialValue } from '@/utils/constant/form/common/configSetting'
 
 const systemStore = useSystemStore(pinia)
 const { isLight } = storeToRefs(systemStore)
-const constantStore = useConstantStore(pinia)
-const { eventConfigTypeList } = storeToRefs(constantStore)
-const eventConfigStore = useEventConfigStore(pinia)
-const { updateSingle, changeIsShow, runTask, stopTask, handleSingleDelete } = eventConfigStore
 
 const configProviderPropsRef = computed<ConfigProviderProps>(() => ({
   theme: isLight.value ? lightTheme : darkTheme
@@ -51,24 +46,22 @@ const { message } = createDiscreteApi(
   }
 )
 
-export const configStatus = [
-  { label: '待执行', value: 0 },
-  { label: '执行中', value: 1 },
-  { label: '执行成功', value: 2 },
-  { label: '执行失败', value: 3 },
-  { label: '排队中', value: 4 }
-]
-
-export const allColumns = (
+export const allCommonColumns = (
   handleUpdateDrawer: (
     title: string,
-    settingInitial: eventConfigSettingInitialValueType,
+    settingInitial: configSettingInitialValueType,
     formInitial: eventConfigFormInitialValueType,
     show: boolean,
     settingDisabled: boolean,
     formDisabled: boolean,
     id: number | null
-  ) => void
+  ) => void,
+  runTask: Function,
+  updateSingle: Function,
+  changeIsShow: Function,
+  stopTask: Function,
+  handleSingleDelete: Function,
+  configTypeList: SelectOption[]
 ): DataTableColumns<eventConfigRowsType> => {
 
   const align = 'center'
@@ -173,7 +166,7 @@ export const allColumns = (
       align,
       ellipsisComponent,
       ellipsis,
-      render: ({ configType }) => findValueInTarget(configType, eventConfigTypeList.value)
+      render: ({ configType }) => findValueInTarget(configType, configTypeList)
     },
     {
       title: '创建人',
@@ -281,7 +274,7 @@ export const allColumns = (
                             const runStatus = await updateSingle(rowData.id)
                             handleUpdateDrawer(
                               '',
-                              eventConfigSettingInitialValue,
+                              configSettingInitialValue,
                               eventConfigFormInitialValue,
                               false,
                               false,
@@ -413,7 +406,7 @@ export const allColumns = (
                         const runStatus = await updateSingle(rowData.id)
                         handleUpdateDrawer(
                           '',
-                          eventConfigSettingInitialValue,
+                          configSettingInitialValue,
                           eventConfigFormInitialValue,
                           false,
                           false,

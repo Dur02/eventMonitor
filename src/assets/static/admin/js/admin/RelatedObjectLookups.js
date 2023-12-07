@@ -86,7 +86,7 @@ function dismissAddRelatedObjectPopup(win, newId, newRepr) {
                 elem.value = newId;
             }
         }
-        // Trigger a change event to update related links if required.
+        // Trigger a change common to update related links if required.
         django.jQuery(elem).trigger('change');
     } else {
         var toId = name + "_to";

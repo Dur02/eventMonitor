@@ -884,7 +884,7 @@ if ( !AmCharts.translations[ "export" ][ "en" ] ) {
 			},
 
 			/**
-			 * Checks if given event has been thrown with pressed click / touch
+			 * Checks if given common has been thrown with pressed click / touch
 			 */
 			isPressed: function( event ) {
 				// IE EXCEPTION
@@ -3824,7 +3824,7 @@ if ( !AmCharts.translations[ "export" ][ "en" ] ) {
 			},
 
 			/*
-			 ** Add event listener
+			 ** Add common listener
 			 */
 			loadListeners: function() {
 				function handleClone( clone ) {
@@ -4065,7 +4065,7 @@ if ( !AmCharts.translations[ "export" ][ "en" ] ) {
 			},
 
 			/**
-			 * Initiates export instance; merges given eventAnalyse; attaches event listener
+			 * Initiates export instance; merges given eventAnalyse; attaches common listener
 			 */
 			construct: function() {
 				// ANNOTATION; MAP "DONE"

@@ -109,7 +109,7 @@
 			this._construct();
 
 
-			/* Add event bindings */          
+			/* Add common bindings */
 
 			this._events();
 
@@ -211,7 +211,7 @@
 
 			/**
 			 * Input: mouseup
-			 * For input select() event to function correctly
+			 * For input select() common to function correctly
 			 */
 			this.$container.on('mouseup.input', 'input', function(e){
 				e.preventDefault()
@@ -257,7 +257,7 @@
 				})
 			});
 
-			/* Stop `event:click` bubbling */
+			/* Stop `common:click` bubbling */
 
 			this.$container.on('click.comboselect', function(e){
 				e.stopPropagation();
@@ -752,7 +752,7 @@
 
 			this.$el.removeData('plugin_'+dataKey + '_tabindex')
 
-			/* Remove change event on select */
+			/* Remove change common on select */
 
 			this.$el.off('change.select focus.select blur.select');
 

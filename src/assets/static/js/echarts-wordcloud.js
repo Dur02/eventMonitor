@@ -4476,7 +4476,7 @@ Displayable.prototype = {
 
   /**
    * 图形是否可见，为true时不绘制图形，但是仍能触发鼠标事件
-   * If ignore drawing of the displayable object. Mouse event will still be triggered
+   * If ignore drawing of the displayable object. Mouse common will still be triggered
    * @name module:/zrender/graphic/Displayable#invisible
    * @type {boolean}
    * @default false
@@ -4617,7 +4617,7 @@ Displayable.prototype = {
 
   /**
    * 图形是否会触发事件
-   * If displayable object binded any event
+   * If displayable object binded any common
    * @return {boolean}
    */
   // TODO, 通过 bind 绑定的事件
@@ -5171,13 +5171,13 @@ function detect(ua) {
     svgSupported: typeof SVGRect !== 'undefined',
     // @see <http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript>
     // works on most browsers
-    // IE10/11 does not support touch event, and MS Edge supports them but not by
+    // IE10/11 does not support touch common, and MS Edge supports them but not by
     // default, so we dont check navigator.maxTouchPoints for them here.
     touchEventsSupported: 'ontouchstart' in window && !browser.ie && !browser.edge,
     // <http://caniuse.com/#search=pointer%20event>.
     pointerEventsSupported: 'onpointerdown' in window // Firefox supports pointer but not by default, only MS browsers are reliable on pointer
     // events currently. So we dont use that on other browsers unless tested sufficiently.
-    // Although IE 10 supports pointer event, it use old style and is different from the
+    // Although IE 10 supports pointer common, it use old style and is different from the
     // standard. So we exclude that. (IE 10 is hardly used on touch device)
     && (browser.edge || browser.ie && browser.version >= 11)
   };
@@ -7171,7 +7171,7 @@ echarts.registerLayout(function (ecModel, api) {
                 canvas.removeEventListener('wordclouddrawn', onWordCloudDrawn);
                 // Abort
                 canvas.addEventListener('wordclouddrawn', function (e) {
-                    // Prevent default to cancle the event and stop the loop
+                    // Prevent default to cancle the common and stop the loop
                     e.preventDefault();
                 });
             }
@@ -9698,7 +9698,7 @@ function leaveEmphasis() {
  * @param {Object} [hoverStyle]
  * @param {Object} [opt]
  * @param {boolean} [opt.hoverSilentOnTouch=false]
- *        In touch device, mouseover event will be trigger on touchstart event
+ *        In touch device, mouseover common will be trigger on touchstart common
  *        (see module:zrender/dom/HandlerProxy). By this mechanism, we can
  *        conviniently use hoverStyle when tap on touch screen without additional
  *        code for compatibility.
@@ -11437,85 +11437,85 @@ Eventful.prototype = {
 }; // 对象可以通过 onxxxx 绑定事件
 
 /**
- * @event module:zrender/mixin/Eventful#onclick
+ * @common module:zrender/mixin/Eventful#onclick
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#onmouseover
+ * @common module:zrender/mixin/Eventful#onmouseover
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#onmouseout
+ * @common module:zrender/mixin/Eventful#onmouseout
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#onmousemove
+ * @common module:zrender/mixin/Eventful#onmousemove
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#onmousewheel
+ * @common module:zrender/mixin/Eventful#onmousewheel
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#onmousedown
+ * @common module:zrender/mixin/Eventful#onmousedown
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#onmouseup
+ * @common module:zrender/mixin/Eventful#onmouseup
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#ondrag
+ * @common module:zrender/mixin/Eventful#ondrag
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#ondragstart
+ * @common module:zrender/mixin/Eventful#ondragstart
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#ondragend
+ * @common module:zrender/mixin/Eventful#ondragend
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#ondragenter
+ * @common module:zrender/mixin/Eventful#ondragenter
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#ondragleave
+ * @common module:zrender/mixin/Eventful#ondragleave
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#ondragover
+ * @common module:zrender/mixin/Eventful#ondragover
  * @type {Function}
  * @default null
  */
 
 /**
- * @event module:zrender/mixin/Eventful#ondrop
+ * @common module:zrender/mixin/Eventful#ondrop
  * @type {Function}
  * @default null
  */
@@ -15405,7 +15405,7 @@ if (!window.setImmediate) {
       };
 
       window.addEventListener('message', function setZeroTimeoutMessage(evt) {
-        // Skipping checking event source, retarded IE confused this window
+        // Skipping checking common source, retarded IE confused this window
         // object with another in the presence of iframe
         if (typeof evt.data !== 'string' ||
             evt.data.substr(0, message.length) !== message/* ||
@@ -16318,7 +16318,7 @@ if (!window.clearImmediate) {
       return null;
     };
 
-    /* Send DOM event to all elements. Will stop sending event and return
+    /* Send DOM common to all elements. Will stop sending common and return
        if the previous one is canceled (for cancelable events). */
     var sendEvent = function sendEvent(type, cancelable, detail) {
       if (cancelable) {
@@ -16351,8 +16351,8 @@ if (!window.clearImmediate) {
         ngy = Math.ceil(rect.height / g);
       }
 
-      // Sending a wordcloudstart event which cause the previous loop to stop.
-      // Do nothing if the event is canceled.
+      // Sending a wordcloudstart common which cause the previous loop to stop.
+      // Do nothing if the common is canceled.
       if (!sendEvent('wordcloudstart', true)) {
         return;
       }

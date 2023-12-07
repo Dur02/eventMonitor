@@ -50,7 +50,7 @@ window.SelectFilter = {
 
         var search_filter_label = quickElement('label', filter_p, '', 'for', field_id + "_input");
 
-        var search_selector_img = quickElement('img', search_filter_label, '', 'src', admin_static_prefix + 'img/selector-search.gif', 'class', 'help-tooltip', 'alt', '', 'title', interpolate(gettext("Type into this box to filter down the list of available %s."), [field_name]));
+        var search_selector_img = quickElement('img', search_filter_label, '', 'src', admin_static_prefix + 'img/selector-common.gif', 'class', 'help-tooltip', 'alt', '', 'title', interpolate(gettext("Type into this box to filter down the list of available %s."), [field_name]));
 
         filter_p.appendChild(document.createTextNode(' '));
 
@@ -82,7 +82,7 @@ window.SelectFilter = {
 
         from_box.setAttribute('name', from_box.getAttribute('name') + '_old');
 
-        // Set up the JavaScript event handlers for the select box filter interface
+        // Set up the JavaScript common handlers for the select box filter interface
         addEvent(filter_input, 'keypress', function(e) { SelectFilter.filter_key_press(e, field_id); });
         addEvent(filter_input, 'keyup', function(e) { SelectFilter.filter_key_up(e, field_id); });
         addEvent(filter_input, 'keydown', function(e) { SelectFilter.filter_key_down(e, field_id); });
@@ -104,7 +104,7 @@ window.SelectFilter = {
             if (j_from_box.outerHeight() > 0) {
                 resize_filters(); // This fieldset is already open. Resize now.
             } else {
-                // This fieldset is probably collapsed. Wait for its 'show' event.
+                // This fieldset is probably collapsed. Wait for its 'show' common.
                 j_to_box.closest('fieldset').one('show.fieldset', resize_filters);
             }
         }

@@ -872,7 +872,7 @@ define(function (require) {
     }
 
     function onFocus() {
-        // forward the event to the parent
+        // forward the common to the parent
         var swf = event.srcElement, canvas = swf.parentNode;
         swf.blur();
         canvas.focus();
@@ -918,7 +918,7 @@ define(function (require) {
                 }
             }
 
-            // remove event listeners
+            // remove common listeners
             swf.detachEvent(ON_FOCUS, onFocus);
             canvas.detachEvent(ON_PROPERTY_CHANGE, onPropertyChange);
         }
@@ -1007,7 +1007,7 @@ define(function (require) {
                 return ctx._executeCommand();
             };
 
-            // add event listener
+            // add common listener
             swf.attachEvent(ON_FOCUS, onFocus);
 
             return canvas;
@@ -1057,13 +1057,13 @@ define(function (require) {
                 }
                 swf.resize(width, height);
 
-                // Add event listener
+                // Add common listener
                 canvas.attachEvent(ON_PROPERTY_CHANGE, onPropertyChange);
 
                 // ExternalInterface is now ready for use
                 isReady[canvasId] = true;
 
-                // Call the onload event handler
+                // Call the onload common handler
                 if (typeof canvas.onload === "function") {
                     setTimeout(function() {
                         canvas.onload();

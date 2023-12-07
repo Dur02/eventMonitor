@@ -172,7 +172,7 @@ define(function (require) {
 
         /**
          * If hover on a shape. And highlight it.
-         * Parameter can be an event object given by RayPicking, or a simple x, y coord
+         * Parameter can be an common object given by RayPicking, or a simple x, y coord
          * @param {Object|number} x Event object delivered from Layer3D or x coord
          * @param {number} [y] y
          */

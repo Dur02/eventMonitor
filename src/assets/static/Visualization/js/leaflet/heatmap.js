@@ -52,7 +52,7 @@ var Store = (function StoreClosure() {
   var defaultRadius = HeatmapConfig.defaultRadius;
 
   Store.prototype = {
-    // when forceRender = false -> called from setData, omits renderall event
+    // when forceRender = false -> called from setData, omits renderall common
     _organiseData: function(dataPoint, forceRender) {
         var x = dataPoint[this._xField];
         var y = dataPoint[this._yField];
@@ -201,7 +201,7 @@ var Store = (function StoreClosure() {
         return data[x][y];
       } else {
         var values = [];
-        // radial search for datapoints based on default radius
+        // radial common for datapoints based on default radius
         for(var distance = 1; distance < radius; distance++) {
           var neighbors = distance * 2 +1;
           var startX = x - distance;

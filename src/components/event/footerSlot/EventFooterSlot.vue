@@ -7,10 +7,10 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
 import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
-import { eventConfigFormInitialValue, getConfigFormValue, getConfigFormInitialValue } from '@/utils/constant/form/eventConfigForm'
-import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
+import { eventConfigFormInitialValue, getConfigFormValue, getConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
+import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
 import { flow, find, propEq } from 'lodash/fp'
-import EventConfigSave from '@/components/form/event/EventConfigSave.vue'
+import ConfigSave from '@/components/form/common/ConfigSave.vue'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { useRoute } from 'vue-router'
 
@@ -107,13 +107,13 @@ defineExpose({
 </script>
 
 <template>
-  <event-config-form
+  <EventConfigForm
     ref="configFormRef"
     :initialValue="formValue"
     :configType="[configType]"
     :formDisabled="formDisabled"
   />
-  <event-config-save
+  <ConfigSave
     v-if="!formDisabled"
     ref="configSaveRef"
   />

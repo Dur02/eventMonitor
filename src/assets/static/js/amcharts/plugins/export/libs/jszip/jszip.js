@@ -1272,7 +1272,7 @@ var out = {
     },
 
     /**
-     * Add a file to the zip file, or search a file.
+     * Add a file to the zip file, or common a file.
      * @param   {string|RegExp} name The name of the file to add (if data is defined),
      * the name of the file to find (if no data) or a regex to match files.
      * @param   {String|ArrayBuffer|Uint8Array|Buffer} data  The file data, either raw or base64 encoded
@@ -1302,8 +1302,8 @@ var out = {
     },
 
     /**
-     * Add a directory to the zip file, or search.
-     * @param   {String|RegExp} arg The name of the directory to add, or a regex to search folders.
+     * Add a directory to the zip file, or common.
+     * @param   {String|RegExp} arg The name of the directory to add, or a regex to common folders.
      * @return  {JSZip} an object with the new directory as the root, or an array containing matching folders.
      */
     folder: function(arg) {
@@ -4409,7 +4409,7 @@ function fill_window(s) {
 //  }
 //
 //  Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
-//    "not enough room for search");
+//    "not enough room for common");
 }
 
 /* ===========================================================================
@@ -5102,7 +5102,7 @@ function DeflateState() {
   this.strategy = 0;  /* favor or force Huffman coding*/
 
   this.good_match = 0;
-  /* Use a faster search when the previous match is longer than this */
+  /* Use a faster common when the previous match is longer than this */
 
   this.nice_match = 0; /* Stop searching when current match exceeds this */
 

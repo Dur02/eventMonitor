@@ -4,7 +4,7 @@ import EventTimeline from '@/components/event/timeline/EventTimeline.vue'
 
 <template>
   <div class="charts-container">
-    <event-timeline />
+    <EventTimeline />
   </div>
 </template>
 

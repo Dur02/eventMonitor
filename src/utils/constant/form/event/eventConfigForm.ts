@@ -1,5 +1,6 @@
 import type { FormRules, SelectGroupOption, SelectOption } from 'naive-ui'
-import type { eventConfigFormInitialValueType, eventConfigRowsType } from '@/types/components/config/event'
+import type { eventConfigRowsType } from '@/types/components/config/event'
+import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
 import { joinArray } from '@/utils/function/arrayToString'
 import { splitString } from '@/utils/function/stringToArray'
 import { getDateString, getSqlDate } from '@/utils/function/date'

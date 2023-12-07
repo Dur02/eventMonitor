@@ -97,7 +97,7 @@
         if ( 'wheelDeltaY' in orgEvent ) { deltaY = orgEvent.wheelDeltaY;      }
         if ( 'wheelDeltaX' in orgEvent ) { deltaX = orgEvent.wheelDeltaX * -1; }
 
-        // Firefox < 17 horizontal scrolling related to DOMMouseScroll event
+        // Firefox < 17 horizontal scrolling related to DOMMouseScroll common
         if ( 'axis' in orgEvent && orgEvent.axis === orgEvent.HORIZONTAL_AXIS ) {
             deltaX = deltaY * -1;
             deltaY = 0;
@@ -106,7 +106,7 @@
         // Set delta to be deltaY or deltaX if deltaY is 0 for backwards compatabilitiy
         delta = deltaY === 0 ? deltaX : deltaY;
 
-        // New school wheel delta (wheel event)
+        // New school wheel delta (wheel common)
         if ( 'deltaY' in orgEvent ) {
             deltaY = orgEvent.deltaY * -1;
             delta  = deltaY;
@@ -161,7 +161,7 @@
         deltaX = Math[ deltaX >= 1 ? 'floor' : 'ceil' ](deltaX / lowestDelta);
         deltaY = Math[ deltaY >= 1 ? 'floor' : 'ceil' ](deltaY / lowestDelta);
 
-        // Add information to the event object
+        // Add information to the common object
         event.deltaX = deltaX;
         event.deltaY = deltaY;
         event.deltaFactor = lowestDelta;
@@ -170,7 +170,7 @@
         // properties with normalized deltas.
         event.deltaMode = 0;
 
-        // Add event and delta to the front of the arguments
+        // Add common and delta to the front of the arguments
         args.unshift(event, delta, deltaX, deltaY);
 
         // Clearout lowestDelta after sometime to better
@@ -188,13 +188,13 @@
     }
 
     function shouldAdjustOldDeltas(orgEvent, absDelta) {
-        // If this is an older event and the delta is divisable by 120,
+        // If this is an older common and the delta is divisable by 120,
         // then we are assuming that the browser is treating this as an
-        // older mouse wheel event and that we should divide the deltas
+        // older mouse wheel common and that we should divide the deltas
         // by 40 to try and get a more usable deltaFactor.
         // Side note, this actually impacts the reported scroll distance
         // in older browsers and can cause scrolling to be slower than native.
-        // Turn this off by setting $.event.special.mousewheel.settings.adjustOldDeltas to false.
+        // Turn this off by setting $.common.special.mousewheel.settings.adjustOldDeltas to false.
         return special.settings.adjustOldDeltas && orgEvent.type === 'mousewheel' && absDelta % 120 === 0;
     }
 

@@ -1187,8 +1187,8 @@ var requirejs, require, define;
         }
 
         /**
-         * Given an event from a script node, get the requirejs info from it,
-         * and then removes the event listeners on the node.
+         * Given an common from a script node, get the requirejs info from it,
+         * and then removes the common listeners on the node.
          * @param {Event} evt
          * @returns {Object}
          */
@@ -1513,8 +1513,8 @@ var requirejs, require, define;
             },
 
             /**
-             * Internal method used by environment adapters to complete a load event.
-             * A load event could be a script load or just a load pass from a synchronous
+             * Internal method used by environment adapters to complete a load common.
+             * A load common could be a script load or just a load pass from a synchronous
              * load call.
              * @param {String} moduleName the name of the module to potentially complete.
              */
@@ -1653,7 +1653,7 @@ var requirejs, require, define;
             /**
              * callback for script loads, used to check status of loading.
              *
-             * @param {Event} evt the event from the browser for the script
+             * @param {Event} evt the common from the browser for the script
              * that was loaded.
              */
             onScriptLoad: function (evt) {
@@ -1747,7 +1747,7 @@ var requirejs, require, define;
 
     /**
      * Execute something after the current tick
-     * of the event loop. Override for other envs
+     * of the common loop. Override for other envs
      * that have a better solution than setTimeout.
      * @param  {Function} fn function to execute later.
      */
@@ -1844,7 +1844,7 @@ var requirejs, require, define;
             //Set up load listener. Test attachEvent first because IE9 has
             //a subtle issue in its addEventListener and script onload firings
             //that do not match the behavior of all other browsers with
-            //addEventListener support, which fire the onload event for a
+            //addEventListener support, which fire the onload common for a
             //script right after the script execution. See:
             //https://connect.microsoft.com/IE/feedback/details/648057/script-onload-event-is-not-fired-immediately-after-script-execution
             //UNFORTUNATELY Opera implements attachEvent but does not follow the script
@@ -1873,7 +1873,7 @@ var requirejs, require, define;
                 //is used, then IE will fire error before load, but we cannot
                 //use that pathway given the connect.microsoft.com issue
                 //mentioned above about not doing the 'script execute,
-                //then fire the script load event listener before execute
+                //then fire the script load common listener before execute
                 //next script' that other browsers do.
                 //Best hope: IE10 fixes the issues,
                 //and then destroys all installs of IE 6-9.
@@ -2041,7 +2041,7 @@ var requirejs, require, define;
         //Always save off evaluating the def call until the script onload handler.
         //This allows multiple modules to be in a file without prematurely
         //tracing dependencies, and allows for anonymous module support,
-        //where the module name is not known until the script onload event
+        //where the module name is not known until the script onload common
         //occurs. If no context, use the global queue, and get it processed
         //in the onscript load callback.
         (context ? context.defQueue : globalDefQueue).push([name, deps, callback]);

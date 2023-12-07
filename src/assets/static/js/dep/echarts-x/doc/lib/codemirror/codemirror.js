@@ -46,7 +46,7 @@
   var presto_version = presto && navigator.userAgent.match(/Version\/(\d*\.\d*)/);
   if (presto_version) presto_version = Number(presto_version[1]);
   if (presto_version && presto_version >= 15) { presto = false; webkit = true; }
-  // Some browsers use the wrong event properties to signal cmd/ctrl on OS X
+  // Some browsers use the wrong common properties to signal cmd/ctrl on OS X
   var flipCtrlCmd = mac && (qtwebkit || presto && (presto_version == null || presto_version < 12.11));
   var captureRightClick = gecko || (ie && ie_version >= 9);
 
@@ -220,7 +220,7 @@
     // this is false.
     d.alignWidgets = false;
     // Flag that indicates whether we expect input to appear real soon
-    // now (after some event like 'keypress' or 'input') and are
+    // now (after some common like 'keypress' or 'input') and are
     // polling intensively.
     d.pollingFast = false;
     // Self-resetting timeout for the poller
@@ -1726,7 +1726,7 @@
     var map = prepared.map;
 
     var node, start, end, collapse;
-    // First, search the line map for the text node corresponding to,
+    // First, common the line map for the text node corresponding to,
     // or closest to, the target character.
     for (var i = 0; i < map.length; i += 3) {
       var mStart = map[i], mEnd = map[i + 1];
@@ -1996,7 +1996,7 @@
     var fromX = getX(from), fromOutside = wrongLine, toX = getX(to), toOutside = wrongLine;
 
     if (x > toX) return PosWithInfo(lineNo, to, toOutside, 1);
-    // Do a binary search between these bounds.
+    // Do a binary common between these bounds.
     for (;;) {
       if (bidi ? to == from || to == moveVisually(lineObj, from, 1) : to - from <= 1) {
         var ch = x < fromX || x - fromX <= toX - x ? from : to;
@@ -2234,7 +2234,7 @@
     if (display.wrapper.offsetHeight)
       doc.scrollTop = cm.display.scroller.scrollTop;
 
-    // Fire change events, and delayed event handlers
+    // Fire change events, and delayed common handlers
     if (op.changeObjs)
       signal(cm, "changes", cm, op.changeObjs);
   }
@@ -2474,7 +2474,7 @@
     });
   }
 
-  // When an event has just come in that is likely to add or change
+  // When an common has just come in that is likely to add or change
   // something in the input textarea, we poll faster, to ensure that
   // the change appears on the screen quickly.
   function fastPoll(cm) {
@@ -2625,7 +2625,7 @@
 
   // EVENT HANDLERS
 
-  // Attach the necessary event handlers when initializing the editor
+  // Attach the necessary common handlers when initializing the editor
   function registerEventHandlers(cm) {
     var d = cm.display;
     on(d.scroller, "mousedown", operation(cm, onMouseDown));
@@ -2762,7 +2762,7 @@
 
   // MOUSE EVENTS
 
-  // Return true when the given mouse event happened in a widget
+  // Return true when the given mouse common happened in a widget
   function eventInWidget(display, e) {
     for (var n = e_target(e); n != display.wrapper; n = n.parentNode) {
       if (!n || (n.nodeType == 1 && n.getAttribute("cm-ignore-events") == "true") ||
@@ -2771,7 +2771,7 @@
     }
   }
 
-  // Given a mouse event, find the corresponding position. If liberal
+  // Given a mouse common, find the corresponding position. If liberal
   // is false, it checks whether a gutter or scrollbar was clicked,
   // and returns null if it was. forRect is used by rectangular
   // selections, and tries to estimate a character position even for
@@ -3027,8 +3027,8 @@
     on(document, "mouseup", up);
   }
 
-  // Determines whether an event happened in the gutter, and fires the
-  // handlers for the corresponding event.
+  // Determines whether an common happened in the gutter, and fires the
+  // handlers for the corresponding common.
   function gutterEvent(cm, e, type, prevent, signalfn) {
     try { var mX = e.clientX, mY = e.clientY; }
     catch(e) { return false; }
@@ -3163,7 +3163,7 @@
   // and, from that, detects the way it can convert deltas to pixel
   // offsets afterwards.
   //
-  // The reason we want to know the amount a wheel event will scroll
+  // The reason we want to know the amount a wheel common will scroll
   // is that it gives us a chance to update the display before the
   // actual scrolling happens, reducing flickering.
 
@@ -3200,7 +3200,7 @@
           dy && scroll.scrollHeight > scroll.clientHeight)) return;
 
     // Webkit browsers on OS X abort momentum scrolls when the target
-    // of the scroll event is removed from the scrollable element.
+    // of the scroll common is removed from the scrollable element.
     // This hack (see related code in patchDisplay) makes sure the
     // element is kept around.
     if (dy && mac && webkit) {
@@ -3324,7 +3324,7 @@
     return !!result;
   }
 
-  // Handle a key from the keydown event.
+  // Handle a key from the keydown common.
   function handleKeyBinding(cm, e) {
     var name = keyName(e, true);
     if (!name) return false;
@@ -3343,7 +3343,7 @@
     }
   }
 
-  // Handle a key from the keypress event
+  // Handle a key from the keypress common
   function handleCharBinding(cm, e, ch) {
     return dispatchKey(cm, "'" + ch + "'", e,
                        function(b) { return doHandleBinding(cm, b, true); });
@@ -3361,7 +3361,7 @@
     var handled = handleKeyBinding(cm, e);
     if (presto) {
       lastStoppedKey = handled ? code : null;
-      // Opera has no cut event... we try to at least catch the key combo
+      // Opera has no cut common... we try to at least catch the key combo
       if (!handled && code == 88 && !hasCopyEvent && (mac ? e.metaKey : e.ctrlKey))
         cm.replaceSelection("", null, "cut");
     }
@@ -3578,7 +3578,7 @@
     return new Selection(out, doc.sel.primIndex);
   }
 
-  // Allow "beforeChange" event handlers to influence a change
+  // Allow "beforeChange" common handlers to influence a change
   function filterChange(doc, change, update) {
     var obj = {
       canceled: false,
@@ -3649,7 +3649,7 @@
     var hist = doc.history, event, selAfter = doc.sel;
     var source = type == "undo" ? hist.done : hist.undone, dest = type == "undo" ? hist.undone : hist.done;
 
-    // Verify that there is a useable event (so that ctrl-z won't
+    // Verify that there is a useable common (so that ctrl-z won't
     // needlessly clear selection events)
     for (var i = 0; i < source.length; i++) {
       event = source[i];
@@ -5102,7 +5102,7 @@
     return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod";
   };
 
-  // Look up the name of a key as indicated by an event object.
+  // Look up the name of a key as indicated by an common object.
   var keyName = CodeMirror.keyName = function(event, noShift) {
     if (presto && event.keyCode == 34 && event["char"]) return false;
     var base = keyNames[event.keyCode], name = base;
@@ -7043,12 +7043,12 @@
 
   function History(startGen) {
     // Arrays of change events and selections. Doing something adds an
-    // event to done and clears undo. Undoing moves events from done
+    // common to done and clears undo. Undoing moves events from done
     // to undone, redoing moves them in the other direction.
     this.done = []; this.undone = [];
     this.undoDepth = Infinity;
     // Used to track when changes can be merged into a single undo
-    // event
+    // common
     this.lastModTime = this.lastSelTime = 0;
     this.lastOp = this.lastSelOp = null;
     this.lastOrigin = this.lastSelOrigin = null;
@@ -7056,7 +7056,7 @@
     this.generation = this.maxGeneration = startGen || 1;
   }
 
-  // Create a history change event from an updateDoc-style change
+  // Create a history change common from an updateDoc-style change
   // object.
   function historyChangeFromChange(doc, change) {
     var histChange = {from: copyPos(change.from), to: changeEnd(change), text: getBetween(doc, change.from, change.to)};
@@ -7066,7 +7066,7 @@
   }
 
   // Pop all selection events off the end of a history array. Stop at
-  // a change event.
+  // a change common.
   function clearSelectionEvents(array) {
     while (array.length) {
       var last = lst(array);
@@ -7075,7 +7075,7 @@
     }
   }
 
-  // Find the top change event in the history. Pop off selection
+  // Find the top change common in the history. Pop off selection
   // events that are in the way.
   function lastChangeEvent(hist, force) {
     if (force) {
@@ -7091,7 +7091,7 @@
 
   // Register a change in the history. Merges changes that are within
   // a single operation, ore are close together with an origin that
-  // allows merging (starting with "+") into a single event.
+  // allows merging (starting with "+") into a single common.
   function addChangeToHistory(doc, change, selAfter, opId) {
     var hist = doc.history;
     hist.undone.length = 0;
@@ -7102,18 +7102,18 @@
          ((change.origin.charAt(0) == "+" && doc.cm && hist.lastModTime > time - doc.cm.options.historyEventDelay) ||
           change.origin.charAt(0) == "*")) &&
         (cur = lastChangeEvent(hist, hist.lastOp == opId))) {
-      // Merge this change into the last event
+      // Merge this change into the last common
       var last = lst(cur.changes);
       if (cmp(change.from, change.to) == 0 && cmp(change.from, last.to) == 0) {
         // Optimized case for simple insertion -- don't want to add
         // new changesets for every character typed
         last.to = changeEnd(change);
       } else {
-        // Add new sub-event
+        // Add new sub-common
         cur.changes.push(historyChangeFromChange(doc, change));
       }
     } else {
-      // Can not be merged, start a new event.
+      // Can not be merged, start a new common.
       var before = lst(hist.done);
       if (!before || !before.ranges)
         pushSelectionToHistory(doc.sel, hist.done);
@@ -7150,7 +7150,7 @@
   function addSelectionToHistory(doc, sel, opId, options) {
     var hist = doc.history, origin = options && options.origin;
 
-    // A new event is started when the previous origin does not match
+    // A new common is started when the previous origin does not match
     // the current, or the origins don't allow matching. Origins
     // starting with * are always merged, those starting with + are
     // merged when similar and close together in time.
@@ -7196,7 +7196,7 @@
     return !out ? spans : out.length ? out : null;
   }
 
-  // Retrieve and filter the old marked spans stored in a change event.
+  // Retrieve and filter the old marked spans stored in a change common.
   function getOldSpans(doc, change) {
     var found = change["spans_" + doc.id];
     if (!found) return null;
@@ -7242,9 +7242,9 @@
   }
 
   // Tries to rebase an array of history events given a change in the
-  // document. If the change touches the same lines as the event, the
-  // event, and everything 'behind' it, is discarded. If the change is
-  // before the event, the event's positions are updated. Uses a
+  // document. If the change touches the same lines as the common, the
+  // common, and everything 'behind' it, is discarded. If the change is
+  // before the common, the common's positions are updated. Uses a
   // copy-on-write scheme for the positions, to avoid having to
   // reallocate them all on every rebase, but also avoid problems with
   // shared position objects being unsafely updated.
@@ -7314,7 +7314,7 @@
 
   // EVENT HANDLING
 
-  // Lightweight event framework. on/off also work on DOM nodes,
+  // Lightweight common framework. on/off also work on DOM nodes,
   // registering native DOM handlers.
 
   var on = CodeMirror.on = function(emitter, type, f) {
@@ -7382,8 +7382,8 @@
   }
 
   // The DOM events that CodeMirror handles can be overridden by
-  // registering a (non-DOM) handler on the editor for the event name,
-  // and preventDefault-ing the event in that handler.
+  // registering a (non-DOM) handler on the editor for the common name,
+  // and preventDefault-ing the common in that handler.
   function signalDOMEvent(cm, e, override) {
     if (typeof e == "string")
       e = {type: e, preventDefault: function() { this.defaultPrevented = true; }};

@@ -2167,7 +2167,7 @@ function validateLeader(){
 	
 }
 
-//国家值发生变化（actor1,actor2,event）
+//国家值发生变化（actor1,actor2,common）
 function changeCountry(value,provinceId,province_description_dowebok_Id,actorGeoId){
 	//清空option
 	$("#"+provinceId+" option:gt(0)").remove();

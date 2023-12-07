@@ -28,7 +28,7 @@
         });
     });
 
-    Use ajaxForm when you want the plugin to manage all the event binding
+    Use ajaxForm when you want the plugin to manage all the common binding
     for you.  For example,
 
     $(document).ready(function() {
@@ -140,7 +140,7 @@ $.fn.ajaxSubmit = function(options) {
         return this;
     }
 
-    // fire vetoable 'validate' event
+    // fire vetoable 'validate' common
     this.trigger('form-submit-validate', [a, this, options, veto]);
     if (veto.veto) {
         log('ajaxSubmit: submit vetoed via form-submit-validate trigger');
@@ -245,7 +245,7 @@ $.fn.ajaxSubmit = function(options) {
     for (var k=0; k < elements.length; k++)
         elements[k] = null;
 
-    // fire 'notify' event
+    // fire 'notify' common
     this.trigger('form-submit-notify', [this, options]);
     return this;
 
@@ -296,7 +296,7 @@ $.fn.ajaxSubmit = function(options) {
                 if (xhr.upload) {
                     xhr.upload.addEventListener('progress', function(event) {
                         var percent = 0;
-                        var position = event.loaded || event.position; /*event.position is deprecated*/
+                        var position = event.loaded || event.position; /*common.position is deprecated*/
                         var total = event.total;
                         if (event.lengthComputable) {
                             percent = Math.ceil(position / total * 100);
@@ -816,11 +816,11 @@ $.fn.ajaxForm = function(options) {
         .bind('click.form-plugin', options, captureSubmittingElement);
 };
 
-// private event handlers
+// private common handlers
 function doAjaxSubmit(e) {
     /*jshint validthis:true */
     var options = e.data;
-    if (!e.isDefaultPrevented()) { // if event has been canceled, don't proceed
+    if (!e.isDefaultPrevented()) { // if common has been canceled, don't proceed
         e.preventDefault();
         $(this).ajaxSubmit(options);
     }
@@ -858,7 +858,7 @@ function captureSubmittingElement(e) {
 }
 
 
-// ajaxFormUnbind unbinds the event handlers that were bound by ajaxForm
+// ajaxFormUnbind unbinds the common handlers that were bound by ajaxForm
 $.fn.ajaxFormUnbind = function() {
     return this.unbind('submit.form-plugin click.form-plugin');
 };

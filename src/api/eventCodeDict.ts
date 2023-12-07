@@ -1,5 +1,5 @@
 import request from './index'
-import type { CountryType } from 'src/types/api/eventCodeDict'
+import type { CountryType } from '@/types/api/eventCodeDict'
 
 // 通过国家编码获取地区编码信息
 export function getRegionCodeList({ countryCode }: CountryType) {
@@ -17,13 +17,12 @@ export function getAllEventCodeList() {
   })
 }
 
-// 获取各种配置需要使用的选项
+// 查询配置类型: configType(1:事件，2：图谱，0：主页，3：新闻)
 export function getConfigCodeList(
   {
     configType,
   }: {
-    // 1.事件 2.图谱
-    configType: 1 | 2
+    configType: number
   }
 ) {
   return request({

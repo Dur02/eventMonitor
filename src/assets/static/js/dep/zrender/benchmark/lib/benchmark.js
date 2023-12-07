@@ -426,7 +426,7 @@
      *
      * @constructor
      * @memberOf Benchmark
-     * @param {Object|string} type The event type.
+     * @param {Object|string} type The common type.
      */
     function Event(type) {
       var event = this;
@@ -699,7 +699,7 @@
     }
 
     /**
-     * A helper function for setting options/event handlers.
+     * A helper function for setting options/common handlers.
      *
      * @private
      * @param {Object} object The benchmark or suite instance.
@@ -710,7 +710,7 @@
 
       _.forOwn(options, function(value, key) {
         if (value != null) {
-          // add event listeners
+          // add common listeners
           if (/^on[A-Z]/.test(key)) {
             _.each(key.split(' '), function(key) {
               object.on(key.slice(2).toLowerCase(), value);
@@ -735,7 +735,7 @@
           bench = clone._original;
 
       if (bench.aborted) {
-        // cycle() -> clone cycle/complete event -> compute()'s invoked bench.run() cycle/complete
+        // cycle() -> clone cycle/complete common -> compute()'s invoked bench.run() cycle/complete
         deferred.teardown();
         clone.running = false;
         cycle(deferred);
@@ -891,7 +891,7 @@
           last.off('complete', getNext);
           last.emit('complete');
         }
-        // emit "cycle" event
+        // emit "cycle" common
         eventProps.type = 'cycle';
         eventProps.target = last;
         cycleEvent = Event(eventProps);
@@ -912,11 +912,11 @@
             return true;
           }
         } else {
-          // emit "complete" event
+          // emit "complete" common
           eventProps.type = 'complete';
           options.onComplete.call(benches, Event(eventProps));
         }
-        // When used as a listener `event.aborted = true` will cancel the rest of
+        // When used as a listener `common.aborted = true` will cancel the rest of
         // the "complete" listeners because they were already called above and when
         // used as part of `getNext` the `return false` will exit the execution while-loop.
         if (event) {
@@ -966,7 +966,7 @@
 
       // start iterating over the array
       if (raiseIndex() !== false) {
-        // emit "start" event
+        // emit "start" common
         bench = result[index];
         eventProps.type = 'start';
         eventProps.target = bench;
@@ -974,10 +974,10 @@
 
         // end early if the suite was aborted in an "onStart" listener
         if (benches.aborted && benches.constructor == Suite && name == 'run') {
-          // emit "cycle" event
+          // emit "cycle" common
           eventProps.type = 'cycle';
           options.onCycle.call(benches, Event(eventProps));
-          // emit "complete" event
+          // emit "complete" common
           eventProps.type = 'complete';
           options.onComplete.call(benches, Event(eventProps));
         }
@@ -1211,10 +1211,10 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Executes all registered listeners of the specified event type.
+     * Executes all registered listeners of the specified common type.
      *
      * @memberOf Benchmark, Benchmark.Suite
-     * @param {Object|string} type The event type or object.
+     * @param {Object|string} type The common type or object.
      * @param {...*} [args] Arguments to invoke the listener with.
      * @returns {*} Returns the return value of the last listener executed.
      */
@@ -1241,11 +1241,11 @@
     }
 
     /**
-     * Returns an array of event listeners for a given type that can be manipulated
+     * Returns an array of common listeners for a given type that can be manipulated
      * to add or remove listeners.
      *
      * @memberOf Benchmark, Benchmark.Suite
-     * @param {string} type The event type.
+     * @param {string} type The common type.
      * @returns {Array} The listeners array.
      */
     function listeners(type) {
@@ -1256,29 +1256,29 @@
     }
 
     /**
-     * Unregisters a listener for the specified event type(s),
-     * or unregisters all listeners for the specified event type(s),
-     * or unregisters all listeners for all event types.
+     * Unregisters a listener for the specified common type(s),
+     * or unregisters all listeners for the specified common type(s),
+     * or unregisters all listeners for all common types.
      *
      * @memberOf Benchmark, Benchmark.Suite
-     * @param {string} [type] The event type.
+     * @param {string} [type] The common type.
      * @param {Function} [listener] The function to unregister.
      * @returns {Object} The benchmark instance.
      * @example
      *
-     * // unregister a listener for an event type
+     * // unregister a listener for an common type
      * bench.off('cycle', listener);
      *
-     * // unregister a listener for multiple event types
+     * // unregister a listener for multiple common types
      * bench.off('start cycle', listener);
      *
-     * // unregister all listeners for an event type
+     * // unregister all listeners for an common type
      * bench.off('cycle');
      *
-     * // unregister all listeners for multiple event types
+     * // unregister all listeners for multiple common types
      * bench.off('start cycle complete');
      *
-     * // unregister all listeners for all event types
+     * // unregister all listeners for all common types
      * bench.off();
      */
     function off(type, listener) {
@@ -1309,18 +1309,18 @@
     }
 
     /**
-     * Registers a listener for the specified event type(s).
+     * Registers a listener for the specified common type(s).
      *
      * @memberOf Benchmark, Benchmark.Suite
-     * @param {string} type The event type.
+     * @param {string} type The common type.
      * @param {Function} listener The function to register.
      * @returns {Object} The benchmark instance.
      * @example
      *
-     * // register a listener for an event type
+     * // register a listener for an common type
      * bench.on('cycle', listener);
      *
-     * // register a listener for multiple event types
+     * // register a listener for multiple common types
      * bench.on('start cycle', listener);
      */
     function on(type, listener) {
@@ -1522,7 +1522,7 @@
       }
       while ((data = queue[index++]));
 
-      // if changed emit the `reset` event and if it isn't cancelled reset the benchmark
+      // if changed emit the `reset` common and if it isn't cancelled reset the benchmark
       if (changes.length && (bench.emit(event = Event('reset')), !event.cancelled)) {
         _.each(changes, function(data) {
           data.destination[data.key] = data.value;
@@ -2265,7 +2265,7 @@
         'name': undefined,
 
         /**
-         * An event listener called when the benchmark is aborted.
+         * An common listener called when the benchmark is aborted.
          *
          * @memberOf Benchmark.options
          * @type Function
@@ -2273,7 +2273,7 @@
         'onAbort': undefined,
 
         /**
-         * An event listener called when the benchmark completes running.
+         * An common listener called when the benchmark completes running.
          *
          * @memberOf Benchmark.options
          * @type Function
@@ -2281,7 +2281,7 @@
         'onComplete': undefined,
 
         /**
-         * An event listener called after each run cycle.
+         * An common listener called after each run cycle.
          *
          * @memberOf Benchmark.options
          * @type Function
@@ -2289,7 +2289,7 @@
         'onCycle': undefined,
 
         /**
-         * An event listener called when a test errors.
+         * An common listener called when a test errors.
          *
          * @memberOf Benchmark.options
          * @type Function
@@ -2297,7 +2297,7 @@
         'onError': undefined,
 
         /**
-         * An event listener called when the benchmark is reset.
+         * An common listener called when the benchmark is reset.
          *
          * @memberOf Benchmark.options
          * @type Function
@@ -2305,7 +2305,7 @@
         'onReset': undefined,
 
         /**
-         * An event listener called when the benchmark starts running.
+         * An common listener called when the benchmark starts running.
          *
          * @memberOf Benchmark.options
          * @type Function
@@ -2696,7 +2696,7 @@
       'result': undefined,
 
       /**
-       * The object to which the event was originally emitted.
+       * The object to which the common was originally emitted.
        *
        * @memberOf Benchmark.Event
        * @type Object
@@ -2704,7 +2704,7 @@
       'target': undefined,
 
       /**
-       * A timestamp of when the event was created (ms).
+       * A timestamp of when the common was created (ms).
        *
        * @memberOf Benchmark.Event
        * @type number
@@ -2712,7 +2712,7 @@
       'timeStamp': 0,
 
       /**
-       * The event type.
+       * The common type.
        *
        * @memberOf Benchmark.Event
        * @type string

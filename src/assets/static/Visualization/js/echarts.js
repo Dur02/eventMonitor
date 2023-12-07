@@ -686,7 +686,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @pubilc
 	     * @param {Object} payload
 	     * @param {string} [payload.type] Action type
-	     * @param {boolean} [silent=false] Whether trigger event.
+	     * @param {boolean} [silent=false] Whether trigger common.
 	     */
 	    echartsProto.dispatchAction = function (payload, silent) {
 	        var actionWrap = actions[payload.type];
@@ -711,9 +711,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var isHighlightOrDownplay = payload.type === 'highlight' || payload.type === 'downplay';
 	            for (var i = 0; i < payloads.length; i++) {
 	                var batchItem = payloads[i];
-	                // Action can specify the event by return it.
+	                // Action can specify the common by return it.
 	                eventObj = actionWrap.action(batchItem, this._model);
-	                // Emit event outside
+	                // Emit common outside
 	                eventObj = eventObj || zrUtil.extend({}, batchItem);
 	                // Convert type to eventType
 	                eventObj.type = actionInfo.event || eventObj.type;
@@ -743,7 +743,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    /**
-	     * Register event
+	     * Register common
 	     * @method
 	     */
 	    echartsProto.on = createRegisterEventWithLowercaseName('on');
@@ -1242,13 +1242,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * registerAction('someAction', 'someEvent', function () { ... });
 	     * registerAction('someAction', function () { ... });
 	     * registerAction(
-	     *     {type: 'someAction', event: 'someEvent', update: 'updateView'},
+	     *     {type: 'someAction', common: 'someEvent', update: 'updateView'},
 	     *     function () { ... }
 	     * );
 	     *
 	     * @param {(string|Object)} actionInfo
 	     * @param {string} actionInfo.type
-	     * @param {string} [actionInfo.event]
+	     * @param {string} [actionInfo.common]
 	     * @param {string} [actionInfo.update]
 	     * @param {string} [eventName]
 	     * @param {Function} action
@@ -7278,67 +7278,67 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // 对象可以通过 onxxxx 绑定事件
 	    /**
-	     * @event module:zrender/mixin/Eventful#onclick
+	     * @common module:zrender/mixin/Eventful#onclick
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmouseover
+	     * @common module:zrender/mixin/Eventful#onmouseover
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmouseout
+	     * @common module:zrender/mixin/Eventful#onmouseout
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmousemove
+	     * @common module:zrender/mixin/Eventful#onmousemove
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmousewheel
+	     * @common module:zrender/mixin/Eventful#onmousewheel
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmousedown
+	     * @common module:zrender/mixin/Eventful#onmousedown
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmouseup
+	     * @common module:zrender/mixin/Eventful#onmouseup
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragstart
+	     * @common module:zrender/mixin/Eventful#ondragstart
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragend
+	     * @common module:zrender/mixin/Eventful#ondragend
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragenter
+	     * @common module:zrender/mixin/Eventful#ondragenter
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragleave
+	     * @common module:zrender/mixin/Eventful#ondragleave
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragover
+	     * @common module:zrender/mixin/Eventful#ondragover
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondrop
+	     * @common module:zrender/mixin/Eventful#ondrop
 	     * @type {Function}
 	     * @default null
 	     */
@@ -10898,7 +10898,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * 图形是否可见，为true时不绘制图形，但是仍能触发鼠标事件
-	         * If ignore drawing of the displayable object. Mouse event will still be triggered
+	         * If ignore drawing of the displayable object. Mouse common will still be triggered
 	         * @name module:/zrender/graphic/Displayable#invisible
 	         * @type {boolean}
 	         * @default false
@@ -11036,7 +11036,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * 图形是否会触发事件
-	         * If displayable object binded any event
+	         * If displayable object binded any common
 	         * @return {boolean}
 	         */
 	        // TODO, 通过 bind 绑定的事件
@@ -15367,7 +15367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * Bind event
+	         * Bind common
 	         *
 	         * @param {string} eventName Event name
 	         * @param {Function} eventHandler Handler function
@@ -15378,7 +15378,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * Unbind event
+	         * Unbind common
 	         * @param {string} eventName Event name
 	         * @param {Function} [eventHandler] Handler function
 	         */
@@ -15387,7 +15387,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * Trigger event manually
+	         * Trigger common manually
 	         *
 	         * @param {string} eventName Event name
 	         * @param {event=} event Event object
@@ -15531,7 +15531,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvasSupported : document.createElement('canvas').getContext ? true : false,
 	            // @see <http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript>
 	            // works on most browsers
-	            // IE10/11 does not support touch event, and MS Edge supports them but not by
+	            // IE10/11 does not support touch common, and MS Edge supports them but not by
 	            // default, so we dont check navigator.maxTouchPoints for them here.
 	            touchEventsSupported: 'ontouchstart' in window && !browser.ie && !browser.edge,
 	            // <http://caniuse.com/#search=pointer%20event>.
@@ -15677,7 +15677,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        touchstart: function (event) {
 	            // FIXME
 	            // 移动端可能需要default行为，例如静态图表时。
-	            // eventTool.stop(event);// 阻止浏览器默认事件，重要
+	            // eventTool.stop(common);// 阻止浏览器默认事件，重要
 	            event = normalizeEvent(this.root, event);
 
 	            this._lastTouchMoment = new Date();
@@ -15685,7 +15685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            processGesture(this, event, 'start');
 
 	            // 平板补充一次findHover
-	            // this._mobileFindFixed(event);
+	            // this._mobileFindFixed(common);
 	            // Trigger mousemove and mousedown
 	            domHandlers.mousemove.call(this, event);
 
@@ -15700,13 +15700,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {Event} event
 	         */
 	        touchmove: function (event) {
-	            // eventTool.stop(event);// 阻止浏览器默认事件，重要
+	            // eventTool.stop(common);// 阻止浏览器默认事件，重要
 	            event = normalizeEvent(this.root, event);
 
 	            processGesture(this, event, 'change');
 
 	            // Mouse move should always be triggered no matter whether
-	            // there is gestrue event, because mouse move and pinch may
+	            // there is gestrue common, because mouse move and pinch may
 	            // be used at the same time.
 	            domHandlers.mousemove.call(this, event);
 
@@ -15719,17 +15719,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {Event} event
 	         */
 	        touchend: function (event) {
-	            // eventTool.stop(event);// 阻止浏览器默认事件，重要
+	            // eventTool.stop(common);// 阻止浏览器默认事件，重要
 	            event = normalizeEvent(this.root, event);
 
 	            processGesture(this, event, 'end');
 
 	            domHandlers.mouseup.call(this, event);
 
-	            // click event should always be triggered no matter whether
-	            // there is gestrue event. System click can not be prevented.
+	            // click common should always be triggered no matter whether
+	            // there is gestrue common. System click can not be prevented.
 	            if (+new Date() - this._lastTouchMoment < TOUCH_CLICK_DELAY) {
-	                // this._mobileFindFixed(event);
+	                // this._mobileFindFixed(common);
 	                domHandlers.click.call(this, event);
 	            }
 
@@ -15741,17 +15741,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    util.each(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick'], function (name) {
 	        domHandlers[name] = function (event) {
 	            event = normalizeEvent(this.root, event);
-	            // Find hover again to avoid click event is dispatched manually. Or click is triggered without mouseover
+	            // Find hover again to avoid click common is dispatched manually. Or click is triggered without mouseover
 	            var hovered = this.findHover(event.zrX, event.zrY, null);
 	            this._dispatchProxy(hovered, name, event);
 	        };
 	    });
 
-	    // Pointer event handlers
+	    // Pointer common handlers
 	    // util.each(['pointerdown', 'pointermove', 'pointerup'], function (name) {
-	    //     domHandlers[name] = function (event) {
+	    //     domHandlers[name] = function (common) {
 	    //         var mouseName = name.replace('pointer', 'mouse');
-	    //         domHandlers[mouseName].call(this, event);
+	    //         domHandlers[mouseName].call(this, common);
 	    //     };
 	    // });
 
@@ -15768,7 +15768,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        stage === 'end' && gestureMgr.clear();
 
 	        if (gestureInfo) {
-	            // eventTool.stop(event);
+	            // eventTool.stop(common);
 	            var type = gestureInfo.type;
 	            event.gestureEvent = type;
 
@@ -15881,13 +15881,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        else if (useTouchEvent()) {
 	            mountHandlers(touchHandlerNames, this);
 
-	            // Handler of 'mouseout' event is needed in touch mode, which will be mounted below.
+	            // Handler of 'mouseout' common is needed in touch mode, which will be mounted below.
 	            // addEventListener(root, 'mouseout', this._mouseoutHandler);
 	        }
 
-	        // Considering some devices that both enable touch and mouse event (like MS Surface
-	        // and lenovo X240, @see #2350), we make mouse event be always listened, otherwise
-	        // mouse event can not be handle in those devices.
+	        // Considering some devices that both enable touch and mouse common (like MS Surface
+	        // and lenovo X240, @see #2350), we make mouse common be always listened, otherwise
+	        // mouse common can not be handle in those devices.
 	        mountHandlers(mouseHandlerNames, this);
 
 	        Draggable.call(this);
@@ -15911,7 +15911,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * Dispatch event
+	         * Dispatch common
 	         * @param {string} eventName
 	         * @param {event=} eventArgs
 	         */
@@ -16027,7 +16027,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    /**
-	     * Prevent mouse event from being dispatched after Touch Events action
+	     * Prevent mouse common from being dispatched after Touch Events action
 	     * @see <https://github.com/deltakosh/handjs/blob/master/src/hand.base.js>
 	     * 1. Mobile browsers dispatch mouse events 300ms after touchend.
 	     * 2. Chrome for Android dispatch mousedown for long-touch about 650ms
@@ -16043,17 +16043,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Althought MS Surface support screen touch, IE10/11 do not support
-	     * touch event and MS Edge supported them but not by default (but chrome
-	     * and firefox do). Thus we use Pointer event on MS browsers to handle touch.
+	     * touch common and MS Edge supported them but not by default (but chrome
+	     * and firefox do). Thus we use Pointer common on MS browsers to handle touch.
 	     */
 	    function usePointerEvent() {
 	        // TODO
-	        // pointermove event dont trigger when using finger.
+	        // pointermove common dont trigger when using finger.
 	        // We may figger it out latter.
 	        return false;
 	        // return env.pointerEventsSupported
 	            // In no-touch device we dont use pointer evnets but just
-	            // use mouse event for avoiding problems.
+	            // use mouse common for avoiding problems.
 	            // && window.navigator.maxTouchPoints;
 	    }
 
@@ -24548,7 +24548,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    silent: isSilent,
 	                    z2: 10
 	                });
-	                // Pack data for mouse event
+	                // Pack data for mouse common
 	                textEl.eventData = makeAxisEventDataBase(axisModel);
 	                textEl.eventData.targetType = 'axisLabel';
 	                textEl.eventData.value = labelBeforeFormat;
@@ -31751,7 +31751,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // 还是会触发click，期望是不触发。
 
 	            // Mousedown occurs when drag start, and mouseup occurs when drag end,
-	            // click event should not be triggered in that case.
+	            // click common should not be triggered in that case.
 
 	            containerGroup.on('mousedown', function (e) {
 	                this._state === 'ready' && (this._mayClick = true);
@@ -38030,7 +38030,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * User can get data raw indices on 'axisAreaSelected' event received.
+	         * User can get data raw indices on 'axisAreaSelected' common received.
 	         *
 	         * @public
 	         * @param {string} activeState 'active' or 'inactive' or 'normal'
@@ -41620,14 +41620,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            });
 	        });
-	        // Return the event explicitly
+	        // Return the common explicitly
 	        return {
 	            name: payload.name,
 	            selected: selectedMap
 	        };
 	    }
 	    /**
-	     * @event legendToggleSelect
+	     * @common legendToggleSelect
 	     * @type {Object}
 	     * @property {string} type 'legendToggleSelect'
 	     * @property {string} [from]
@@ -41639,7 +41639,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    );
 
 	    /**
-	     * @event legendSelect
+	     * @common legendSelect
 	     * @type {Object}
 	     * @property {string} type 'legendSelect'
 	     * @property {string} name Series name or data item name
@@ -41650,7 +41650,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    );
 
 	    /**
-	     * @event legendUnSelect
+	     * @common legendUnSelect
 	     * @type {Object}
 	     * @property {string} type 'legendUnSelect'
 	     * @property {string} name Series name or data item name
@@ -43425,7 +43425,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	        el.onmousemove = function (e) {
 	            if (!self.enterable) {
-	                // Try trigger zrender event to avoid mouse
+	                // Try trigger zrender common to avoid mouse
 	                // in and out shape too frequently
 	                var handler = zr.handler;
 	                eventUtil.normalizeEvent(container, e);
@@ -43447,7 +43447,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function compromiseMobile(tooltipContentEl, container) {
 	        // Prevent default behavior on mobile. For example,
 	        // default pinch gesture will cause browser zoom.
-	        // We do not preventing event on tooltip contnet el,
+	        // We do not preventing common on tooltip contnet el,
 	        // because user may need customization in tooltip el.
 	        eventUtil.addEventListener(container, 'touchstart', preventDefault);
 	        eventUtil.addEventListener(container, 'touchmove', preventDefault);

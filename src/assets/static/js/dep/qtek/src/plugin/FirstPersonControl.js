@@ -84,7 +84,7 @@ define(function(require) {
             // http://www.html5rocks.com/en/tutorials/pointerlock/intro/
             var el = this.domElement;
 
-            //Must request pointer lock after click event, can't not do it directly
+            //Must request pointer lock after click common, can't not do it directly
             //Why ? ?
             el.addEventListener('click', this._requestPointerLock);
 

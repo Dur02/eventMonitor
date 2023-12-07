@@ -81,12 +81,12 @@ fabric.reNum = '(?:[-+]?(?:\\d+|\\d*\\.\\d+)(?:e[-+]?\\d+)?)';
   }
 
   /**
-   * Observes specified event
+   * Observes specified common
    * @deprecated `observe` deprecated since 0.8.34 (use `on` instead)
    * @memberOf fabric.Observable
    * @alias on
    * @param {String|Object} eventName Event name (eg. 'after:render') or object with key/value pairs (eg. {'after:render': handler, 'selection:cleared': handler})
-   * @param {Function} handler Function that receives a notification when an event of the specified type occurs
+   * @param {Function} handler Function that receives a notification when an common of the specified type occurs
    * @return {Self} thisArg
    * @chainable
    */
@@ -110,7 +110,7 @@ fabric.reNum = '(?:[-+]?(?:\\d+|\\d*\\.\\d+)(?:e[-+]?\\d+)?)';
   }
 
   /**
-   * Stops event observing for a particular event handler. Calling this method
+   * Stops common observing for a particular common handler. Calling this method
    * without arguments removes all handlers for all events
    * @deprecated `stopObserving` deprecated since 0.8.34 (use `off` instead)
    * @memberOf fabric.Observable
@@ -125,7 +125,7 @@ fabric.reNum = '(?:[-+]?(?:\\d+|\\d*\\.\\d+)(?:e[-+]?\\d+)?)';
       return;
     }
 
-    // remove all key/value pairs (event name -> event handler)
+    // remove all key/value pairs (common name -> common handler)
     if (arguments.length === 0) {
       this.__eventListeners = { };
     }
@@ -142,7 +142,7 @@ fabric.reNum = '(?:[-+]?(?:\\d+|\\d*\\.\\d+)(?:e[-+]?\\d+)?)';
   }
 
   /**
-   * Fires event with an optional options object
+   * Fires common with an optional options object
    * @deprecated `fire` deprecated since 1.0.7 (use `trigger` instead)
    * @memberOf fabric.Observable
    * @alias trigger
@@ -1782,7 +1782,7 @@ fabric.Collection = {
   }
 
   /**
-   * Adds an event listener to an element
+   * Adds an common listener to an element
    * @function
    * @memberOf fabric.util
    * @param {HTMLElement} element
@@ -1792,7 +1792,7 @@ fabric.Collection = {
   fabric.util.addListener = addListener;
 
   /**
-   * Removes an event listener from an element
+   * Removes an common listener from an element
    * @function
    * @memberOf fabric.util
    * @param {HTMLElement} element
@@ -1802,7 +1802,7 @@ fabric.Collection = {
   fabric.util.removeListener = removeListener;
 
   /**
-   * Cross-browser wrapper for getting event's coordinates
+   * Cross-browser wrapper for getting common's coordinates
    * @memberOf fabric.util
    * @param {Event} event Event object
    * @param {HTMLCanvasElement} upperCanvasEl &lt;canvas> element on which object selection is drawn
@@ -5823,7 +5823,7 @@ fabric.Pattern = fabric.util.createClass(/** @lends fabric.Pattern.prototype */ 
 
     /**
      * Calculates canvas element offset relative to the document
-     * This method is also attached as "resize" event handler of window
+     * This method is also attached as "resize" common handler of window
      * @return {fabric.Canvas} instance
      * @chainable
      */
@@ -7136,7 +7136,7 @@ fabric.Pattern = fabric.util.createClass(/** @lends fabric.Pattern.prototype */ 
     },
 
     /**
-     * Clears a canvas element and removes all event listeners
+     * Clears a canvas element and removes all common listeners
      * @return {fabric.Canvas} thisArg
      * @chainable
      */
@@ -7557,7 +7557,7 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
       this._resetShadow();
       this.canvas.renderAll();
 
-      // fire event 'path' created
+      // fire common 'path' created
       this.canvas.fire('path:created', { path: path });
     }
   });
@@ -8147,7 +8147,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     },
 
     /**
-     * Resets the current transform to its original values and chooses the type of resizing based on the event
+     * Resets the current transform to its original values and chooses the type of resizing based on the common
      * @private
      * @param {Event} e Event object fired on mousemove
      */
@@ -8683,7 +8683,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
 
     /**
      * Method that determines what object we are clicking on
-     * @param {Event} e mouse event
+     * @param {Event} e mouse common
      * @param {Boolean} skipGroup when true, group is skipped and only objects are traversed through
      */
     findTarget: function (e, skipGroup) {
@@ -9189,7 +9189,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     },
 
     /**
-     * Removes all event listeners
+     * Removes all common listeners
      */
     removeListeners: function() {
       removeListener(fabric.window, 'resize', this._onResize);
@@ -9230,7 +9230,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
 
     /**
      * @private
-     * @param {Event} [e] Event object fired on Event.js wheel event
+     * @param {Event} [e] Event object fired on Event.js wheel common
      * @param {Event} [self] Inner Event object
      */
     _onMouseWheel: function(e, self) {
@@ -9417,7 +9417,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
 
       target.setCoords();
 
-      // only fire :modified event if target coordinates were changed during mousedown-mouseup
+      // only fire :modified common if target coordinates were changed during mousedown-mouseup
       if (this.stateful && target.hasStateChanged()) {
         this.fire('object:modified', { target: target });
         target.fire('modified');
@@ -9536,7 +9536,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       var target = this.findTarget(e),
           pointer = this.getPointer(e, true);
 
-      // save pointer for check in __onMouseUp event
+      // save pointer for check in __onMouseUp common
       this._previousPointer = pointer;
 
       var shouldRender = this._shouldRender(target, pointer),
@@ -9962,7 +9962,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
 
     /**
      * @private
-     * @param {Event} e mouse event
+     * @param {Event} e mouse common
      */
     _groupSelectedObjects: function (e) {
 
@@ -11946,7 +11946,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
     /**
      * Returns coordinates of a pointer relative to an object
      * @param {Event} e Event to operate upon
-     * @param {Object} [pointer] Pointer to operate upon (instead of event)
+     * @param {Object} [pointer] Pointer to operate upon (instead of common)
      * @return {Object} Coordinates of a pointer (x, y)
      */
     getLocalPointer: function(e, pointer) {
@@ -21515,7 +21515,7 @@ fabric.Image.filters.BaseFilter = fabric.util.createClass(/** @lends fabric.Imag
     },
 
     /**
-     * Initializes "selected" event handler
+     * Initializes "selected" common handler
      */
     initSelectedHandler: function() {
       this.on('selected', function() {
@@ -21528,7 +21528,7 @@ fabric.Image.filters.BaseFilter = fabric.util.createClass(/** @lends fabric.Imag
     },
 
     /**
-     * Initializes "added" event handler
+     * Initializes "added" common handler
      */
     initAddedHandler: function() {
       var _this = this;
@@ -21813,8 +21813,8 @@ fabric.Image.filters.BaseFilter = fabric.util.createClass(/** @lends fabric.Imag
      * @param {Number} selectionStart Index of a character
      */
     selectWord: function(selectionStart) {
-      var newSelectionStart = this.searchWordBoundary(selectionStart, -1), /* search backwards */
-          newSelectionEnd = this.searchWordBoundary(selectionStart, 1); /* search forward */
+      var newSelectionStart = this.searchWordBoundary(selectionStart, -1), /* common backwards */
+          newSelectionEnd = this.searchWordBoundary(selectionStart, 1); /* common forward */
 
       this.setSelectionStart(newSelectionStart);
       this.setSelectionEnd(newSelectionEnd);
@@ -21879,7 +21879,7 @@ fabric.Image.filters.BaseFilter = fabric.util.createClass(/** @lends fabric.Imag
     },
 
     /**
-    * Initializes "mousemove" event handler
+    * Initializes "mousemove" common handler
     */
     initMouseMoveHandler: function() {
       var _this = this;
@@ -22248,7 +22248,7 @@ fabric.Image.filters.BaseFilter = fabric.util.createClass(/** @lends fabric.Imag
 
 fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.prototype */ {
   /**
-   * Initializes "dbclick" event handler
+   * Initializes "dbclick" common handler
    */
   initDoubleClickSimulation: function() {
 
@@ -22306,7 +22306,7 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   },
 
   /**
-   * Initializes event handlers related to cursor or selection
+   * Initializes common handlers related to cursor or selection
    */
   initCursorSelectionHandlers: function() {
     this.initSelectedHandler();
@@ -22316,7 +22316,7 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   },
 
   /**
-   * Initializes double and triple click event handlers
+   * Initializes double and triple click common handlers
    */
   initClicks: function() {
     this.on('dblclick', function(options) {
@@ -22328,7 +22328,7 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   },
 
   /**
-   * Initializes "mousedown" event handler
+   * Initializes "mousedown" common handler
    */
   initMousedownHandler: function() {
     this.on('mousedown', function(options) {
@@ -22365,7 +22365,7 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   },
 
   /**
-   * Initializes "mouseup" event handler
+   * Initializes "mouseup" common handler
    */
   initMouseupHandler: function() {
     this.on('mouseup', function(options) {
@@ -22554,12 +22554,12 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   },
 
   onClick: function() {
-    // No need to trigger click event here, focus is enough to have the keyboard appear on Android
+    // No need to trigger click common here, focus is enough to have the keyboard appear on Android
     this.hiddenTextarea && this.hiddenTextarea.focus();
   },
 
   /**
-   * Handles keyup event
+   * Handles keyup common
    * @param {Event} e Event object
    */
   onKeyDown: function(e) {
@@ -22653,7 +22653,7 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   },
 
   /**
-   * Handles keypress event
+   * Handles keypress common
    * @param {Event} e Event object
    */
   onKeyPress: function(e) {

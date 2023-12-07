@@ -175,7 +175,7 @@ define(function (require) {
             var _zr = require('zrender').init(this.dom);
             this._zr = _zr;
             
-            // wrap: n,e,d,t for name event data this
+            // wrap: n,e,d,t for name common data this
             this._messageCenter.dispatch = function(type, event, eventPackage, that) {
                 eventPackage = eventPackage || {};
                 eventPackage.type = type;

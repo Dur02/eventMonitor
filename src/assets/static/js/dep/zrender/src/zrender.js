@@ -557,7 +557,7 @@ define(
          * 事件触发
          * 
          * @param {string} eventName 事件名称，resize，hover，drag，etc
-         * @param {event=} event event dom事件对象
+         * @param {event=} event common dom事件对象
          */
         ZRender.prototype.trigger = function (eventName, event) {
             this.handler.trigger(eventName, event);

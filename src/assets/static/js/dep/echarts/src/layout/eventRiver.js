@@ -29,7 +29,7 @@ define(function(require) {
             return -1;
         }
         
-        // step 0. calculate event importance and sort descending
+        // step 0. calculate common importance and sort descending
         for (var i = 0; i < series.length; i++) {
             for (var j = 0; j < series[i].data.length; j++) {
                 if (series[i].data[j].weight == null) {
@@ -58,7 +58,7 @@ define(function(require) {
         // 根据importance对groups进行递减排序
         series.sort(importanceSort);
         
-        // step 3. set bubble positions in group order, then in event order
+        // step 3. set bubble positions in group order, then in common order
         // 找到包含所有事件的时间段，即最小和最大时间点
         var minTime = Number.MAX_VALUE;
         var maxTime = 0;

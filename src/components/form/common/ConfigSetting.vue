@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { ref, watch } from 'vue'
-import { storeToRefs } from 'pinia'
-import type { FormInst } from 'naive-ui'
+import type { FormInst, SelectOption } from 'naive-ui'
 import {
   NForm,
   NFormItem,
@@ -13,24 +12,21 @@ import {
   NSelect,
   NInputNumber
 } from 'naive-ui'
-import { priorityOption, monitorOption, eventConfigSettingRules } from '@/utils/constant/form/eventConfigSetting'
+import { priorityOption, monitorOption, configSettingRules } from '@/utils/constant/form/common/configSetting'
 import { Menu as MenuIcon } from '@vicons/ionicons5'
-import { useConstantStore } from '@/stores/constant'
 import { renderOption } from '@/utils/function/renderOption'
-import type { eventConfigSettingInitialValueType } from '@/types/components/config/event'
+import type { configSettingInitialValueType } from '@/types/components/form/common/configSetting'
 import deepCopy from '@/utils/function/deepcopy'
 
 const props = defineProps<{
-  initialValue: eventConfigSettingInitialValueType,
+  configList: SelectOption[],
+  initialValue: configSettingInitialValueType,
   settingDisabled: boolean
 }>()
 const emits = defineEmits(['selectConfigType'])
 
-const constantStore = useConstantStore()
-const { eventConfigTypeList } = storeToRefs(constantStore)
-
 const formRef: Ref<FormInst | null> = ref(null)
-const formValue: Ref<eventConfigSettingInitialValueType> = ref(deepCopy(props.initialValue) as eventConfigSettingInitialValueType)
+const formValue: Ref<configSettingInitialValueType> = ref(deepCopy(props.initialValue) as configSettingInitialValueType)
 
 const handleSelectConfigType = (configType: string[]) => {
   emits('selectConfigType', configType)
@@ -59,7 +55,7 @@ watch(
     ref="formRef"
     class="form"
     :model="formValue"
-    :rules="eventConfigSettingRules"
+    :rules="configSettingRules"
     :label-width="70"
     label-placement='left'
     label-align='left'
@@ -104,7 +100,7 @@ watch(
           path="configType"
         >
           <n-select
-            :options="eventConfigTypeList"
+            :options="configList"
             v-model:value="formValue.configType"
             :disabled="settingDisabled"
             :render-option="renderOption"

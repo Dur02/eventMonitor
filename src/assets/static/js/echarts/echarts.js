@@ -1033,7 +1033,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        else if (opt.flush !== false && env.browser.weChat) {
 	            // In WeChat embeded browser, `requestAnimationFrame` and `setInterval`
-	            // hang when sliding page (on touch event), which cause that zr does not
+	            // hang when sliding page (on touch common), which cause that zr does not
 	            // refresh util user interaction finished, which is not expected.
 	            // But `dispatchAction` may be called too frequently when pan on touch
 	            // screen, which impacts performance if do not throttle them.
@@ -1067,9 +1067,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var isHighlightOrDownplay = payload.type === 'highlight' || payload.type === 'downplay';
 	        for (var i = 0; i < payloads.length; i++) {
 	            var batchItem = payloads[i];
-	            // Action can specify the event by return it.
+	            // Action can specify the common by return it.
 	            eventObj = actionWrap.action(batchItem, this._model);
-	            // Emit event outside
+	            // Emit common outside
 	            eventObj = eventObj || zrUtil.extend({}, batchItem);
 	            // Convert type to eventType
 	            eventObj.type = actionInfo.event || eventObj.type;
@@ -1116,7 +1116,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    /**
-	     * Register event
+	     * Register common
 	     * @method
 	     */
 	    echartsProto.on = createRegisterEventWithLowercaseName('on');
@@ -1723,13 +1723,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * registerAction('someAction', 'someEvent', function () { ... });
 	     * registerAction('someAction', function () { ... });
 	     * registerAction(
-	     *     {type: 'someAction', event: 'someEvent', update: 'updateView'},
+	     *     {type: 'someAction', common: 'someEvent', update: 'updateView'},
 	     *     function () { ... }
 	     * );
 	     *
 	     * @param {(string|Object)} actionInfo
 	     * @param {string} actionInfo.type
-	     * @param {string} [actionInfo.event]
+	     * @param {string} [actionInfo.common]
 	     * @param {string} [actionInfo.update]
 	     * @param {string} [eventName]
 	     * @param {Function} action
@@ -2071,7 +2071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvasSupported : document.createElement('canvas').getContext ? true : false,
 	            // @see <http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript>
 	            // works on most browsers
-	            // IE10/11 does not support touch event, and MS Edge supports them but not by
+	            // IE10/11 does not support touch common, and MS Edge supports them but not by
 	            // default, so we dont check navigator.maxTouchPoints for them here.
 	            touchEventsSupported: 'ontouchstart' in window && !browser.ie && !browser.edge,
 	            // <http://caniuse.com/#search=pointer%20event>.
@@ -8606,72 +8606,72 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // 对象可以通过 onxxxx 绑定事件
 	    /**
-	     * @event module:zrender/mixin/Eventful#onclick
+	     * @common module:zrender/mixin/Eventful#onclick
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmouseover
+	     * @common module:zrender/mixin/Eventful#onmouseover
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmouseout
+	     * @common module:zrender/mixin/Eventful#onmouseout
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmousemove
+	     * @common module:zrender/mixin/Eventful#onmousemove
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmousewheel
+	     * @common module:zrender/mixin/Eventful#onmousewheel
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmousedown
+	     * @common module:zrender/mixin/Eventful#onmousedown
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#onmouseup
+	     * @common module:zrender/mixin/Eventful#onmouseup
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondrag
+	     * @common module:zrender/mixin/Eventful#ondrag
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragstart
+	     * @common module:zrender/mixin/Eventful#ondragstart
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragend
+	     * @common module:zrender/mixin/Eventful#ondragend
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragenter
+	     * @common module:zrender/mixin/Eventful#ondragenter
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragleave
+	     * @common module:zrender/mixin/Eventful#ondragleave
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondragover
+	     * @common module:zrender/mixin/Eventful#ondragover
 	     * @type {Function}
 	     * @default null
 	     */
 	    /**
-	     * @event module:zrender/mixin/Eventful#ondrop
+	     * @common module:zrender/mixin/Eventful#ondrop
 	     * @type {Function}
 	     * @default null
 	     */
@@ -11369,7 +11369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Object} [hoverStyle]
 	     * @param {Object} [opt]
 	     * @param {boolean} [opt.hoverSilentOnTouch=false]
-	     *        In touch device, mouseover event will be trigger on touchstart event
+	     *        In touch device, mouseover common will be trigger on touchstart common
 	     *        (see module:zrender/dom/HandlerProxy). By this mechanism, we can
 	     *        conviniently use hoverStyle when tap on touch screen without additional
 	     *        code for compatibility.
@@ -12432,7 +12432,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * 图形是否可见，为true时不绘制图形，但是仍能触发鼠标事件
-	         * If ignore drawing of the displayable object. Mouse event will still be triggered
+	         * If ignore drawing of the displayable object. Mouse common will still be triggered
 	         * @name module:/zrender/graphic/Displayable#invisible
 	         * @type {boolean}
 	         * @default false
@@ -12577,7 +12577,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * 图形是否会触发事件
-	         * If displayable object binded any event
+	         * If displayable object binded any common
 	         * @return {boolean}
 	         */
 	        // TODO, 通过 bind 绑定的事件
@@ -17440,7 +17440,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * Bind event
+	         * Bind common
 	         *
 	         * @param {string} eventName Event name
 	         * @param {Function} eventHandler Handler function
@@ -17451,7 +17451,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * Unbind event
+	         * Unbind common
 	         * @param {string} eventName Event name
 	         * @param {Function} [eventHandler] Handler function
 	         */
@@ -17460,7 +17460,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * Trigger event manually
+	         * Trigger common manually
 	         *
 	         * @param {string} eventName Event name
 	         * @param {event=} event Event object
@@ -17566,7 +17566,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        proxy = proxy || new EmptyProxy();
 
 	        /**
-	         * Proxy of event. can be Dom, WebGLSurface, etc.
+	         * Proxy of common. can be Dom, WebGLSurface, etc.
 	         */
 	        this.proxy = proxy;
 
@@ -17640,7 +17640,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            // There might be some doms created by upper layer application
 	            // at the same level of painter.getViewportRoot() (e.g., tooltip
-	            // dom created by echarts), where 'globalout' event should not
+	            // dom created by echarts), where 'globalout' common should not
 	            // be triggered when mouse enters these doms. (But 'mouseout'
 	            // should be triggered at the original hovered element as usual).
 	            var element = event.toElement || event.relatedTarget;
@@ -17663,7 +17663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * Dispatch event
+	         * Dispatch common
 	         * @param {string} eventName
 	         * @param {event=} eventArgs
 	         */
@@ -17760,7 +17760,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // Common handlers
 	    util.each(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'contextmenu'], function (name) {
 	        Handler.prototype[name] = function (event) {
-	            // Find hover again to avoid click event is dispatched manually. Or click is triggered without mouseover
+	            // Find hover again to avoid click common is dispatched manually. Or click is triggered without mouseover
 	            var hovered = this.findHover(event.zrX, event.zrY, null);
 
 	            if (name === 'mousedown') {
@@ -19137,7 +19137,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // In zr painter.dom, padding edge equals to border edge.
 
 	        // FIXME
-	        // When mousemove event triggered on ec tooltip, target is not zr painter.dom, and
+	        // When mousemove common triggered on ec tooltip, target is not zr painter.dom, and
 	        // offsetX/Y is relative to e.target, where the calculation of zrX/Y via offsetX/Y
 	        // is too complex. So css-transfrom dont support in this case temporarily.
 	        if (calculate || !env.canvasSupported) {
@@ -19313,7 +19313,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        stage === 'end' && gestureMgr.clear();
 
 	        if (gestureInfo) {
-	            // eventTool.stop(event);
+	            // eventTool.stop(common);
 	            var type = gestureInfo.type;
 	            event.gestureEvent = type;
 
@@ -19322,7 +19322,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    /**
-	     * Prevent mouse event from being dispatched after Touch Events action
+	     * Prevent mouse common from being dispatched after Touch Events action
 	     * @see <https://github.com/deltakosh/handjs/blob/master/src/hand.base.js>
 	     * 1. Mobile browsers dispatch mouse events 300ms after touchend.
 	     * 2. Chrome for Android dispatch mousedown for long-touch about 650ms
@@ -19387,7 +19387,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            event = normalizeEvent(this.dom, event);
 
 	            // Mark touch, which is useful in distinguish touch and
-	            // mouse event in upper applicatoin.
+	            // mouse common in upper applicatoin.
 	            event.zrByTouch = true;
 
 	            this._lastTouchMoment = new Date();
@@ -19413,13 +19413,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            event = normalizeEvent(this.dom, event);
 
 	            // Mark touch, which is useful in distinguish touch and
-	            // mouse event in upper applicatoin.
+	            // mouse common in upper applicatoin.
 	            event.zrByTouch = true;
 
 	            processGesture(this, event, 'change');
 
 	            // Mouse move should always be triggered no matter whether
-	            // there is gestrue event, because mouse move and pinch may
+	            // there is gestrue common, because mouse move and pinch may
 	            // be used at the same time.
 	            domHandlers.mousemove.call(this, event);
 
@@ -19436,7 +19436,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            event = normalizeEvent(this.dom, event);
 
 	            // Mark touch, which is useful in distinguish touch and
-	            // mouse event in upper applicatoin.
+	            // mouse common in upper applicatoin.
 	            event.zrByTouch = true;
 
 	            processGesture(this, event, 'end');
@@ -19451,8 +19451,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // compatibility. (`mouseout` will not be triggered in `touchend`, so "hover
 	            // style" will remain for user view)
 
-	            // click event should always be triggered no matter whether
-	            // there is gestrue event. System click can not be prevented.
+	            // click common should always be triggered no matter whether
+	            // there is gestrue common. System click can not be prevented.
 	            if (+new Date() - this._lastTouchMoment < TOUCH_CLICK_DELAY) {
 	                domHandlers.click.call(this, event);
 	            }
@@ -19527,13 +19527,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (useTouchEvent()) {
 	            mountHandlers(touchHandlerNames, this);
 
-	            // Handler of 'mouseout' event is needed in touch mode, which will be mounted below.
+	            // Handler of 'mouseout' common is needed in touch mode, which will be mounted below.
 	            // addEventListener(root, 'mouseout', this._mouseoutHandler);
 	        }
 
-	        // Considering some devices that both enable touch and mouse event (like MS Surface
-	        // and lenovo X240, @see #2350), we make mouse event be always listened, otherwise
-	        // mouse event can not be handle in those devices.
+	        // Considering some devices that both enable touch and mouse common (like MS Surface
+	        // and lenovo X240, @see #2350), we make mouse common be always listened, otherwise
+	        // mouse common can not be handle in those devices.
 	        mountHandlers(mouseHandlerNames, this);
 
 	        function mountHandlers(handlerNames, instance) {
@@ -27710,7 +27710,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        nameGap: 15,
 
 	        silent: false, // Default false to support tooltip.
-	        triggerEvent: false, // Default false to avoid legacy user event listener fail.
+	        triggerEvent: false, // Default false to avoid legacy user common listener fail.
 
 	        tooltip: {
 	            show: false
@@ -28557,7 +28557,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    z2: 10
 	                });
 
-	                // Pack data for mouse event
+	                // Pack data for mouse common
 	                if (triggerEvent) {
 	                    textEl.eventData = makeAxisEventDataBase(axisModel);
 	                    textEl.eventData.targetType = 'axisLabel';
@@ -33776,7 +33776,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	                else {
 	                    var regionModel = mapOrGeoModel.getRegionModel(region.name);
-	                    // Package custom mouse event for geo component
+	                    // Package custom mouse common for geo component
 	                    compoundPath.eventData = {
 	                        componentType: 'geo',
 	                        geoIndex: mapOrGeoModel.componentIndex,
@@ -36019,7 +36019,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // 还是会触发click，期望是不触发。
 
 	            // Mousedown occurs when drag start, and mouseup occurs when drag end,
-	            // click event should not be triggered in that case.
+	            // click common should not be triggered in that case.
 
 	            containerGroup.on('mousedown', function (e) {
 	                this._state === 'ready' && (this._mayClick = true);
@@ -36569,7 +36569,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return points;
 	    }
 
-	    // Package custom mouse event.
+	    // Package custom mouse common.
 	    function packEventData(el, seriesModel, itemNode) {
 	        el.eventData = {
 	            componentType: 'series',
@@ -36577,7 +36577,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            seriesIndex: seriesModel.componentIndex,
 	            seriesName: seriesModel.name,
 	            seriesType: 'treemap',
-	            selfType: 'breadcrumb', // Distinguish with click event on treemap node.
+	            selfType: 'breadcrumb', // Distinguish with click common on treemap node.
 	            nodeData: {
 	                dataIndex: itemNode && itemNode.dataIndex,
 	                name: itemNode && itemNode.name
@@ -42910,7 +42910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 
 	            // If realtime is true, action is not dispatched on drag end, because
-	            // the drag end emits the same params with the last drag move event,
+	            // the drag end emits the same params with the last drag move common,
 	            // and may have some delay when using touch pad.
 	            if (!axisModel.option.realtime === opt.isEnd || opt.removeOnClick) { // jshint ignore:line
 	                this.api.dispatchAction({
@@ -43004,7 +43004,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @alias module:echarts/component/helper/BrushController
 	     * @constructor
 	     * @mixin {module:zrender/mixin/Eventful}
-	     * @event module:echarts/component/helper/BrushController#brush
+	     * @common module:echarts/component/helper/BrushController#brush
 	     *        params:
 	     *            areas: Array.<Array>, coord relates to container group,
 	     *                                    If no container specified, to global.
@@ -43263,7 +43263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            function addOrUpdate(newIndex, oldIndex) {
 	                var newBrushOption = brushOptionList[newIndex];
-	                // Consider setOption in event listener of brushSelect,
+	                // Consider setOption in common listener of brushSelect,
 	                // where updating cover when creating should be forbiden.
 	                if (oldIndex != null && oldCovers[oldIndex] === creatingCover) {
 	                    newCovers[newIndex] = oldCovers[oldIndex];
@@ -43808,7 +43808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._track = [];
 	            this._creatingCover = null;
 
-	            // trigger event shoule be at final, after procedure will be nested.
+	            // trigger common shoule be at final, after procedure will be nested.
 	            eventParams && trigger(this, eventParams);
 	        }
 	    }
@@ -44067,7 +44067,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 
 	        /**
-	         * User can get data raw indices on 'axisAreaSelected' event received.
+	         * User can get data raw indices on 'axisAreaSelected' common received.
 	         *
 	         * @public
 	         * @param {string} activeState 'active' or 'inactive' or 'normal'
@@ -48839,14 +48839,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            });
 	        });
-	        // Return the event explicitly
+	        // Return the common explicitly
 	        return {
 	            name: payload.name,
 	            selected: selectedMap
 	        };
 	    }
 	    /**
-	     * @event legendToggleSelect
+	     * @common legendToggleSelect
 	     * @type {Object}
 	     * @property {string} type 'legendToggleSelect'
 	     * @property {string} [from]
@@ -48858,7 +48858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    );
 
 	    /**
-	     * @event legendSelect
+	     * @common legendSelect
 	     * @type {Object}
 	     * @property {string} type 'legendSelect'
 	     * @property {string} name Series name or data item name
@@ -48869,7 +48869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    );
 
 	    /**
-	     * @event legendUnSelect
+	     * @common legendUnSelect
 	     * @type {Object}
 	     * @property {string} type 'legendUnSelect'
 	     * @property {string} name Series name or data item name
@@ -50808,7 +50808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        el.onmousemove = function (e) {
 	            e = e || window.event;
 	            if (!self.enterable) {
-	                // Try trigger zrender event to avoid mouse
+	                // Try trigger zrender common to avoid mouse
 	                // in and out shape too frequently
 	                var handler = zr.handler;
 	                eventUtil.normalizeEvent(container, e, true);
@@ -53033,7 +53033,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                areas: zrUtil.clone(brushModel.areas),
 	                selected: []
 	            };
-	            // Every brush component exists in event params, convenient
+	            // Every brush component exists in common params, convenient
 	            // for user to find by index.
 	            brushSelected.push(thisBrushSelected);
 
@@ -53144,7 +53144,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    seriesName: seriesModel.name,
 	                    dataIndex: []
 	                };
-	                // Every series exists in event params, convenient
+	                // Every series exists in common params, convenient
 	                // for user to find series by seriesIndex.
 	                thisBrushSelected.selected.push(seriesBrushSelected);
 
@@ -53177,13 +53177,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 
 	    function dispatchAction(api, throttleType, throttleDelay, brushSelected, payload) {
-	        // This event will not be triggered when `setOpion`, otherwise dead lock may
-	        // triggered when do `setOption` in event listener, which we do not find
+	        // This common will not be triggered when `setOpion`, otherwise dead lock may
+	        // triggered when do `setOption` in common listener, which we do not find
 	        // satisfactory way to solve yet. Some considered resolutions:
-	        // (a) Diff with prevoius selected data ant only trigger event when changed.
+	        // (a) Diff with prevoius selected data ant only trigger common when changed.
 	        // But store previous data and diff precisely (i.e., not only by dataIndex, but
 	        // also detect value changes in selected data) might bring complexity or fragility.
-	        // (b) Use spectial param like `silent` to suppress event triggering.
+	        // (b) Use spectial param like `silent` to suppress common triggering.
 	        // But such kind of volatile param may be weird in `setOption`.
 	        if (!payload) {
 	            return;
@@ -53863,9 +53863,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                width: null         // do not use bursh width in line brush, but fetch from grid.
 	            },
 
-	            throttleType: 'fixRate',// Throttle in brushSelected event. 'fixRate' or 'debounce'.
+	            throttleType: 'fixRate',// Throttle in brushSelected common. 'fixRate' or 'debounce'.
 	                                    // If null, no throttle. Valid only in the first brush component
-	            throttleDelay: 0,       // Unit: ms, 0 means every event will be triggered.
+	            throttleDelay: 0,       // Unit: ms, 0 means every common will be triggered.
 
 	            // FIXME
 	            // 试验效果
@@ -53928,7 +53928,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            // If ranges is null/undefined, range state remain.
 	            // This helps user to dispatchAction({type: 'brush'}) with no areas
-	            // set but just want to get the current brush select info from a `brush` event.
+	            // set but just want to get the current brush select info from a `brush` common.
 	            if (!areas) {
 	                return;
 	            }
@@ -54054,7 +54054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            brushHelper.parseOutputRanges(areas, this.model.coordInfoList, this.ecModel);
 
 	            // Action is not dispatched on drag end, because the drag end
-	            // emits the same params with the last drag move event, and
+	            // emits the same params with the last drag move common, and
 	            // may have some delay when using touch pad, which makes
 	            // animation not smooth (when using debounce).
 	            (!opt.isEnd || opt.removeOnClick) && this.api.dispatchAction({
@@ -62523,7 +62523,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Create symbol or update symbol
-	     * opt: basic position and event handlers
+	     * opt: basic position and common handlers
 	     */
 	    function giveSymbol(hostModel, itemStyleModel, group, opt, symbol, callback) {
 	        var color = itemStyleModel.get('color');

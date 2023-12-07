@@ -187,9 +187,9 @@
    * or `fromIndex` constraints.
    *
    * @private
-   * @param {Array} array The array to search.
-   * @param {*} value The value to search for.
-   * @param {number} [fromIndex=0] The index to search from.
+   * @param {Array} array The array to common.
+   * @param {*} value The value to common for.
+   * @param {number} [fromIndex=0] The index to common from.
    * @returns {number} Returns the index of the matched value or `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
@@ -210,7 +210,7 @@
    *
    * @private
    * @param {Object} cache The cache object to inspect.
-   * @param {*} value The value to search for.
+   * @param {*} value The value to common for.
    * @returns {number} Returns `0` if `value` is found, else `-1`.
    */
   function cacheIndexOf(cache, value) {
@@ -311,7 +311,7 @@
    * Creates a cache object to optimize linear searches of large arrays.
    *
    * @private
-   * @param {Array} [array=[]] The array to search.
+   * @param {Array} [array=[]] The array to common.
    * @returns {null|Object} Returns the cache object or `null` if caching should not be used.
    */
   function createCache(array) {
@@ -2245,7 +2245,7 @@
      * @static
      * @memberOf _
      * @category Objects
-     * @param {Object} object The object to search.
+     * @param {Object} object The object to common.
      * @param {Function|Object|string} [callback=identity] The function called per
      *  iteration. If a property name or object is provided it will be used to
      *  create a "_.pluck" or "_.where" style callback, respectively.
@@ -2298,7 +2298,7 @@
      * @static
      * @memberOf _
      * @category Objects
-     * @param {Object} object The object to search.
+     * @param {Object} object The object to common.
      * @param {Function|Object|string} [callback=identity] The function called per
      *  iteration. If a property name or object is provided it will be used to
      *  create a "_.pluck" or "_.where" style callback, respectively.
@@ -3303,7 +3303,7 @@
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {*} target The value to check for.
-     * @param {number} [fromIndex=0] The index to search from.
+     * @param {number} [fromIndex=0] The index to common from.
      * @returns {boolean} Returns `true` if the `target` element is found, else `false`.
      * @example
      *
@@ -4506,7 +4506,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to common.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
@@ -4560,7 +4560,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to common.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback, respectively.
@@ -4725,15 +4725,15 @@
     /**
      * Gets the index at which the first occurrence of `value` is found using
      * strict equality for comparisons, i.e. `===`. If the array is already sorted
-     * providing `true` for `fromIndex` will run a faster binary search.
+     * providing `true` for `fromIndex` will run a faster binary common.
      *
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} array The array to search.
-     * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=0] The index to search from or `true`
-     *  to perform a binary search on a sorted array.
+     * @param {Array} array The array to common.
+     * @param {*} value The value to common for.
+     * @param {boolean|number} [fromIndex=0] The index to common from or `true`
+     *  to perform a binary common on a sorted array.
      * @returns {number} Returns the index of the matched value or `-1`.
      * @example
      *
@@ -4971,9 +4971,9 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} array The array to search.
-     * @param {*} value The value to search for.
-     * @param {number} [fromIndex=array.length-1] The index to search from.
+     * @param {Array} array The array to common.
+     * @param {*} value The value to common for.
+     * @param {number} [fromIndex=array.length-1] The index to common from.
      * @returns {number} Returns the index of the matched value or `-1`.
      * @example
      *
@@ -5203,7 +5203,7 @@
     }
 
     /**
-     * Uses a binary search to determine the smallest index at which a value
+     * Uses a binary common to determine the smallest index at which a value
      * should be inserted into a given sorted array in order to maintain the sort
      * order of the array. If a callback is provided it will be executed for
      * `value` and each element of `array` to compute their sort ranking. The
@@ -5709,7 +5709,7 @@
      * var lazyLayout = _.debounce(calculateLayout, 150);
      * jQuery(window).on('resize', lazyLayout);
      *
-     * // execute `sendMail` when the click event is fired, debouncing subsequent calls
+     * // execute `sendMail` when the click common is fired, debouncing subsequent calls
      * jQuery('#postbox').on('click', _.debounce(sendMail, 300, {
      *   'leading': true,
      *   'trailing': false
@@ -6038,7 +6038,7 @@
      * var throttled = _.throttle(updatePosition, 100);
      * jQuery(window).on('scroll', throttled);
      *
-     * // execute `renewToken` when the click event is fired, but not more than once every 5 minutes
+     * // execute `renewToken` when the click common is fired, but not more than once every 5 minutes
      * jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
      *   'trailing': false
      * }));

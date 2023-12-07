@@ -328,7 +328,7 @@
    * support for callback shorthands and `this` binding.
    *
    * @private
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to common.
    * @param {Function} predicate The function invoked per iteration.
    * @param {boolean} [fromRight] Specify iterating from right to left.
    * @returns {number} Returns the index of the matched value, else `-1`.
@@ -349,9 +349,9 @@
    * The base implementation of `_.indexOf` without support for binary searches.
    *
    * @private
-   * @param {Array} array The array to search.
-   * @param {*} value The value to search for.
-   * @param {number} fromIndex The index to search from.
+   * @param {Array} array The array to common.
+   * @param {*} value The value to common for.
+   * @param {number} fromIndex The index to common from.
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
@@ -522,8 +522,8 @@
    * Gets the index at which the first occurrence of `NaN` is found in `array`.
    *
    * @private
-   * @param {Array} array The array to search.
-   * @param {number} fromIndex The index to search from.
+   * @param {Array} array The array to common.
+   * @param {number} fromIndex The index to common from.
    * @param {boolean} [fromRight] Specify iterating from right to left.
    * @returns {number} Returns the index of the matched `NaN`, else `-1`.
    */
@@ -1389,8 +1389,8 @@
      * `_.indexOf` by returning `0` if the value is found, else `-1`.
      *
      * @private
-     * @param {Object} cache The cache to search.
-     * @param {*} value The value to search for.
+     * @param {Object} cache The cache to common.
+     * @param {*} value The value to common for.
      * @returns {number} Returns `0` if `value` is found, else `-1`.
      */
     function cacheIndexOf(cache, value) {
@@ -2090,7 +2090,7 @@
      * over `collection` using the provided `eachFunc`.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Function} predicate The function invoked per iteration.
      * @param {Function} eachFunc The function to iterate over `collection`.
      * @param {boolean} [retKey] Specify returning the key of the found element
@@ -2927,7 +2927,7 @@
     }
 
     /**
-     * Performs a binary search of `array` to determine the index at which `value`
+     * Performs a binary common of `array` to determine the index at which `value`
      * should be inserted into `array` in order to maintain its sort order.
      *
      * @private
@@ -4956,7 +4956,7 @@
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -5006,7 +5006,7 @@
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -5110,15 +5110,15 @@
      * using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for equality comparisons. If `fromIndex` is negative, it is used as the offset
      * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
-     * performs a faster binary search.
+     * performs a faster binary common.
      *
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
-     * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=0] The index to search from or `true`
-     *  to perform a binary search on a sorted array.
+     * @param {Array} array The array to common.
+     * @param {*} value The value to common for.
+     * @param {boolean|number} [fromIndex=0] The index to common from or `true`
+     *  to perform a binary common on a sorted array.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -5129,7 +5129,7 @@
      * _.indexOf([1, 2, 1, 2], 2, 2);
      * // => 3
      *
-     * // performing a binary search
+     * // performing a binary common
      * _.indexOf([1, 1, 2, 2], 2, true);
      * // => 2
      */
@@ -5245,10 +5245,10 @@
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
-     * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=array.length-1] The index to search from
-     *  or `true` to perform a binary search on a sorted array.
+     * @param {Array} array The array to common.
+     * @param {*} value The value to common for.
+     * @param {boolean|number} [fromIndex=array.length-1] The index to common from
+     *  or `true` to perform a binary common on a sorted array.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -5259,7 +5259,7 @@
      * _.lastIndexOf([1, 2, 1, 2], 2, 2);
      * // => 1
      *
-     * // performing a binary search
+     * // performing a binary common
      * _.lastIndexOf([1, 1, 2, 2], 2, true);
      * // => 3
      */
@@ -5471,7 +5471,7 @@
     }
 
     /**
-     * Uses a binary search to determine the lowest index at which `value` should
+     * Uses a binary common to determine the lowest index at which `value` should
      * be inserted into `array` in order to maintain its sort order. If an iteratee
      * function is provided it is invoked for `value` and each element of `array`
      * to compute their sort ranking. The iteratee is bound to `thisArg` and
@@ -5746,7 +5746,7 @@
      * Creates a duplicate-free version of an array, using
      * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for equality comparisons, in which only the first occurence of each element
-     * is kept. Providing `true` for `isSorted` performs a faster search algorithm
+     * is kept. Providing `true` for `isSorted` performs a faster common algorithm
      * for sorted arrays. If an iteratee function is provided it is invoked for
      * each element in the array to generate the criterion by which uniqueness
      * is computed. The `iteratee` is bound to `thisArg` and invoked with three
@@ -6483,7 +6483,7 @@
      * @memberOf _
      * @alias detect
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -6522,7 +6522,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -6549,7 +6549,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Object} source The object of property values to match.
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
@@ -6682,9 +6682,9 @@
      * @memberOf _
      * @alias contains, include
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
-     * @param {*} target The value to search for.
-     * @param {number} [fromIndex=0] The index to search from.
+     * @param {Array|Object|string} collection The collection to common.
+     * @param {*} target The value to common for.
+     * @param {number} [fromIndex=0] The index to common from.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {boolean} Returns `true` if a matching element is found, else `false`.
      * @example
@@ -7380,7 +7380,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Object} source The object of property values to match.
      * @returns {Array} Returns the new filtered array.
      * @example
@@ -7778,7 +7778,7 @@
      * // avoid costly calculations while the window size is in flux
      * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
      *
-     * // invoke `sendMail` when the click event is fired, debouncing subsequent calls
+     * // invoke `sendMail` when the click common is fired, debouncing subsequent calls
      * jQuery('#postbox').on('click', _.debounce(sendMail, 300, {
      *   'leading': true,
      *   'trailing': false
@@ -8349,7 +8349,7 @@
      * // avoid excessively updating the position while scrolling
      * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
      *
-     * // invoke `renewToken` when the click event is fired, but not more than once every 5 minutes
+     * // invoke `renewToken` when the click common is fired, but not more than once every 5 minutes
      * jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
      *   'trailing': false
      * }));
@@ -9371,7 +9371,7 @@
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to search.
+     * @param {Object} object The object to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -9421,7 +9421,7 @@
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to search.
+     * @param {Object} object The object to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -10392,7 +10392,7 @@
      * @returns {string} Returns the deburred string.
      * @example
      *
-     * _.deburr('d¨¦j¨¤ vu');
+     * _.deburr('dï¿½ï¿½jï¿½ï¿½ vu');
      * // => 'deja vu'
      */
     function deburr(string) {
@@ -10406,9 +10406,9 @@
      * @static
      * @memberOf _
      * @category String
-     * @param {string} [string=''] The string to search.
-     * @param {string} [target] The string to search for.
-     * @param {number} [position=string.length] The position to search from.
+     * @param {string} [string=''] The string to common.
+     * @param {string} [target] The string to common for.
+     * @param {number} [position=string.length] The position to common from.
      * @returns {boolean} Returns `true` if `string` ends with `target`, else `false`.
      * @example
      *
@@ -10741,9 +10741,9 @@
      * @static
      * @memberOf _
      * @category String
-     * @param {string} [string=''] The string to search.
-     * @param {string} [target] The string to search for.
-     * @param {number} [position=0] The position to search from.
+     * @param {string} [string=''] The string to common.
+     * @param {string} [target] The string to common for.
+     * @param {number} [position=0] The position to common from.
      * @returns {boolean} Returns `true` if `string` starts with `target`, else `false`.
      * @example
      *

@@ -253,7 +253,7 @@ define(function (require) {
                     }
                 }
 
-                // Trigger a global zr event to tooltip
+                // Trigger a global zr common to tooltip
                 zr.handler.dispatch(e.type, {
                     target: shape,
                     event: e.event,

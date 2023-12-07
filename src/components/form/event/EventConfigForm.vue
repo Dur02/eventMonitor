@@ -21,15 +21,16 @@ import {
 } from 'naive-ui'
 import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
-import { rootOptions, eventConfigFormRules } from '@/utils/constant/form/eventConfigForm'
+import { rootOptions, eventConfigFormRules } from '@/utils/constant/form/event/eventConfigForm'
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
 import { getRegionCodeList } from '@/api/eventCodeDict'
 import { filter, includes, map } from 'lodash/fp'
 import deepCopy from '@/utils/function/deepcopy'
-import type { eventConfigFormInitialValueType } from '@/types/components/config/event'
+import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
 import { renderOption } from '@/utils/function/renderOption'
 import { formatTimeStamp } from '@/utils/function/date'
+import { WeightHanging } from '@vicons/fa'
 
 const props = defineProps<{
   initialValue: eventConfigFormInitialValueType,
@@ -176,7 +177,7 @@ watch(
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
-            <calendar />
+            <Calendar />
           </n-icon>
           <span>日期属性</span>
         </div>
@@ -198,7 +199,7 @@ watch(
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
-            <grid />
+            <Grid />
           </n-icon>
           <span>数据源</span>
         </div>
@@ -226,7 +227,7 @@ watch(
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
-            <ios-apps />
+            <IosApps />
           </n-icon>
           <span>权重依据</span>
         </div>
@@ -257,7 +258,7 @@ watch(
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
-            <calculator />
+            <Calculator />
           </n-icon>
           <span>统计依据</span>
         </div>
@@ -283,7 +284,7 @@ watch(
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
-            <people />
+            <People />
           </n-icon>
           <span>角色属性</span>
         </div>
@@ -743,7 +744,7 @@ watch(
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
-            <document-text />
+            <DocumentText />
           </n-icon>
           <span>事件属性</span>
         </div>
@@ -938,7 +939,7 @@ watch(
       <template #label>
         <div class="icon-label">
           <n-icon class="icon" size="20">
-            <document-text />
+            <WeightHanging />
           </n-icon>
           <span>权重值</span>
         </div>

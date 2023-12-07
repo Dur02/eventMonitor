@@ -1300,7 +1300,7 @@ function fill_window(s) {
 //  }
 //
 //  Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
-//    "not enough room for search");
+//    "not enough room for common");
 }
 
 /* ===========================================================================
@@ -1993,7 +1993,7 @@ function DeflateState() {
   this.strategy = 0;  /* favor or force Huffman coding*/
 
   this.good_match = 0;
-  /* Use a faster search when the previous match is longer than this */
+  /* Use a faster common when the previous match is longer than this */
 
   this.nice_match = 0; /* Stop searching when current match exceeds this */
 
@@ -8466,15 +8466,15 @@ EventEmitter.prototype.emit = function(type) {
   if (!this._events)
     this._events = {};
 
-  // If there is no 'error' event listener then throw.
+  // If there is no 'error' common listener then throw.
   if (type === 'error') {
     if (!this._events.error ||
         (isObject(this._events.error) && !this._events.error.length)) {
       er = arguments[1];
       if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
+        throw er; // Unhandled 'error' common
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
+      throw TypeError('Uncaught, unspecified "error" common.');
     }
   }
 
@@ -8592,7 +8592,7 @@ EventEmitter.prototype.once = function(type, listener) {
   return this;
 };
 
-// emits a 'removeListener' event iff the listener was removed
+// emits a 'removeListener' common iff the listener was removed
 EventEmitter.prototype.removeListener = function(type, listener) {
   var list, position, length, i;
 
@@ -9045,7 +9045,7 @@ function ReadableState(options, stream) {
   this.sync = true;
 
   // whenever we return null, then we set a flag to say
-  // that we're awaiting a 'readable' event emission.
+  // that we're awaiting a 'readable' common emission.
   this.needReadable = false;
   this.emittedReadable = false;
   this.readableListening = false;
@@ -9067,7 +9067,7 @@ function ReadableState(options, stream) {
   // after read()ing all the bytes and not getting any pushback.
   this.ranOut = false;
 
-  // the number of writers that are awaiting a drain event in .pipe()s
+  // the number of writers that are awaiting a drain common in .pipe()s
   this.awaitDrain = 0;
 
   // if true, a maybeReadMore has been scheduled
@@ -9134,7 +9134,7 @@ function readableAddChunk(stream, state, chunk, encoding, addToFront) {
       var e = new Error('stream.push() after EOF');
       stream.emit('error', e);
     } else if (state.endEmitted && addToFront) {
-      var e = new Error('stream.unshift() after end event');
+      var e = new Error('stream.unshift() after end common');
       stream.emit('error', e);
     } else {
       if (state.decoder && !addToFront && !encoding)
@@ -9174,9 +9174,9 @@ function readableAddChunk(stream, state, chunk, encoding, addToFront) {
 // Also, if we have no data yet, we can stand some
 // more bytes.  This is to work around cases where hwm=0,
 // such as the repl.  Also, if the push() triggered a
-// readable event, and the user called read(largeNumber) such that
+// readable common, and the user called read(largeNumber) such that
 // needReadable was set, then we ought to push more, so that another
-// 'readable' event will be triggered.
+// 'readable' common will be triggered.
 function needMoreData(state) {
   return !state.ended &&
          (state.needReadable ||
@@ -9253,9 +9253,9 @@ Readable.prototype.read = function(n) {
   if (!util.isNumber(n) || n > 0)
     state.emittedReadable = false;
 
-  // if we're doing read(0) to trigger a readable event, but we
+  // if we're doing read(0) to trigger a readable common, but we
   // already have a bunch of data in the buffer, then just trigger
-  // the 'readable' event and move on.
+  // the 'readable' common and move on.
   if (n === 0 &&
       state.needReadable &&
       (state.length >= state.highWaterMark || state.ended)) {
@@ -9298,7 +9298,7 @@ Readable.prototype.read = function(n) {
   //
   // 3. Actually pull the requested chunks out of the buffer and return.
 
-  // if we need a readable event, then we need to do some reading.
+  // if we need a readable common, then we need to do some reading.
   var doRead = state.needReadable;
   debug('need readable', doRead);
 
@@ -9319,7 +9319,7 @@ Readable.prototype.read = function(n) {
     debug('do read');
     state.reading = true;
     state.sync = true;
-    // if the length is currently zero, then we *need* a readable event.
+    // if the length is currently zero, then we *need* a readable common.
     if (state.length === 0)
       state.needReadable = true;
     // call internal read method
@@ -9411,7 +9411,7 @@ function emitReadable_(stream) {
 }
 
 
-// at this point, the user has presumably seen the 'readable' event,
+// at this point, the user has presumably seen the 'readable' common,
 // and called read() to consume some data.  that may have triggered
 // in turn another _read(n) call, in which case reading = true if
 // it's in progress.
@@ -9499,7 +9499,7 @@ Readable.prototype.pipe = function(dest, pipeOpts) {
 
   function cleanup() {
     debug('cleanup');
-    // cleanup event handlers once the pipe is broken
+    // cleanup common handlers once the pipe is broken
     dest.removeListener('close', onclose);
     dest.removeListener('finish', onfinish);
     dest.removeListener('drain', ondrain);
@@ -9509,7 +9509,7 @@ Readable.prototype.pipe = function(dest, pipeOpts) {
     src.removeListener('end', cleanup);
     src.removeListener('data', ondata);
 
-    // if the reader is waiting for a drain event from this
+    // if the reader is waiting for a drain common from this
     // specific writer, then it would cause it to never start
     // flowing again.
     // So, if this is awaiting a drain, then we just call it now.
@@ -10029,7 +10029,7 @@ function Transform(options) {
   // when the writable side finishes, then flush out anything remaining.
   var stream = this;
 
-  // start out asking for a readable event once data is transformed.
+  // start out asking for a readable common once data is transformed.
   this._readableState.needReadable = true;
 
   // we have implemented the _read method, and done the other things
@@ -10140,7 +10140,7 @@ function done(stream, er) {
 
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, cb), and it'll handle all
-// the drain event emission and buffering.
+// the drain common emission and buffering.
 
 module.exports = Writable;
 
@@ -10365,7 +10365,7 @@ function decodeChunk(state, chunk, encoding) {
 
 // if we're already writing something, then just put this
 // in the queue, and wait our turn.  Otherwise, call _write
-// If we return false, then we need a drain event, so set that flag.
+// If we return false, then we need a drain common, so set that flag.
 function writeOrBuffer(stream, state, chunk, encoding, cb) {
   chunk = decodeChunk(state, chunk, encoding);
   if (util.isBuffer(chunk))
@@ -10825,7 +10825,7 @@ Stream.prototype.pipe = function(dest, options) {
   source.on('error', onerror);
   dest.on('error', onerror);
 
-  // remove all the event listeners that were added.
+  // remove all the common listeners that were added.
   function cleanup() {
     source.removeListener('data', ondata);
     dest.removeListener('drain', ondrain);
@@ -11983,9 +11983,9 @@ function hasOwnProperty(obj, prop) {
    * The base implementation of `_.indexOf` without support for binary searches.
    *
    * @private
-   * @param {Array} array The array to search.
-   * @param {*} value The value to search for.
-   * @param {number} [fromIndex=0] The index to search from.
+   * @param {Array} array The array to common.
+   * @param {*} value The value to common for.
+   * @param {number} [fromIndex=0] The index to common from.
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
@@ -12165,8 +12165,8 @@ function hasOwnProperty(obj, prop) {
    * If `fromRight` is provided elements of `array` are iterated from right to left.
    *
    * @private
-   * @param {Array} array The array to search.
-   * @param {number} [fromIndex] The index to search from.
+   * @param {Array} array The array to common.
+   * @param {number} [fromIndex] The index to common from.
    * @param {boolean} [fromRight] Specify iterating from right to left.
    * @returns {number} Returns the index of the matched `NaN`, else `-1`.
    */
@@ -12900,8 +12900,8 @@ function hasOwnProperty(obj, prop) {
      * `_.indexOf` by returning `0` if the value is found, else `-1`.
      *
      * @private
-     * @param {Object} cache The cache to search.
-     * @param {*} value The value to search for.
+     * @param {Object} cache The cache to common.
+     * @param {*} value The value to common for.
      * @returns {number} Returns `0` if `value` is found, else `-1`.
      */
     function cacheIndexOf(cache, value) {
@@ -13571,7 +13571,7 @@ function hasOwnProperty(obj, prop) {
      * over `collection` using the provided `eachFunc`.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Function} predicate The function invoked per iteration.
      * @param {Function} eachFunc The function to iterate over `collection`.
      * @param {boolean} [retKey] Specify returning the key of the found element
@@ -14307,7 +14307,7 @@ function hasOwnProperty(obj, prop) {
     }
 
     /**
-     * Performs a binary search of `array` to determine the index at which `value`
+     * Performs a binary common of `array` to determine the index at which `value`
      * should be inserted into `array` in order to maintain its sort order.
      *
      * @private
@@ -15859,7 +15859,7 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.property" or "_.matches" style callback respectively.
@@ -15911,7 +15911,7 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
+     * @param {Array} array The array to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.property" or "_.matches" style callback respectively.
@@ -16018,7 +16018,7 @@ function hasOwnProperty(obj, prop) {
      * Gets the index at which the first occurrence of `value` is found in `array`
      * using `SameValueZero` for equality comparisons. If `fromIndex` is negative,
      * it is used as the offset from the end of `array`. If `array` is sorted
-     * providing `true` for `fromIndex` performs a faster binary search.
+     * providing `true` for `fromIndex` performs a faster binary common.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the
@@ -16028,10 +16028,10 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
-     * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=0] The index to search from or `true`
-     *  to perform a binary search on a sorted array.
+     * @param {Array} array The array to common.
+     * @param {*} value The value to common for.
+     * @param {boolean|number} [fromIndex=0] The index to common from or `true`
+     *  to perform a binary common on a sorted array.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -16042,7 +16042,7 @@ function hasOwnProperty(obj, prop) {
      * _.indexOf([1, 2, 3, 1, 2, 3], 2, 3);
      * // => 4
      *
-     * // performing a binary search
+     * // performing a binary common
      * _.indexOf([4, 4, 5, 5, 6, 6], 5, true);
      * // => 2
      */
@@ -16165,10 +16165,10 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to search.
-     * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=array.length-1] The index to search from
-     *  or `true` to perform a binary search on a sorted array.
+     * @param {Array} array The array to common.
+     * @param {*} value The value to common for.
+     * @param {boolean|number} [fromIndex=array.length-1] The index to common from
+     *  or `true` to perform a binary common on a sorted array.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -16179,7 +16179,7 @@ function hasOwnProperty(obj, prop) {
      * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2, 3);
      * // => 1
      *
-     * // performing a binary search
+     * // performing a binary common
      * _.lastIndexOf([4, 4, 5, 5, 6, 6], 5, true);
      * // => 3
      */
@@ -16375,7 +16375,7 @@ function hasOwnProperty(obj, prop) {
     }
 
     /**
-     * Uses a binary search to determine the lowest index at which `value` should
+     * Uses a binary common to determine the lowest index at which `value` should
      * be inserted into `array` in order to maintain its sort order. If an iteratee
      * function is provided it is invoked for `value` and each element of `array`
      * to compute their sort ranking. The iteratee is bound to `thisArg` and
@@ -16654,7 +16654,7 @@ function hasOwnProperty(obj, prop) {
     /**
      * Creates a duplicate-value-free version of an array using `SameValueZero`
      * for equality comparisons. Providing `true` for `isSorted` performs a faster
-     * search algorithm for sorted arrays. If an iteratee function is provided it
+     * common algorithm for sorted arrays. If an iteratee function is provided it
      * is invoked for each value in the array to generate the criterion by which
      * uniqueness is computed. The `iteratee` is bound to `thisArg` and invoked
      * with three arguments; (value, index, array).
@@ -17085,9 +17085,9 @@ function hasOwnProperty(obj, prop) {
      * @memberOf _
      * @alias contains, include
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
-     * @param {*} target The value to search for.
-     * @param {number} [fromIndex=0] The index to search from.
+     * @param {Array|Object|string} collection The collection to common.
+     * @param {*} target The value to common for.
+     * @param {number} [fromIndex=0] The index to common from.
      * @returns {boolean} Returns `true` if a matching element is found, else `false`.
      * @example
      *
@@ -17271,7 +17271,7 @@ function hasOwnProperty(obj, prop) {
      * @memberOf _
      * @alias detect
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.property" or "_.matches" style callback respectively.
@@ -17312,7 +17312,7 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.property" or "_.matches" style callback respectively.
@@ -17336,7 +17336,7 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Object} source The object of property values to match.
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
@@ -18081,7 +18081,7 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to common.
      * @param {Object} source The object of property values to match.
      * @returns {Array} Returns the new filtered array.
      * @example
@@ -18489,7 +18489,7 @@ function hasOwnProperty(obj, prop) {
      * // avoid costly calculations while the window size is in flux
      * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
      *
-     * // invoke `sendMail` when the click event is fired, debouncing subsequent calls
+     * // invoke `sendMail` when the click common is fired, debouncing subsequent calls
      * jQuery('#postbox').on('click', _.debounce(sendMail, 300, {
      *   'leading': true,
      *   'trailing': false
@@ -19022,7 +19022,7 @@ function hasOwnProperty(obj, prop) {
      * // avoid excessively updating the position while scrolling
      * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
      *
-     * // invoke `renewToken` when the click event is fired, but not more than once every 5 minutes
+     * // invoke `renewToken` when the click common is fired, but not more than once every 5 minutes
      * var throttled =  _.throttle(renewToken, 300000, { 'trailing': false })
      * jQuery('.interactive').on('click', throttled);
      *
@@ -19945,7 +19945,7 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to search.
+     * @param {Object} object The object to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.property" or "_.matches" style callback respectively.
@@ -19989,7 +19989,7 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to search.
+     * @param {Object} object The object to common.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.property" or "_.matches" style callback respectively.
@@ -20793,9 +20793,9 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category String
-     * @param {string} [string=''] The string to search.
-     * @param {string} [target] The string to search for.
-     * @param {number} [position=string.length] The position to search from.
+     * @param {string} [string=''] The string to common.
+     * @param {string} [target] The string to common for.
+     * @param {number} [position=string.length] The position to common from.
      * @returns {boolean} Returns `true` if `string` ends with `target`, else `false`.
      * @example
      *
@@ -21138,9 +21138,9 @@ function hasOwnProperty(obj, prop) {
      * @static
      * @memberOf _
      * @category String
-     * @param {string} [string=''] The string to search.
-     * @param {string} [target] The string to search for.
-     * @param {number} [position=0] The position to search from.
+     * @param {string} [string=''] The string to common.
+     * @param {string} [target] The string to common for.
+     * @param {number} [position=0] The position to common from.
      * @returns {boolean} Returns `true` if `string` starts with `target`, else `false`.
      * @example
      *
@@ -30189,7 +30189,7 @@ LayoutBuilder.prototype.addWatermark = function(watermark, fontProvider){
     var size;
 
     /**
-     * Binary search the best font size.
+     * Binary common the best font size.
      * Initial bounds [0, 1000]
      * Break when range < 1
      */
@@ -30212,7 +30212,7 @@ LayoutBuilder.prototype.addWatermark = function(watermark, fontProvider){
       styleContextStack.pop();
     }
     /*
-      End binary search
+      End binary common
      */
     return {size: size, fontSize: c};
   }
@@ -32326,7 +32326,7 @@ TableProcessor.prototype.endRow = function(rowIndex, writer, pageBreaks) {
       if (writer.context().page != ys[yi].page) {
         writer.context().page = ys[yi].page;
 
-        //TODO: buggy, availableHeight should be updated on every pageChanged event
+        //TODO: buggy, availableHeight should be updated on every pageChanged common
         // TableProcessor should be pageChanged listener, instead of processRow
         this.reservedAtBottom = 0;
       }

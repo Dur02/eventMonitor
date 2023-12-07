@@ -3,8 +3,7 @@ import type {
   GetEventConfigListByConfigName,
   GetResultDataByConfigIdRespType,
   GetResultDataByConfigIdType
-} from 'src/types/api/eventAnalyse'
-import type { AxiosResponse } from 'axios'
+} from '@/types/api/eventAnalyse'
 
 // 事件库分析-执行任务
 export function runTask({ configId }: { configId: number } ) {

@@ -87,11 +87,11 @@ define(function (require) {
     };
 
     /**
-     * Register event handling functions
+     * Register common handling functions
      */
     Layer3D.prototype._initHandlers = function () {
 
-        // Mouse event handling
+        // Mouse common handling
         this.bind('click', this._clickHandler, this);
         this.bind('mousedown', this._mouseDownHandler, this);
         this.bind('mouseup', this._mouseUpHandler, this);

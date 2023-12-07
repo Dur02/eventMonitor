@@ -10,26 +10,21 @@ import {
   NButton,
   useMessage
 } from 'naive-ui'
-// import {
-//   cardDarkThemeOverrides,
-//   cardLightThemeOverrides,
-//   drawerDarkThemeOverrides,
-//   drawerLightThemeOverrides
-// } from '@/utils/themeOverrides/common'
-import { getConfigSettingValue } from '@/utils/constant/form/eventConfigSetting'
-import { getConfigFormValue } from '@/utils/constant/form/eventConfigForm'
-import { useSystemStore } from '@/stores/system'
+import { getConfigSettingValue } from '@/utils/constant/form/common/configSetting'
+import { getConfigFormValue } from '@/utils/constant/form/event/eventConfigForm'
 import { storeToRefs } from 'pinia'
-import EventConfigSetting from '@/components/form/event/EventConfigSetting.vue'
+import ConfigSetting from '@/components/form/common/ConfigSetting.vue'
 import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
-import type { eventConfigSettingInitialValueType, eventConfigFormInitialValueType } from '@/types/components/config/event'
+import type { configSettingInitialValueType } from '@/types/components/form/common/configSetting'
+import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
 import { addEventConfig, updateEventConfig } from '@/api/eventConfiguration'
 import { useEventConfigStore } from '@/stores/eventConfig'
+import { useConstantStore } from '@/stores/constant'
 
 const message = useMessage()
 
-const systemStore = useSystemStore()
-const { isLight } = storeToRefs(systemStore)
+const constantStore = useConstantStore()
+const { eventConfigTypeList } = storeToRefs(constantStore)
 const eventConfigStore = useEventConfigStore()
 const { paginationReactive } = storeToRefs(eventConfigStore)
 const { reloadTableData } = eventConfigStore
@@ -37,7 +32,7 @@ const { reloadTableData } = eventConfigStore
 const props = defineProps<{
   drawerTitle: string,
   drawerShow: boolean,
-  settingInitialValue: eventConfigSettingInitialValueType,
+  settingInitialValue: configSettingInitialValueType,
   formInitialValue: eventConfigFormInitialValueType,
   settingDisabled: boolean,
   formDisabled: boolean,
@@ -150,13 +145,14 @@ const handleUpdate = () => {
         <n-card
           :bordered="false"
         >
-          <event-config-setting
+          <ConfigSetting
             ref="configSetting"
+            :configList="eventConfigTypeList"
             :initialValue="settingInitialValue"
             :settingDisabled="settingDisabled"
             @selectConfigType="handleTypesChange"
           />
-          <event-config-form
+          <EventConfigForm
             ref="configForm"
             :initialValue="formInitialValue"
             :configType="configType"

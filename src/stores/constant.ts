@@ -22,6 +22,7 @@ export const useConstantStore = defineStore('constant', () => {
   const religionCode: Ref<SelectOption[]>  = ref([])
   const rootCodeList: Ref<SelectOption[]> = ref([])
   const eventConfigTypeList: Ref<SelectOption[]> = ref([])
+  const graphConfigTypeList: Ref<SelectOption[]> = ref([])
 
   const getAllEventCodeList = async () => {
     if (actorTypeCode.value.length === 0) {
@@ -110,6 +111,18 @@ export const useConstantStore = defineStore('constant', () => {
     return Promise.resolve()
   }
 
+  const getAllGraphConfigType = async () => {
+    if (graphConfigTypeList.value.length === 0) {
+      try {
+        const { data } = await getConfigCodeList({ configType: 2 })
+        graphConfigTypeList.value = data
+      } catch (e) {
+        return Promise.reject()
+      }
+    }
+    return Promise.resolve()
+  }
+
   return {
     actorCountryCodeList,
     actorTypeCode,
@@ -123,7 +136,9 @@ export const useConstantStore = defineStore('constant', () => {
     religionCode,
     rootCodeList,
     eventConfigTypeList,
+    graphConfigTypeList,
     getAllEventCodeList,
-    getAllEventConfigType
+    getAllEventConfigType,
+    getAllGraphConfigType
   }
 })

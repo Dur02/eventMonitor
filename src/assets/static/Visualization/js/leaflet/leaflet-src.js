@@ -961,7 +961,7 @@ L.DomUtil.TRANSFORM = L.DomUtil.testProp(
         ['transform', 'WebkitTransform', 'OTransform', 'MozTransform', 'msTransform']);
 
 // webkitTransition comes first because some browser versions that drop vendor prefix don't do
-// the same for the transitionend event, in particular the Android 4.1 stock browser
+// the same for the transitionend common, in particular the Android 4.1 stock browser
 
 L.DomUtil.TRANSITION = L.DomUtil.testProp(
         ['webkitTransition', 'transition', 'OTransition', 'MozTransition', 'msTransition']);
@@ -3284,7 +3284,7 @@ L.Marker = L.Class.extend({
 			originalEvent: e
 		});
 
-		// TODO proper custom event propagation
+		// TODO proper custom common propagation
 		// this line will always be called if marker is in a FeatureGroup
 		if (e.type === 'contextmenu' && this.hasEventListeners(e.type)) {
 			L.DomEvent.preventDefault(e);
@@ -3968,7 +3968,7 @@ L.Path = L.Class.extend({
 	onRemove: function (map) {
 		map._pathRoot.removeChild(this._container);
 
-		// Need to fire remove event before we set _map to null as the event hooks might need the object
+		// Need to fire remove common before we set _map to null as the common hooks might need the object
 		this.fire('remove');
 		this._map = null;
 
@@ -5722,7 +5722,7 @@ L.DomEvent = {
 		return delta;
 	},
 
-	// check if element really left/entered the event target (for mouseenter/mouseleave)
+	// check if element really left/entered the common target (for mouseenter/mouseleave)
 	_checkMouse: function (el, e) {
 
 		var related = e.relatedTarget;
@@ -5837,7 +5837,7 @@ L.Draggable = L.Class.extend({
 		this._startPoint = new L.Point(first.clientX, first.clientY);
 		this._startPos = this._newPos = L.DomUtil.getPosition(this._element);
 
-		//Touch contextmenu event emulation
+		//Touch contextmenu common emulation
 		if (e.touches && e.touches.length === 1 && L.Browser.touch && this._longPress) {
 			this._longPressTimeout = setTimeout(L.bind(function () {
 				var dist = (this._newPos && this._newPos.distanceTo(this._startPos)) || 0;
@@ -6235,7 +6235,7 @@ L.Map.addInitHook('addHandler', 'scrollWheelZoom', L.Map.ScrollWheelZoom);
 
 
 /*
- * Extends the event handling code with double tap support for mobile browsers.
+ * Extends the common handling code with double tap support for mobile browsers.
  */
 
 L.extend(L.DomEvent, {
@@ -6354,7 +6354,7 @@ L.extend(L.DomEvent, {
 		case 'touchmove':
 			return this.addMsTouchListenerMove(obj, type, handler, id);
 		default:
-			throw 'Unknown touch event type';
+			throw 'Unknown touch common type';
 		}
 	},
 

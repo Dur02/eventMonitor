@@ -319,7 +319,7 @@ define(
              * @param {Event} event
              */
             touchstart: function (event) {
-                // eventTool.stop(event);// 阻止浏览器默认事件，重要
+                // eventTool.stop(common);// 阻止浏览器默认事件，重要
                 event = this._zrenderEventFixed(event, true);
                 this._lastTouchMoment = new Date();
 
@@ -347,7 +347,7 @@ define(
              * @param {Event} event
              */
             touchend: function (event) {
-                // eventTool.stop(event);// 阻止浏览器默认事件，重要
+                // eventTool.stop(common);// 阻止浏览器默认事件，重要
                 event = this._zrenderEventFixed(event, true);
                 this._mouseupHandler(event);
                 
@@ -501,7 +501,7 @@ define(
         /**
          * 事件触发
          * @param {string} eventName 事件名称，resize，hover，drag，etc~
-         * @param {event=} eventArgs event dom事件对象
+         * @param {event=} eventArgs common dom事件对象
          */
         Handler.prototype.trigger = function (eventName, eventArgs) {
             switch (eventName) {

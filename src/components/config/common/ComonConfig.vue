@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
-import type { FormInst } from 'naive-ui'
-import type { eventConfigFormInitialValueType, searchFormType } from '@/types/components/config/event'
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import type { Ref, Component } from 'vue'
+import type { searchFormType } from '@/types/components/config/common'
+import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
+import { nextTick, ref } from 'vue'
+import type { SelectOption } from 'naive-ui'
 import {
   NButton,
   NDataTable,
@@ -14,29 +15,32 @@ import {
   NPopconfirm
 } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { allColumns, configStatus } from '@/utils/constant/config/event/eventConfig'
-import { eventConfigSettingInitialValue } from '@/utils/constant/form/eventConfigSetting'
-import { eventConfigFormInitialValue } from '@/utils/constant/form/eventConfigForm'
-import EventConfigDrawer from '@/components/drawer/EventConfigDrawer.vue'
-import { useConstantStore } from '@/stores/constant'
-import { useEventConfigStore } from '@/stores/eventConfig'
+import { configStatus } from '@/utils/constant/config/common/search'
+import { configSettingInitialValue } from '@/utils/constant/form/common/configSetting'
 import deepCopy from '@/utils/function/deepcopy'
-import type { eventConfigSettingInitialValueType } from '@/types/components/config/event'
+import type { configSettingInitialValueType } from '@/types/components/form/common/configSetting'
 import { renderOption } from '@/utils/function/renderOption'
 
-const constantStore = useConstantStore()
-const { eventConfigTypeList } = storeToRefs(constantStore)
-const { getAllEventConfigType } = constantStore
-const eventConfigStore = useEventConfigStore()
-const { tableLoading, dataRef, checkedRowKeysRef, paginationReactive } = storeToRefs(eventConfigStore)
+const props = defineProps<{
+  configTypeList: SelectOption[],
+  configStore: any,
+  configDrawer: Component,
+  formInitialValue: eventConfigFormInitialValueType,
+  allColumns: Function
+}>()
+
+const { tableLoading, dataRef, checkedRowKeysRef, paginationReactive } = storeToRefs(props.configStore)
 const {
-  setTableLoading,
   changeLastSearchValue,
   setCheckedRowKeys,
   reloadTableData,
   handleMultipleDelete: handleStoreDeleteInStore,
-  resetAll
-} = eventConfigStore
+  runTask,
+  updateSingle,
+  changeIsShow,
+  stopTask,
+  handleSingleDelete
+} = props.configStore
 
 const searchBtnLoading: Ref<boolean> = ref(false)
 const refreshBtnLoading: Ref<boolean> = ref(false)
@@ -45,8 +49,8 @@ const drawerShow: Ref<boolean>  = ref(false)
 const drawerTitle: Ref<string> = ref('')
 const settingDisabled: Ref<boolean>  = ref(false)
 const formDisabled: Ref<boolean>  = ref(false)
-const settingInitialValue: Ref<eventConfigSettingInitialValueType> = ref(eventConfigSettingInitialValue)
-const formInitialValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
+const settingInitialValue: Ref<configSettingInitialValueType> = ref(configSettingInitialValue)
+const formInitialValue: Ref<eventConfigFormInitialValueType> = ref(props.formInitialValue)
 const configId: Ref<number | null> = ref(null)
 
 // 保存搜索表单的值
@@ -86,7 +90,7 @@ const handlePageChange = async (currentPage: number): Promise<void> => {
 
 const handleUpdateDrawer = (
   title: string,
-  settingInitial: eventConfigSettingInitialValueType,
+  settingInitial: configSettingInitialValueType,
   formInitial: eventConfigFormInitialValueType,
   show: boolean,
   settingDisabledParam: boolean,
@@ -105,8 +109,8 @@ const handleUpdateDrawer = (
 const handleOpenCreate = () => {
   handleUpdateDrawer(
     '创建配置',
-    eventConfigSettingInitialValue,
-    eventConfigFormInitialValue,
+    configSettingInitialValue,
+    props.formInitialValue,
     true,
     false,
     false,
@@ -122,29 +126,14 @@ const updateDrawerShow = (bool: boolean): void => {
 const resetValue = () => {
   handleUpdateDrawer(
     '',
-    eventConfigSettingInitialValue,
-    eventConfigFormInitialValue,
+    configSettingInitialValue,
+    props.formInitialValue,
     false,
     false,
     false,
     null
   )
 }
-
-onMounted(async () => {
-  try {
-    setTableLoading(true)
-    await getAllEventConfigType()
-    setTableLoading(false)
-    await reloadTableData(1)
-  } catch (e) {
-    setTableLoading(false)
-  }
-})
-
-onBeforeUnmount(() => {
-  resetAll()
-})
 </script>
 
 <template>
@@ -168,7 +157,7 @@ onBeforeUnmount(() => {
       <n-form-item label="类型筛选">
         <n-select
           v-model:value="searchFormValue.configType"
-          :options="eventConfigTypeList"
+          :options="configTypeList"
           placeholder="请选择"
           :render-option="renderOption"
           clearable
@@ -243,7 +232,7 @@ onBeforeUnmount(() => {
       class="table"
       size="small"
       :checked-row-keys="checkedRowKeysRef"
-      :columns="allColumns(handleUpdateDrawer)"
+      :columns="allColumns(handleUpdateDrawer, runTask, updateSingle, changeIsShow, stopTask, handleSingleDelete, configTypeList)"
       :data="dataRef"
       :pagination="paginationReactive"
       :row-key="(rowData) => rowData.id"
@@ -254,7 +243,8 @@ onBeforeUnmount(() => {
       @update:page="handlePageChange"
       @update:checked-row-keys="setCheckedRowKeys"
     />
-    <event-config-drawer
+    <component
+      :is="configDrawer"
       :drawer-title="drawerTitle"
       :drawerShow="drawerShow"
       :settingInitialValue="settingInitialValue"

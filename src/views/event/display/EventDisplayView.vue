@@ -4,7 +4,7 @@ import EventDisplay from '@/components/event/display/EventDisplay.vue'
 </script>
 
 <template>
-  <event-display />
+  <EventDisplay />
 </template>
 
 <style scoped lang="scss">

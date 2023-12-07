@@ -198,67 +198,67 @@ define(function (require) {
 
     // 对象可以通过 onxxxx 绑定事件
     /**
-     * @event module:zrender/mixin/Eventful#onclick
+     * @common module:zrender/mixin/Eventful#onclick
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#onmouseover
+     * @common module:zrender/mixin/Eventful#onmouseover
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#onmouseout
+     * @common module:zrender/mixin/Eventful#onmouseout
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#onmousemove
+     * @common module:zrender/mixin/Eventful#onmousemove
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#onmousewheel
+     * @common module:zrender/mixin/Eventful#onmousewheel
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#onmousedown
+     * @common module:zrender/mixin/Eventful#onmousedown
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#onmouseup
+     * @common module:zrender/mixin/Eventful#onmouseup
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#ondragstart
+     * @common module:zrender/mixin/Eventful#ondragstart
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#ondragend
+     * @common module:zrender/mixin/Eventful#ondragend
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#ondragenter
+     * @common module:zrender/mixin/Eventful#ondragenter
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#ondragleave
+     * @common module:zrender/mixin/Eventful#ondragleave
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#ondragover
+     * @common module:zrender/mixin/Eventful#ondragover
      * @type {Function}
      * @default null
      */
     /**
-     * @event module:zrender/mixin/Eventful#ondrop
+     * @common module:zrender/mixin/Eventful#ondrop
      * @type {Function}
      * @default null
      */
