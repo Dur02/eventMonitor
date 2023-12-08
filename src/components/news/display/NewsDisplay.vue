@@ -363,7 +363,7 @@ footStore.$onAction(({ name, after }) => {
   </n-space>
   <n-scrollbar
     ref="scrollbarRef"
-    style="max-height: calc(100vh - 258px);"
+    style="max-height: calc(100vh - 266px);"
   >
     <n-space v-if="data.length !== 0" vertical :size="[0, 10]">
       <n-card
@@ -514,7 +514,7 @@ footStore.$onAction(({ name, after }) => {
 }
 
 .pagination {
-  float: right;
+  justify-content: flex-end;
   margin-top: 10px;
 }
 </style>

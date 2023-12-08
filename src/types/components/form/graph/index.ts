@@ -13,6 +13,6 @@ export interface graphConfigFormInitialValueType {
   personsIsBig: number,
   organizations: string,
   organizationsIsBig: number,
-  websiteRegion: string,
+  websiteRegion: Array<string> | null,
   cameoeventids: string
 }

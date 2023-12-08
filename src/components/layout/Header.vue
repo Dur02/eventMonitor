@@ -3,11 +3,13 @@ import { ref } from 'vue'
 import { NAvatar, NDropdown, NH2, NIcon, NLayoutHeader, NSpace, NText } from 'naive-ui'
 import { Person } from '@vicons/ionicons5'
 import ChangePassword from '@/components/modal/ChangePassword.vue'
-import router from '@/router'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { options } from '@/utils/constant/layout/header'
 import { storeToRefs } from 'pinia'
 import Clock from '@/components/layout/Clock.vue'
+
+const router = useRouter()
 
 const userStore = useUserStore()
 const { nickname } = storeToRefs(userStore)

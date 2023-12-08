@@ -1,5 +1,5 @@
 import request from './index'
-import type { GetEventConfigListRespType, GetEventConfigListType, UpdateEventConfigShowType } from 'src/types/api/eventConfiguration'
+import type { configListRequestType, UpdateEventConfigShowType } from 'src/types/api/eventConfiguration'
 import type { AxiosResponse } from 'axios'
 
 // 是否挂起转态修改：1->显示(默认)，2->不显示
@@ -48,7 +48,7 @@ export function addEventConfig(data: any): Promise<AxiosResponse<any, any>> {
   })
 }
 
-// 查询事件配置管理列表
+// 获取事件配置管理详细信息
 export function getSingleEventConfig({ id }: { id: number }) {
   return request({
     url: `/eventMonitor/eventConfiguration/${id}`,
@@ -65,8 +65,8 @@ export function getEventConfigList(
     createByName,
     pageNum,
     pageSize
-  }: GetEventConfigListType
-): Promise<GetEventConfigListRespType> {
+  }: configListRequestType
+) {
   return request({
     url: '/eventMonitor/eventConfiguration/list',
     method: 'get',

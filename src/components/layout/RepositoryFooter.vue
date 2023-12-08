@@ -5,11 +5,15 @@ import { ref } from 'vue'
 import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
 import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
 import { eventConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
-import GraphConfigForm from '@/components/form/graph/GraphConfigForm.vue';
+import GraphConfigForm from '@/components/form/graph/GraphConfigForm.vue'
+import { graphConfigFormInitialValue } from '@/utils/constant/form/graph/graphConfigForm'
+import type { graphConfigFormInitialValueType } from '@/types/components/form/graph'
 
 const footerExpand: Ref<boolean> = ref(false)
-const configFormRef: Ref<any | null> = ref(null)
+const eventConfigFormRef: Ref<any | null> = ref(null)
 const eventConfigFormValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
+const graphConfigFormRef: Ref<any | null> = ref(null)
+const graphConfigFormValue: Ref<graphConfigFormInitialValueType> = ref(graphConfigFormInitialValue)
 
 const changeExpand = () => {
   footerExpand.value = !footerExpand.value
@@ -45,7 +49,7 @@ const changeExpand = () => {
       >
         <n-scrollbar style="max-height: 100%;">
           <EventConfigForm
-            ref="configFormRef"
+            ref="eventConfigFormRef"
             :initialValue="eventConfigFormValue"
             :configType="['event_news_show_viz']"
             :formDisabled="false"
@@ -59,9 +63,9 @@ const changeExpand = () => {
         display-directive="show:lazy"
       >
         <n-scrollbar style="max-height: 100%;">
-          <graph-config-form
-            ref="configFormRef"
-            :initialValue="{}"
+          <GraphConfigForm
+            ref="graphConfigFormRef"
+            :initialValue="graphConfigFormValue"
             :configType="['event_news_show_viz']"
             :formDisabled="false"
             style="padding: 5px 13px;"

@@ -6,13 +6,14 @@ import { useEventConfigStore } from '@/stores/eventConfig'
 import { onMounted, onBeforeUnmount } from 'vue'
 import EventConfigDrawer from '@/components/drawer/EventConfigDrawer.vue'
 import { eventConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
-import { allCommonColumns } from '@/utils/constant/config/event/eventConfig'
+import { allCommonColumns } from '@/utils/constant/config/common/commonConfig'
 
 const constantStore = useConstantStore()
 const { graphConfigTypeList } = storeToRefs(constantStore)
 const { getAllGraphConfigType } = constantStore
 const eventConfigStore = useEventConfigStore()
 const {
+  setConfigPage,
   setTableLoading,
   reloadTableData,
   resetAll
@@ -20,6 +21,7 @@ const {
 
 onMounted(async () => {
   try {
+    setConfigPage('graph')
     setTableLoading(true)
     await getAllGraphConfigType()
     setTableLoading(false)

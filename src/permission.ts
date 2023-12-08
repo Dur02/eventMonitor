@@ -3,6 +3,7 @@ import { createDiscreteApi } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+import { useSystemStore } from '@/stores/system';
 
 const { loadingBar } = createDiscreteApi(
   ['loadingBar', 'dialog']
@@ -16,6 +17,9 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
   const userStore = useUserStore()
   const { roles } = storeToRefs(userStore)
   const { getInfo, logout } = userStore
+  const systemStore = useSystemStore()
+  const { showLogoutDialog } = storeToRefs(systemStore)
+  const { setShowLogoutDialog } = systemStore
 
   if (localStorage.getItem('token')) {
     if (whiteList.indexOf(to.path) !== -1) {
@@ -27,7 +31,10 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
           await getInfo()
           next({ ...to, replace: true })
         } catch (e) {
-          await logout()
+          if (!showLogoutDialog.value) {
+            await logout()
+            setShowLogoutDialog(true)
+          }
           next({ path: '/login', replace: true })
         }
       } else {

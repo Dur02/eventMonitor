@@ -14,11 +14,23 @@ import type { searchFormType } from '@/types/components/config/common'
 import type { eventConfigRowsType } from '@/types/components/config/event'
 import { runTask as runTaskApi } from '@/api/eventAnalyse'
 import deepCopy from '@/utils/function/deepcopy'
+import {
+  deleteGraphConfig,
+  getGraphConfigList,
+  getSingleGraphConfig
+} from '@/api/gkgConfiguration'
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
 
 export const useEventConfigStore = defineStore('eventConfig', () => {
+  const configPage: Ref<'event' | 'graph' | ''> = ref('')
+  const reloadFun: Ref<Function | null> = ref(null)
+  const updateSingleFun: Ref<Function | null> = ref(null)
+  const updateIsShowFun: Ref<Function | null> = ref(null)
+  const runTaskFun: Ref<Function | null> = ref(null)
+  const stopTaskFun: Ref<Function | null> = ref(null)
+  const deleteFun: Ref<Function | null> = ref(null)
   const tableLoading: Ref<boolean> = ref(false)
   const dataRef: Ref<Array<object>> = ref([])
   const checkedRowKeysRef: Ref<DataTableRowKey[]> = ref([])
@@ -38,6 +50,39 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     }
   })
 
+  const setConfigPage = (newValue: 'event' | 'graph' | '') => {
+    configPage.value = newValue
+    switch (newValue) {
+      case "event": {
+        reloadFun.value = getEventConfigList
+        updateSingleFun.value = getSingleEventConfig
+        updateIsShowFun.value = updateEventConfigShow
+        runTaskFun.value = runTaskApi
+        stopTaskFun.value = StopTaskRun
+        deleteFun.value = deleteEventConfig
+        break
+      }
+      case "graph": {
+        reloadFun.value = getGraphConfigList
+        updateSingleFun.value = getSingleGraphConfig
+        updateIsShowFun.value = updateEventConfigShow
+        runTaskFun.value = runTaskApi
+        stopTaskFun.value = StopTaskRun
+        deleteFun.value = deleteGraphConfig
+        break
+      }
+      default: {
+        reloadFun.value = null
+        updateSingleFun.value = null
+        updateIsShowFun.value = null
+        runTaskFun.value = null
+        stopTaskFun.value = null
+        deleteFun.value = null
+        break
+      }
+    }
+  }
+
   const setTableLoading = (newValue: boolean) => {
     tableLoading.value = newValue
   }
@@ -50,6 +95,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     checkedRowKeysRef.value = newValue
   }
 
+
   const reloadTableData = async (page: number) => {
     if (!tableLoading.value) {
       tableLoading.value = true
@@ -57,7 +103,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
       // 数据发生变化就重置多选的行为空
       setCheckedRowKeys([])
       try {
-        const { rows, total } = await getEventConfigList({
+        const { rows, total } = await reloadFun.value!({
           ...lastSearchValue.value,
           pageNum: page,
           pageSize: paginationReactive.pageSize!
@@ -80,7 +126,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     if (!tableLoading.value) {
       tableLoading.value = true
       try {
-        const { data } = await getSingleEventConfig({ id })
+        const { data } = await updateSingleFun.value!({ id })
         dataRef.value = flow(
           map((item: eventConfigRowsType) => {
             if (item.id === data.id) {
@@ -104,7 +150,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     if (!tableLoading.value) {
       tableLoading.value = true
       try {
-        await updateEventConfigShow({ configId: id, isShow: isShow === 1 ? 0 : 1 })
+        await updateIsShowFun.value!({ configId: id, isShow: isShow === 1 ? 0 : 1 })
         tableLoading.value = false
         await reloadTableData(paginationReactive.page!)
       } catch (e) {
@@ -129,7 +175,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
           return item
         })
       )(deepCopy(dataRef.value))
-      await runTaskApi({ configId: id })
+      await runTaskFun.value!({ configId: id })
       await reloadTableData(paginationReactive.page!)
     } catch (e) {
       await reloadTableData(paginationReactive.page!)
@@ -142,7 +188,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     if (!tableLoading.value) {
       tableLoading.value = true
       try {
-        await StopTaskRun({ configId: id })
+        await stopTaskFun.value!({ configId: id })
         tableLoading.value = false
         await reloadTableData(paginationReactive.page!)
       } catch (e) {
@@ -159,7 +205,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
     if (!tableLoading.value) {
       tableLoading.value = true
       try {
-        await deleteEventConfig({ ids: [id] })
+        await deleteFun.value!({ ids: [id] })
         tableLoading.value = false
         // 删除最后一页最后一个时，若当前页码不为1，则把当前页码-1重新请求表格数据
         if (paginationReactive.itemCount! - (paginationReactive.page! - 1) * paginationReactive.pageSize! === 1) {
@@ -198,6 +244,7 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
   }
 
   const resetAll = () => {
+    setConfigPage('')
     tableLoading.value= false
     dataRef.value= []
     checkedRowKeysRef.value = []
@@ -212,11 +259,13 @@ export const useEventConfigStore = defineStore('eventConfig', () => {
   }
 
   return {
+    configPage,
     tableLoading,
     dataRef,
     checkedRowKeysRef,
     lastSearchValue,
     paginationReactive,
+    setConfigPage,
     setTableLoading,
     changeLastSearchValue,
     setCheckedRowKeys,

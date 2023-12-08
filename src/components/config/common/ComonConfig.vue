@@ -15,7 +15,7 @@ import {
   NPopconfirm
 } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { configStatus } from '@/utils/constant/config/common/search'
+import { configStatus } from '@/utils/constant/config/common/commonConfig'
 import { configSettingInitialValue } from '@/utils/constant/form/common/configSetting'
 import deepCopy from '@/utils/function/deepcopy'
 import type { configSettingInitialValueType } from '@/types/components/form/common/configSetting'
@@ -252,6 +252,8 @@ const resetValue = () => {
       :settingDisabled="settingDisabled"
       :formDisabled="formDisabled"
       :configId="configId"
+      :paginationReactive="paginationReactive"
+      :reloadTableData="reloadTableData"
       @DrawerClose="updateDrawerShow"
       @AfterLeave="resetValue"
     />

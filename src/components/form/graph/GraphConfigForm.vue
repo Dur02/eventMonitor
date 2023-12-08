@@ -1,28 +1,26 @@
 <script setup lang="ts">
+import type { FormInst } from 'naive-ui'
 import {
   NForm,
   NFormItem,
   NFormItemGi,
   NInput,
   NCheckboxGroup,
-  NInputNumber,
   NDatePicker,
   NIcon,
   NRadioGroup,
   NRadio,
   NSpace,
   NGrid,
-  NGi,
   NSelect,
-  NCheckbox,
-  NTreeSelect
+  NCheckbox
 } from 'naive-ui'
 import type { Ref } from 'vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import deepCopy from '@/utils/function/deepcopy'
 import { formatTimeStamp } from '@/utils/function/date'
 import type { graphConfigFormInitialValueType } from '@/types/components/form/graph'
-import { Calendar, Grid, Heart } from '@vicons/ionicons5'
+import { Calculator, Calendar, Grid, Heart } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
 import { ObjectGroup } from '@vicons/fa'
 import { CountertopsFilled, PersonSearchRound } from '@vicons/material'
@@ -35,11 +33,25 @@ const props = defineProps<{
   formDisabled: boolean
 }>()
 
+const formRef: Ref<FormInst | null> = ref(null)
 const formValue: Ref<graphConfigFormInitialValueType> = ref(deepCopy(props.initialValue))
 
-onMounted(() => {
-  console.log(props)
-})
+watch(
+  () => props.initialValue,
+  () => {
+    formRef.value?.restoreValidation()
+    formValue.value = deepCopy(props.initialValue)
+    if (!formValue.value.sqldate) {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      formValue.value.sqldate = [start.getTime(), end.getTime()]
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
@@ -124,6 +136,30 @@ onMounted(() => {
           </n-radio>
           <n-radio :value="2">
             包含所选实体集的新闻报道数(NUMARTS)
+          </n-radio>
+        </n-space>
+      </n-radio-group>
+    </n-form-item>
+    <n-form-item
+      path="statisticsBasis"
+      label-style="font-weight: 600;"
+      label-width="115"
+    >
+      <template #label>
+        <div class="icon-label">
+          <n-icon class="icon" size="20">
+            <Calculator />
+          </n-icon>
+          <span>统计依据</span>
+        </div>
+      </template>
+      <n-radio-group v-model:value="formValue.statisticsBasis">
+        <n-space>
+          <n-radio :value="2">
+            数量
+          </n-radio>
+          <n-radio :value="1">
+            比重
           </n-radio>
         </n-space>
       </n-radio-group>

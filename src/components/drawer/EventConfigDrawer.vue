@@ -18,16 +18,12 @@ import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
 import type { configSettingInitialValueType } from '@/types/components/form/common/configSetting'
 import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
 import { addEventConfig, updateEventConfig } from '@/api/eventConfiguration'
-import { useEventConfigStore } from '@/stores/eventConfig'
 import { useConstantStore } from '@/stores/constant'
 
 const message = useMessage()
 
 const constantStore = useConstantStore()
 const { eventConfigTypeList } = storeToRefs(constantStore)
-const eventConfigStore = useEventConfigStore()
-const { paginationReactive } = storeToRefs(eventConfigStore)
-const { reloadTableData } = eventConfigStore
 
 const props = defineProps<{
   drawerTitle: string,
@@ -36,7 +32,9 @@ const props = defineProps<{
   formInitialValue: eventConfigFormInitialValueType,
   settingDisabled: boolean,
   formDisabled: boolean,
-  configId: number | null
+  configId: number | null,
+  paginationReactive: any,
+  reloadTableData: Function
 }>()
 
 const emits = defineEmits(['DrawerClose', 'AfterLeave'])
@@ -69,7 +67,7 @@ const handleCreate = () => {
             ...getConfigSettingValue(configSetting.value),
             ...getConfigFormValue(configForm.value)
           })
-          await reloadTableData(paginationReactive.value.page!)
+          await props.reloadTableData(props.paginationReactive.page!)
           message.success('创建成功')
           handleDrawerClose(false)
         } catch (e) {
@@ -95,7 +93,7 @@ const handleUpdate = () => {
             ...getConfigFormValue(configForm.value),
             id: props.configId
           })
-          await reloadTableData(paginationReactive.value.page!)
+          await props.reloadTableData(props.paginationReactive.page!)
           message.success('修改成功')
           handleDrawerClose(false)
         } catch (e) {

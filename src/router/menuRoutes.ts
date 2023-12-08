@@ -127,7 +127,7 @@ export default [
         name: 'eventConfigure',
         meta: {
           breadcrumb: '事件配置',
-          hasFooter: false,
+          footerType: 'none',
         },
         component: () => import('../views/config/event/EventConfigView.vue')
       },
@@ -136,7 +136,7 @@ export default [
         name: 'graphConfigure',
         meta: {
           breadcrumb: '图谱配置',
-          hasFooter: false,
+          footerType: 'none',
         },
         component: () => import('../views/config/graph/GraphConfigView.vue')
       },

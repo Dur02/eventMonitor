@@ -5,6 +5,7 @@ import {
   NLoadingBarProvider,
   NMessageProvider,
   NNotificationProvider,
+  NModal,
   zhCN,
   dateZhCN,
   lightTheme,
@@ -16,8 +17,12 @@ import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
 
 const systemStore = useSystemStore()
-const { isLight } = storeToRefs(systemStore)
+const { isLight, showLogoutDialog } = storeToRefs(systemStore)
+const { setShowLogoutDialog } = systemStore
 
+const handlePositiveClick = async () => {
+  setShowLogoutDialog(false)
+}
 </script>
 
 <template>
@@ -32,6 +37,14 @@ const { isLight } = storeToRefs(systemStore)
         <n-message-provider>
           <n-notification-provider>
             <RouterView />
+            <n-modal
+              v-model:show="showLogoutDialog"
+              preset="dialog"
+              title="出错"
+              content="登录状态已过期，需要重新登录"
+              positiveText="确定"
+              @after-leave="handlePositiveClick"
+            />
           </n-notification-provider>
         </n-message-provider>
       </n-loading-bar-provider>
