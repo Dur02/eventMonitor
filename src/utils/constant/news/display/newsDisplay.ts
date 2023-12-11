@@ -51,7 +51,7 @@ export const graphDisplayColumns: any =[
     align,
   },
   {
-    title: 'cameoeventids',
+    title: '事件ID集合',
     key: 'cameoeventids',
     ellipsis,
     align,
@@ -65,110 +65,110 @@ export const graphDisplayColumns: any =[
     ellipsisComponent
   },
   {
-    title: 'date',
+    title: '日期',
     key: 'date',
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: 'locations',
+    title: '地理位置',
     key: 'locations',
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: 'numarts',
+    title: '报道数',
     key: 'numarts',
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: 'organizations',
+    title: '组织',
     key: 'organizations',
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: 'persons',
+    title: '人物',
     key: 'persons',
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: 'sources',
-    key: 'sources',
-    ellipsis,
-    align,
-    ellipsisComponent
-  },
-  {
-    title: 'sourceurls',
-    key: 'sourceurls',
-    ellipsis,
-    align,
-    ellipsisComponent
-  },
-  {
-    title: 'themes',
+    title: '主题',
     key: 'themes',
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: 'tone',
+    title: '情感值',
     key: 'tone',
     ellipsis,
     align,
     ellipsisComponent,
     children: [
       {
-        title: 'actRa',
-        key: 'tone.actRa',
-        ellipsis,
-        align,
-        ellipsisComponent
-      },
-      {
-        title: 'avgEm',
+        title: '平均情感',
         key: 'tone.avgEm',
         ellipsis,
         align,
         ellipsisComponent
       },
       {
-        title: 'negEm',
-        key: 'tone.negEm',
-        ellipsis,
-        align,
-        ellipsisComponent
-      },
-      {
-        title: 'polRa',
-        key: 'tone.polRa',
-        ellipsis,
-        align,
-        ellipsisComponent
-      },
-      {
-        title: 'proEm',
+        title: '正向情感',
         key: 'tone.proEm',
         ellipsis,
         align,
         ellipsisComponent
       },
       {
-        title: 'propRa',
+        title: '负向情感',
+        key: 'tone.negEm',
+        ellipsis,
+        align,
+        ellipsisComponent
+      },
+      {
+        title: '极性词比例',
+        key: 'tone.polRa',
+        ellipsis,
+        align,
+        ellipsisComponent
+      },
+      {
+        title: '活动词比例',
+        key: 'tone.actRa',
+        ellipsis,
+        align,
+        ellipsisComponent
+      },
+      {
+        title: '代称词比例',
         key: 'tone.propRa',
         ellipsis,
         align,
         ellipsisComponent
       }
     ]
-  }
+  },
+  {
+    title: '来源',
+    key: 'sources',
+    ellipsis,
+    align,
+    ellipsisComponent
+  },
+  {
+    title: '来源url',
+    key: 'sourceurls',
+    ellipsis,
+    align,
+    ellipsisComponent
+  },
 ]

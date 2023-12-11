@@ -7,8 +7,8 @@ import type { RouteLocationNormalizedLoaded, Router, RouteRecordRaw } from 'vue-
 import { useRoute, useRouter } from 'vue-router'
 import menuRoutes from '@/router/menuRoutes'
 import { useSystemStore } from '@/stores/system'
-import { map } from 'lodash/fp'
-import { storeToRefs } from 'pinia';
+import { flow, map, compact } from 'lodash/fp'
+import { storeToRefs } from 'pinia'
 import type { routeType } from '@/types/components/layout/sider'
 
 const systemStore = useSystemStore()
@@ -27,12 +27,15 @@ const handleSelectedChange = (key: string): void => {
 
 onMounted((): void => {
   const mapChildren = (param: RouteRecordRaw[]): routeType[] => {
-    return map((item: RouteRecordRaw): routeType => ({
-      key: item.name as string,
-      label: item.meta ? item.meta.breadcrumb as string : null,
-      icon: item.meta ? item.meta.icon as Function : null,
-      children: item.children ? mapChildren(item.children) : undefined
-    }))(param)
+    return flow(
+      map((item: RouteRecordRaw): routeType | null => item.meta && item.meta.hidden ? null : ({
+        key: item.name as string,
+        label: item.meta ? item.meta.breadcrumb as string : null,
+        icon: item.meta ? item.meta.icon as Function : null,
+        children: item.children ? mapChildren(item.children) : undefined
+      })),
+      compact
+    )(param)
   }
 
   // 通过menuRoutes生成菜单栏
@@ -43,8 +46,11 @@ watch(
   () => route.name,
   () => {
     selectedMenu.value = route.name as string
+    if (route.meta.activeMenu) {
+      selectedMenu.value = route.meta.activeMenu as string
+    }
     nextTick(() => {
-      menuInstRef.value?.showOption(route.name as string)
+      menuInstRef.value?.showOption(selectedMenu.value)
     })
   },
   {

@@ -165,7 +165,6 @@ watch(
       </n-radio-group>
     </n-form-item>
     <n-form-item
-      path="weightBasis"
       label-style="font-weight: 600;"
       label-width="115"
       :show-feedback="false"
@@ -175,7 +174,7 @@ watch(
           <n-icon class="icon" size="20">
             <CountertopsFilled />
           </n-icon>
-          <span>counts搜索</span>
+          <span>counts</span>
         </div>
       </template>
       <n-grid :cols="24">
@@ -202,7 +201,6 @@ watch(
       </n-grid>
     </n-form-item>
     <n-form-item
-      path="weightBasis"
       label-style="font-weight: 600;"
       label-width="115"
       :show-feedback="false"
@@ -212,7 +210,7 @@ watch(
           <n-icon class="icon" size="20">
             <Document />
           </n-icon>
-          <span>主题搜索</span>
+          <span>主题</span>
         </div>
       </template>
       <n-grid :cols="24">
@@ -230,8 +228,8 @@ watch(
           <n-checkbox
             :checked="formValue.themesIsBig === 0"
             @update:checked="(checked) => {
-                  checked ? formValue.themesIsBig = 0 : formValue.themesIsBig = 1
-                }"
+              checked ? formValue.themesIsBig = 0 : formValue.themesIsBig = 1
+            }"
           >
             区分大小写
           </n-checkbox>
@@ -239,7 +237,6 @@ watch(
       </n-grid>
     </n-form-item>
     <n-form-item
-      path="weightBasis"
       label-style="font-weight: 600;"
       label-width="115"
       :show-feedback="false"
@@ -249,7 +246,7 @@ watch(
           <n-icon class="icon" size="20">
             <Earth16Filled />
           </n-icon>
-          <span>地理搜索</span>
+          <span>地理</span>
         </div>
       </template>
       <n-grid :cols="24">
@@ -267,8 +264,8 @@ watch(
           <n-checkbox
             :checked="formValue.locationsIsBig === 0"
             @update:checked="(checked) => {
-                  checked ? formValue.locationsIsBig = 0 : formValue.locationsIsBig = 1
-                }"
+              checked ? formValue.locationsIsBig = 0 : formValue.locationsIsBig = 1
+            }"
           >
             区分大小写
           </n-checkbox>
@@ -276,7 +273,6 @@ watch(
       </n-grid>
     </n-form-item>
     <n-form-item
-      path="weightBasis"
       label-style="font-weight: 600;"
       label-width="115"
       :show-feedback="false"
@@ -286,7 +282,7 @@ watch(
           <n-icon class="icon" size="20">
             <PersonSearchRound />
           </n-icon>
-          <span>人物搜索</span>
+          <span>人物</span>
         </div>
       </template>
       <n-grid :cols="24">
@@ -313,7 +309,6 @@ watch(
       </n-grid>
     </n-form-item>
     <n-form-item
-      path="weightBasis"
       label-style="font-weight: 600;"
       label-width="115"
       :show-feedback="false"
@@ -323,7 +318,7 @@ watch(
           <n-icon class="icon" size="20">
             <Organization48Filled />
           </n-icon>
-          <span>组织搜索</span>
+          <span>组织</span>
         </div>
       </template>
       <n-grid :cols="24">
@@ -350,7 +345,6 @@ watch(
       </n-grid>
     </n-form-item>
     <n-form-item
-      path="dataSource"
       label-style="font-weight: 600;"
       label-width="115"
     >
@@ -365,7 +359,6 @@ watch(
       <n-select />
     </n-form-item>
     <n-form-item
-      path="dataSource"
       label-style="font-weight: 600;"
       label-width="115"
     >
@@ -390,7 +383,6 @@ watch(
     </n-form-item>
     <p style="margin: 0 0 5px 115px;">支持多个事件ID的精确查询,输入形式包括1.多个ID之间用","(英文)分割,如:256,257;2.两个ID之间用"-"分割,表示事件ID的范围</p>
     <n-form-item
-      path="sqldate"
       label-style="font-weight: 600;"
       label-width="115"
     >

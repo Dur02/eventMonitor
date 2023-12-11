@@ -91,7 +91,7 @@ export default [
         path: 'display',
         name: 'newsDisplay',
         meta: {
-          breadcrumb: '新闻展示',
+          breadcrumb: '事件新闻',
           configType: 'event_news_show_viz',
           footerType: 'normal',
           footerForm: EventFooterSlot,
@@ -109,6 +109,18 @@ export default [
           footerType: 'repository',
         },
         component: () => import('../views/news/display/NewsDisplayView.vue')
+      },
+      {
+        path: 'detail/:urlHash/:i18nValue',
+        name: 'newsDetail',
+        meta: {
+          breadcrumb: '事件新闻',
+          footerType: 'none',
+          hidden: true,
+          activeMenu: 'newsDisplay'
+        },
+        props: true,
+        component: () => import('@/components/news/display/NewsDetail.vue')
       }
     ]
   },

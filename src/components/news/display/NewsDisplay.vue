@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { nextTick, reactive, ref, watch } from 'vue'
-import { getNewsDetail, searchNews } from '@/api/news'
+import { searchNews } from '@/api/news'
 import type { PaginationProps, ScrollbarInst } from 'naive-ui'
 import {
   NSpace,
@@ -18,7 +18,8 @@ import {
   NInput,
   NDatePicker,
   NSelect,
-  NSkeleton
+  NSkeleton,
+  NH2
 } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { flow, map, split, find, propEq } from 'lodash/fp'
@@ -31,12 +32,12 @@ import { intersection } from 'lodash'
 import NewsEvent from '@/components/modal/NewsEvent.vue'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
 import NewsGraph from '@/components/modal/NewsGraph.vue'
-import NewsDetail from '@/components/modal/NewsDetail.vue'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
 
+const router = useRouter()
 const route = useRoute()
 
 const footStore = useFooterStore()
@@ -59,8 +60,6 @@ const lastSearchValue: Ref<NewsSearchValueType> = ref({
   isExact: 1,
   queryContent: ''
 })
-const newsDetailDisplay: Ref<boolean> = ref(false)
-const newsDetailData: Ref<object> = ref({})
 const newsEventDisplay: Ref<boolean> = ref(false)
 const newsEventData: Ref<never[]> = ref([])
 const newsGraphDisplay: Ref<boolean> = ref(false)
@@ -68,7 +67,7 @@ const newsGraphData: Ref<never[]> = ref([])
 const scrollbarRef: Ref<ScrollbarInst | null> = ref(null)
 const paginationReactive: PaginationProps = reactive({
   page: 1,
-  pageSize: 30,
+  pageSize: 10,
   itemCount: 0
 })
 const currentEvent = ref({})
@@ -148,37 +147,11 @@ const reloadTableData = async (page: number) => {
   }
 }
 
-const handleTitleClick = async (urlHash: string) => {
-  try {
-    const {
-      data: {
-        resultData
-      }
-    } = await getNewsDetail(urlHash)
-    newsDetailDisplay.value = true
-    const splitArr = split('/')(resultData.url)
-    if (splitArr[2]) {
-      newsDetailData.value = {
-        ...resultData,
-        site: splitArr[0] + '//' + splitArr[2]
-      }
-    } else {
-      newsDetailData.value = {
-        ...resultData,
-        site: ''
-      }
-    }
-  } catch (e) {
-    //
-  }
-}
-
-const handleDetailClose = (bool: boolean): void => {
-  newsDetailDisplay.value = bool
-}
-
-const afterDetailClose = () => {
-  newsDetailData.value = {}
+const handleTitleClick = (urlHash: string) => {
+  let routeData = router.resolve({
+    path: `/news/detail/${urlHash}/${i18nValue.value}`
+  })
+  window.open(routeData.href, '_blank')
 }
 
 const handleEventClick = (event: never[]) => {
@@ -215,6 +188,15 @@ const handleGraphClose = (bool: boolean): void => {
 
 const afterGraphClose = () => {
   newsGraphData.value = []
+}
+
+const handlePageSizeChange = (value: number) => {
+  paginationReactive.pageSize = value
+  const maxPage = Math.ceil(paginationReactive.itemCount! / value)
+  if (paginationReactive.page! > maxPage) {
+    paginationReactive.page = maxPage
+  }
+  reloadTableData(paginationReactive.page!)
 }
 
 watch(
@@ -371,7 +353,7 @@ footStore.$onAction(({ name, after }) => {
         :key="item.urlHash"
         class="news-card"
       >
-        <n-space vertical :size="[0, 20]">
+        <n-space vertical :size="[0, 10]">
           <n-skeleton
             v-if="newLoadingRef"
             width="60%"
@@ -383,12 +365,11 @@ footStore.$onAction(({ name, after }) => {
             :line-clamp="1"
             :tooltip="false"
           >
-            <h2
+            <n-h2
               class="news-title"
               @click="() => handleTitleClick(item.urlHash)"
-            >
-              {{ item.numbers }}: {{ i18nValue === 'ZhCN' ? item.titleZh : item.title }}
-            </h2>
+              v-html="`${item.numbers}: ${i18nValue === 'ZhCN' ? item.titleZh : item.title}`"
+            />
           </n-ellipsis>
           <n-skeleton
             v-if="newLoadingRef"
@@ -440,12 +421,13 @@ footStore.$onAction(({ name, after }) => {
             text
           />
           <n-ellipsis
-            v-else
             :line-clamp="2"
             :tooltip="false"
-          >
-            <p>{{ i18nValue === 'ZhCN' ? item.contentZh : item.content }}</p>
-          </n-ellipsis>
+            :style="{
+              textIndent: i18nValue === 'ZhCN' ? '2em' : '0'
+            }"
+            v-html="`<p>${i18nValue === 'ZhCN' ? item.contentZh : item.content}</p>`"
+          />
         </n-space>
       </n-card>
     </n-space>
@@ -460,9 +442,13 @@ footStore.$onAction(({ name, after }) => {
     v-if="data.length !== 0"
     class="pagination"
     v-model:page="paginationReactive.page"
+    v-model:page-size="paginationReactive.pageSize"
     :item-count="paginationReactive.itemCount"
+    :page-sizes="[10, 20, 50, 100]"
     show-quick-jumper
+    show-size-picker
     @update:page="reloadTableData"
+    @update:page-size="handlePageSizeChange"
   >
     <template #suffix="{ itemCount }">
       共{{ itemCount }}条
@@ -479,13 +465,6 @@ footStore.$onAction(({ name, after }) => {
     :graph="newsGraphData"
     @modalClose="handleGraphClose"
     @afterModalClose="afterGraphClose"
-  />
-  <NewsDetail
-    :i18nValue="i18nValue"
-    :show-modal="newsDetailDisplay"
-    :detail="newsDetailData"
-    @modalClose="handleDetailClose"
-    @afterModalClose="afterDetailClose"
   />
 </template>
 
