@@ -16,32 +16,47 @@ import {
   NCheckbox
 } from 'naive-ui'
 import type { Ref } from 'vue'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import deepCopy from '@/utils/function/deepcopy'
 import { formatTimeStamp } from '@/utils/function/date'
 import type { graphConfigFormInitialValueType } from '@/types/components/form/graph'
-import { Calculator, Calendar, Grid, Heart } from '@vicons/ionicons5'
+import { Calculator, Calendar, Heart } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
 import { ObjectGroup } from '@vicons/fa'
 import { CountertopsFilled, PersonSearchRound } from '@vicons/material'
 import { Document, ApplicationWeb } from '@vicons/carbon'
 import { Earth16Filled, Organization48Filled } from '@vicons/fluent'
+import { useNewsStore } from '@/stores/news'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   initialValue: graphConfigFormInitialValueType,
   configType: string[] | null,
-  formDisabled: boolean
+  formDisabled: boolean,
+  type?: 'normal' | 'news'
 }>()
+
+const newsStore = useNewsStore()
+const { graphConfigFormValue } = storeToRefs(newsStore)
+
+const getFormValueSource = computed(() => {
+  return props.type === 'news' ? graphConfigFormValue.value : formValue.value
+})
 
 const formRef: Ref<FormInst | null> = ref(null)
 const formValue: Ref<graphConfigFormInitialValueType> = ref(deepCopy(props.initialValue))
+
+defineExpose({
+  formRef,
+  formValue
+})
 
 watch(
   () => props.initialValue,
   () => {
     formRef.value?.restoreValidation()
     formValue.value = deepCopy(props.initialValue)
-    if (!formValue.value.sqldate) {
+    if (!formValue.value.sqldate && props.type !== 'news') {
       const end = new Date()
       const start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
@@ -68,7 +83,6 @@ watch(
   >
     <p style="margin: 0 0 5px 115px;">当前数据库时间范围: 1971-01-01 至 {{ formatTimeStamp(new Date().getTime()) }}</p>
     <n-form-item
-      path="sqldate"
       label-style="font-weight: 600;"
       label-width="115"
     >
@@ -81,7 +95,7 @@ watch(
         </div>
       </template>
       <n-date-picker
-        v-model:value="formValue.sqldate"
+        v-model:value="getFormValueSource.sqldate"
         type="daterange"
         :actions="null"
         :is-date-disabled="(ts: number) => ts > Date.now()"
@@ -90,34 +104,7 @@ watch(
       />
     </n-form-item>
     <n-form-item
-      path="dataSource"
-      label-style="font-weight: 600;"
-      label-width="115"
-    >
-      <template #label>
-        <div class="icon-label">
-          <n-icon class="icon" size="20">
-            <Grid />
-          </n-icon>
-          <span>数据源</span>
-        </div>
-      </template>
-      <n-radio-group v-model:value="formValue.dataSource">
-        <n-space>
-          <n-radio value="dataSource1">
-            数据源1
-          </n-radio>
-          <n-radio value="dataSource2">
-            数据源2
-          </n-radio>
-          <n-radio value="dataSource3">
-            数据源3
-          </n-radio>
-        </n-space>
-      </n-radio-group>
-    </n-form-item>
-    <n-form-item
-      path="weightBasis"
+      v-if="type !== 'news'"
       label-style="font-weight: 600;"
       label-width="115"
     >
@@ -129,7 +116,7 @@ watch(
           <span>权重依据</span>
         </div>
       </template>
-      <n-radio-group v-model:value="formValue.weightBasis">
+      <n-radio-group v-model:value="getFormValueSource.weightBasis">
         <n-space>
           <n-radio :value="1">
             包含所选实体集的新闻报道数
@@ -141,7 +128,7 @@ watch(
       </n-radio-group>
     </n-form-item>
     <n-form-item
-      path="statisticsBasis"
+      v-if="type !== 'news'"
       label-style="font-weight: 600;"
       label-width="115"
     >
@@ -153,7 +140,7 @@ watch(
           <span>统计依据</span>
         </div>
       </template>
-      <n-radio-group v-model:value="formValue.statisticsBasis">
+      <n-radio-group v-model:value="getFormValueSource.statisticsBasis">
         <n-space>
           <n-radio :value="2">
             数量
@@ -182,7 +169,7 @@ watch(
           span="16"
         >
           <n-input
-            v-model:value="formValue.counts"
+            v-model:value="getFormValueSource.counts"
           />
         </n-form-item-gi>
         <n-form-item-gi
@@ -190,9 +177,9 @@ watch(
           offset="1"
         >
           <n-checkbox
-            :checked="formValue.countsIsBig === 0"
+            :checked="getFormValueSource.countsIsBig === 0"
             @update:checked="(checked) => {
-              checked ? formValue.countsIsBig = 0 : formValue.countsIsBig = 1
+              checked ? getFormValueSource.countsIsBig = 0 : getFormValueSource.countsIsBig = 1
             }"
           >
             区分大小写
@@ -218,7 +205,7 @@ watch(
           span="16"
         >
           <n-input
-            v-model:value="formValue.themes"
+            v-model:value="getFormValueSource.themes"
           />
         </n-form-item-gi>
         <n-form-item-gi
@@ -226,9 +213,9 @@ watch(
           offset="1"
         >
           <n-checkbox
-            :checked="formValue.themesIsBig === 0"
+            :checked="getFormValueSource.themesIsBig === 0"
             @update:checked="(checked) => {
-              checked ? formValue.themesIsBig = 0 : formValue.themesIsBig = 1
+              checked ? getFormValueSource.themesIsBig = 0 : getFormValueSource.themesIsBig = 1
             }"
           >
             区分大小写
@@ -254,7 +241,7 @@ watch(
           span="16"
         >
           <n-input
-            v-model:value="formValue.locations"
+            v-model:value="getFormValueSource.locations"
           />
         </n-form-item-gi>
         <n-form-item-gi
@@ -262,9 +249,9 @@ watch(
           offset="1"
         >
           <n-checkbox
-            :checked="formValue.locationsIsBig === 0"
+            :checked="getFormValueSource.locationsIsBig === 0"
             @update:checked="(checked) => {
-              checked ? formValue.locationsIsBig = 0 : formValue.locationsIsBig = 1
+              checked ? getFormValueSource.locationsIsBig = 0 : getFormValueSource.locationsIsBig = 1
             }"
           >
             区分大小写
@@ -290,7 +277,7 @@ watch(
           span="16"
         >
           <n-input
-            v-model:value="formValue.persons"
+            v-model:value="getFormValueSource.persons"
           />
         </n-form-item-gi>
         <n-form-item-gi
@@ -298,9 +285,9 @@ watch(
           offset="1"
         >
           <n-checkbox
-            :checked="formValue.personsIsBig === 0"
+            :checked="getFormValueSource.personsIsBig === 0"
             @update:checked="(checked) => {
-              checked ? formValue.personsIsBig = 0 : formValue.personsIsBig = 1
+              checked ? getFormValueSource.personsIsBig = 0 : getFormValueSource.personsIsBig = 1
             }"
           >
             区分大小写
@@ -326,7 +313,7 @@ watch(
           span="16"
         >
           <n-input
-            v-model:value="formValue.organizations"
+            v-model:value="getFormValueSource.organizations"
           />
         </n-form-item-gi>
         <n-form-item-gi
@@ -334,9 +321,9 @@ watch(
           offset="1"
         >
           <n-checkbox
-            :checked="formValue.organizationsIsBig === 0"
+            :checked="getFormValueSource.organizationsIsBig === 0"
             @update:checked="(checked) => {
-              checked ? formValue.organizationsIsBig = 0 : formValue.organizationsIsBig = 1
+              checked ? getFormValueSource.organizationsIsBig = 0 : getFormValueSource.organizationsIsBig = 1
             }"
           >
             区分大小写
@@ -370,7 +357,7 @@ watch(
           <span>情感值</span>
         </div>
       </template>
-      <n-checkbox-group v-model:value="formValue.emo">
+      <n-checkbox-group v-model:value="getFormValueSource.emo">
         <n-space item-style="display: flex;">
           <n-checkbox value="Beijing" label="平均情感" />
           <n-checkbox value="Shanghai" label="正情感词比例" />
@@ -395,7 +382,7 @@ watch(
         </div>
       </template>
       <n-input
-        v-model:value="formValue.cameoeventids"
+        v-model:value="getFormValueSource.cameoeventids"
       />
     </n-form-item>
   </n-form>

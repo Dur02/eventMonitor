@@ -154,7 +154,7 @@ footStore.$onAction(({ name, after }) => {
         :loading="loadingRef"
         :pagination="paginationReactive"
         :row-key="(rowData: eventDisplayRowsType) => rowData.globaleventid"
-        max-height="calc(100vh - 315px)"
+        max-height="calc(100vh - 323px)"
         @update:page="handlePageChange"
       />
     </n-space>

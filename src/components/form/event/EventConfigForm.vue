@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import type { FormInst, SelectOption, SelectGroupOption, TreeSelectOption } from 'naive-ui'
 import {
   NForm,
@@ -19,7 +19,7 @@ import {
   NCheckbox,
   NTreeSelect
 } from 'naive-ui'
-import { Calendar, Grid, Calculator, People, DocumentText } from '@vicons/ionicons5'
+import { Calendar, Calculator, People, DocumentText } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
 import { rootOptions, eventConfigFormRules } from '@/utils/constant/form/event/eventConfigForm'
 import { useConstantStore } from '@/stores/constant'
@@ -31,11 +31,13 @@ import type { eventConfigFormInitialValueType } from '@/types/components/form/ev
 import { renderOption } from '@/utils/function/renderOption'
 import { formatTimeStamp } from '@/utils/function/date'
 import { WeightHanging } from '@vicons/fa'
+import { useNewsStore } from '@/stores/news'
 
 const props = defineProps<{
   initialValue: eventConfigFormInitialValueType,
   configType: string[] | null,
-  formDisabled: boolean
+  formDisabled: boolean,
+  type?: 'normal' | 'news'
 }>()
 
 const eventStore = useConstantStore()
@@ -54,11 +56,18 @@ const {
 } = storeToRefs(eventStore)
 const { getAllEventCodeList } = eventStore
 
-const formValue: Ref<eventConfigFormInitialValueType> = ref(deepCopy(props.initialValue) as eventConfigFormInitialValueType)
+const newsStore = useNewsStore()
+const { eventConfigFormValue } = storeToRefs(newsStore)
+
+const formValue: Ref<eventConfigFormInitialValueType> = ref(deepCopy(props.initialValue))
 const formRef: Ref<FormInst | null> = ref(null)
 const rootOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 const baseOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
 const subOption: Ref<Array<SelectOption | SelectGroupOption>> = ref([])
+
+const getFormValueSource = computed(() => {
+  return props.type === 'news' ? eventConfigFormValue.value : formValue.value
+})
 
 const handleRegionLoad = (option: TreeSelectOption): Promise<void> => {
   return new Promise<void>(async (resolve, reject) => {
@@ -77,9 +86,9 @@ const handleRegionLoad = (option: TreeSelectOption): Promise<void> => {
 }
 
 const handleClassUpdate = (value: number[]) => {
-  formValue.value.eventrootcode = []
-  formValue.value.eventbasecode = []
-  formValue.value.eventcode= []
+  getFormValueSource.value.eventrootcode = []
+  getFormValueSource.value.eventbasecode = []
+  getFormValueSource.value.eventcode= []
   switch (value.length) {
     case 0: {
       rootOption.value = rootCodeList.value
@@ -97,8 +106,8 @@ const handleClassUpdate = (value: number[]) => {
 }
 
 const handleRootUpdate = async (value: string[]) => {
-  formValue.value.eventbasecode = []
-  formValue.value.eventcode = []
+  getFormValueSource.value.eventbasecode = []
+  getFormValueSource.value.eventcode = []
   switch (value.length) {
     case 0: {
       baseOption.value = []
@@ -114,7 +123,7 @@ const handleRootUpdate = async (value: string[]) => {
 }
 
 const handleBaseUpdate = async (value: string[]) => {
-  formValue.value.eventcode = []
+  getFormValueSource.value.eventcode = []
   switch (value.length) {
     case 0: {
       subOption.value = []
@@ -142,7 +151,7 @@ watch(
   () => {
     formRef.value?.restoreValidation()
     formValue.value = deepCopy(props.initialValue)
-    if (!formValue.value.sqldate) {
+    if (!formValue.value.sqldate && props.type !== 'news') {
       const end = new Date()
       const start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
@@ -160,8 +169,8 @@ watch(
     ref="formRef"
     class="form"
     :disabled="formDisabled"
-    :rules="eventConfigFormRules"
-    :model="formValue"
+    :rules="type === 'news' ? undefined : eventConfigFormRules"
+    :model="getFormValueSource"
     size="medium"
     label-placement="left"
     label-align="left"
@@ -170,7 +179,7 @@ watch(
   >
     <p style="margin: 0 0 5px 100px;">当前数据库时间范围: 1971-01-01 至 {{ formatTimeStamp(new Date().getTime()) }}</p>
     <n-form-item
-      path="sqldate"
+      :path="type === 'news' ? undefined : 'sqldate'"
       label-style="font-weight: 600;"
       label-width="100"
     >
@@ -183,7 +192,7 @@ watch(
         </div>
       </template>
       <n-date-picker
-        v-model:value="formValue.sqldate"
+        v-model:value="getFormValueSource.sqldate"
         type="daterange"
         :actions="null"
         :is-date-disabled="(ts: number) => ts > Date.now()"
@@ -192,34 +201,7 @@ watch(
       />
     </n-form-item>
     <n-form-item
-      path="dataSource"
-      label-style="font-weight: 600;"
-      label-width="100"
-    >
-      <template #label>
-        <div class="icon-label">
-          <n-icon class="icon" size="20">
-            <Grid />
-          </n-icon>
-          <span>数据源</span>
-        </div>
-      </template>
-      <n-radio-group v-model:value="formValue.dataSource">
-        <n-space>
-          <n-radio value="dataSource1">
-            数据源1
-          </n-radio>
-          <n-radio value="dataSource2">
-            数据源2
-          </n-radio>
-          <n-radio value="dataSource3">
-            数据源3
-          </n-radio>
-        </n-space>
-      </n-radio-group>
-    </n-form-item>
-<!--    v-if="!includes('event_show_viz')(configType)"-->
-    <n-form-item
+      v-if="type !== 'news'"
       path="weightBasis"
       label-style="font-weight: 600;"
       label-width="100"
@@ -251,6 +233,7 @@ watch(
     </n-form-item>
 <!--    v-if="intersection(configType, ['event_timeline_viz', 'event_timeline_type_viz', 'event_timeline_geo_viz', 'event_tone_scale_viz']).length !== 0"-->
     <n-form-item
+      v-if="type !== 'news'"
       path="statisticsBasis"
       label-style="font-weight: 600;"
       label-width="100"
@@ -308,7 +291,7 @@ watch(
               label="国家(地区)"
             >
               <n-select
-                v-model:value="formValue.actor1countrycode"
+                v-model:value="getFormValueSource.actor1countrycode"
                 :options="actorCountryCodeList"
                 :render-option="renderOption"
                 multiple
@@ -323,7 +306,7 @@ watch(
               label="组织"
             >
               <n-select
-                v-model:value="formValue.actor1knowngroupcode"
+                v-model:value="getFormValueSource.actor1knowngroupcode"
                 :options="knownGroupCode"
                 :render-option="renderOption"
                 multiple
@@ -338,7 +321,7 @@ watch(
               label="宗教1"
             >
               <n-select
-                v-model:value="formValue.actor1religion1code"
+                v-model:value="getFormValueSource.actor1religion1code"
                 :options="religionCode"
                 :render-option="renderOption"
                 multiple
@@ -353,7 +336,7 @@ watch(
               label="宗教2"
             >
               <n-select
-                v-model:value="formValue.actor1religion2code"
+                v-model:value="getFormValueSource.actor1religion2code"
                 :options="religionCode"
                 :render-option="renderOption"
                 multiple
@@ -368,7 +351,7 @@ watch(
               label="种族"
             >
               <n-select
-                v-model:value="formValue.actor1ethniccode"
+                v-model:value="getFormValueSource.actor1ethniccode"
                 :options="ethnicCode"
                 :render-option="renderOption"
                 multiple
@@ -383,7 +366,7 @@ watch(
               label="种类1"
             >
               <n-select
-                v-model:value="formValue.actor1type1code"
+                v-model:value="getFormValueSource.actor1type1code"
                 :options="actorTypeCode"
                 :render-option="renderOption"
                 multiple
@@ -398,7 +381,7 @@ watch(
               label="种类2"
             >
               <n-select
-                v-model:value="formValue.actor1type2code"
+                v-model:value="getFormValueSource.actor1type2code"
                 :options="actorTypeCode"
                 :render-option="renderOption"
                 multiple
@@ -413,7 +396,7 @@ watch(
               label="种类3"
             >
               <n-select
-                v-model:value="formValue.actor1type3code"
+                v-model:value="getFormValueSource.actor1type3code"
                 :options="actorTypeCode"
                 :render-option="renderOption"
                 multiple
@@ -435,7 +418,8 @@ watch(
               label="角色全称"
             >
               <n-input
-                v-model:value="formValue.actor1name"
+                v-model:value="getFormValueSource.actor1name"
+                clearable
               />
             </n-form-item-gi>
 <!--            v-if="!includes('event_country_relation_viz')(configType)"-->
@@ -443,9 +427,9 @@ watch(
               span="1"
             >
               <n-checkbox
-                :checked="formValue.actor1nameIsBig === 0"
+                :checked="getFormValueSource.actor1nameIsBig === 0"
                 @update:checked="(checked) => {
-                  checked ? formValue.actor1nameIsBig = 0 : formValue.actor1nameIsBig = 1
+                  checked ? getFormValueSource.actor1nameIsBig = 0 : getFormValueSource.actor1nameIsBig = 1
                 }"
               >
                 区分大小写
@@ -457,7 +441,7 @@ watch(
               label="地理类型"
             >
               <n-select
-                v-model:value="formValue.actor1geoType"
+                v-model:value="getFormValueSource.actor1geoType"
                 :options="geoTypeList"
                 multiple
                 max-tag-count="responsive"
@@ -471,7 +455,7 @@ watch(
               label="国家/州省"
             >
               <n-tree-select
-                v-model:value="formValue.actor1geoCountrycodeAndAdm1code"
+                v-model:value="getFormValueSource.actor1geoCountrycodeAndAdm1code"
                 :options="geoCountryCodeList"
                 multiple
                 max-tag-count="responsive"
@@ -495,16 +479,19 @@ watch(
               span="3"
               label="地理全称"
             >
-              <n-input v-model:value="formValue.actor1geoFullname" />
+              <n-input
+                v-model:value="getFormValueSource.actor1geoFullname"
+                clearable
+              />
             </n-form-item-gi>
 <!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
               span="1"
             >
               <n-checkbox
-                :checked="formValue.actor1geoFullnameIsBig === 0"
+                :checked="getFormValueSource.actor1geoFullnameIsBig === 0"
                 @update:checked="(checked) => {
-                  checked ? formValue.actor1geoFullnameIsBig = 0 : formValue.actor1geoFullnameIsBig = 1
+                  checked ? getFormValueSource.actor1geoFullnameIsBig = 0 : getFormValueSource.actor1geoFullnameIsBig = 1
                 }"
               >
                 区分大小写
@@ -531,7 +518,7 @@ watch(
               label="国家(地区)"
             >
               <n-select
-                v-model:value="formValue.actor2countrycode"
+                v-model:value="getFormValueSource.actor2countrycode"
                 :options="actorCountryCodeList"
                 :render-option="renderOption"
                 multiple
@@ -546,7 +533,7 @@ watch(
               label="组织"
             >
               <n-select
-                v-model:value="formValue.actor2knowngroupcode"
+                v-model:value="getFormValueSource.actor2knowngroupcode"
                 :options="knownGroupCode"
                 :render-option="renderOption"
                 multiple
@@ -561,7 +548,7 @@ watch(
               label="宗教1"
             >
               <n-select
-                v-model:value="formValue.actor2religion1code"
+                v-model:value="getFormValueSource.actor2religion1code"
                 :options="religionCode"
                 :render-option="renderOption"
                 multiple
@@ -576,7 +563,7 @@ watch(
               label="宗教2"
             >
               <n-select
-                v-model:value="formValue.actor2religion2code"
+                v-model:value="getFormValueSource.actor2religion2code"
                 :options="religionCode"
                 :render-option="renderOption"
                 multiple
@@ -591,7 +578,7 @@ watch(
               label="种族"
             >
               <n-select
-                v-model:value="formValue.actor2ethniccode"
+                v-model:value="getFormValueSource.actor2ethniccode"
                 :options="ethnicCode"
                 :render-option="renderOption"
                 multiple
@@ -606,7 +593,7 @@ watch(
               label="种类1"
             >
               <n-select
-                v-model:value="formValue.actor2type1code"
+                v-model:value="getFormValueSource.actor2type1code"
                 :options="actorTypeCode"
                 :render-option="renderOption"
                 multiple
@@ -621,7 +608,7 @@ watch(
               label="种类2"
             >
               <n-select
-                v-model:value="formValue.actor2type2code"
+                v-model:value="getFormValueSource.actor2type2code"
                 :options="actorTypeCode"
                 :render-option="renderOption"
                 multiple
@@ -636,7 +623,7 @@ watch(
               label="种类3"
             >
               <n-select
-                v-model:value="formValue.actor2type3code"
+                v-model:value="getFormValueSource.actor2type3code"
                 :options="actorTypeCode"
                 :render-option="renderOption"
                 multiple
@@ -657,16 +644,19 @@ watch(
               span="3"
               label="角色全称"
             >
-              <n-input v-model:value="formValue.actor2name" />
+              <n-input
+                v-model:value="getFormValueSource.actor2name"
+                clearable
+              />
             </n-form-item-gi>
 <!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
               span="1"
             >
               <n-checkbox
-                :checked="formValue.actor2nameIsBig === 0"
+                :checked="getFormValueSource.actor2nameIsBig === 0"
                 @update:checked="(checked) => {
-                  checked ? formValue.actor2nameIsBig = 0 : formValue.actor2nameIsBig = 1
+                  checked ? getFormValueSource.actor2nameIsBig = 0 : getFormValueSource.actor2nameIsBig = 1
                 }"
               >
                 区分大小写
@@ -678,7 +668,7 @@ watch(
               label="地理类型"
             >
               <n-select
-                v-model:value="formValue.actor2geoType"
+                v-model:value="getFormValueSource.actor2geoType"
                 :options="geoTypeList"
                 multiple
                 max-tag-count="responsive"
@@ -692,7 +682,7 @@ watch(
               label="国家/州省"
             >
               <n-tree-select
-                v-model:value="formValue.actor2geoCountrycodeAndAdm1code"
+                v-model:value="getFormValueSource.actor2geoCountrycodeAndAdm1code"
                 :options="geoCountryCodeList"
                 multiple
                 max-tag-count="responsive"
@@ -716,16 +706,19 @@ watch(
               span="3"
               label="地理全称"
             >
-              <n-input v-model:value="formValue.actor2geoFullname" />
+              <n-input
+                v-model:value="getFormValueSource.actor2geoFullname"
+                clearable
+              />
             </n-form-item-gi>
 <!--            v-if="!includes('event_country_relation_viz')(configType)"-->
             <n-form-item-gi
               span="1"
             >
               <n-checkbox
-                :checked="formValue.actor2geoFullnameIsBig === 0"
+                :checked="getFormValueSource.actor2geoFullnameIsBig === 0"
                 @update:checked="(checked) => {
-                  checked ? formValue.actor2geoFullnameIsBig = 0 : formValue.actor2geoFullnameIsBig = 1
+                  checked ? getFormValueSource.actor2geoFullnameIsBig = 0 : getFormValueSource.actor2geoFullnameIsBig = 1
                 }"
               >
                 区分大小写
@@ -765,7 +758,7 @@ watch(
           >
             <n-form-item-gi span="1" label="大类">
               <n-select
-                v-model:value="formValue.quadclass"
+                v-model:value="getFormValueSource.quadclass"
                 :options="quadClass"
                 :render-option="renderOption"
                 multiple
@@ -777,7 +770,7 @@ watch(
             </n-form-item-gi>
             <n-form-item-gi span="1" label="根类">
               <n-select
-                v-model:value="formValue.eventrootcode"
+                v-model:value="getFormValueSource.eventrootcode"
                 :options="rootOption"
                 :render-option="renderOption"
                 multiple
@@ -789,7 +782,7 @@ watch(
             </n-form-item-gi>
             <n-form-item-gi span="1" label="基类">
               <n-select
-                v-model:value="formValue.eventbasecode"
+                v-model:value="getFormValueSource.eventbasecode"
                 :options="baseOption"
                 :render-option="renderOption"
                 multiple
@@ -801,7 +794,7 @@ watch(
             </n-form-item-gi>
             <n-form-item-gi span="1" label="子类">
               <n-select
-                v-model:value="formValue.eventcode"
+                v-model:value="getFormValueSource.eventcode"
                 :options="subOption"
                 :render-option="renderOption"
                 multiple
@@ -827,7 +820,7 @@ watch(
           >
             <n-form-item-gi span="2" label="地理类型">
               <n-select
-                v-model:value="formValue.actiongeoType"
+                v-model:value="getFormValueSource.actiongeoType"
                 :options="geoTypeList"
                 multiple
                 max-tag-count="responsive"
@@ -837,7 +830,7 @@ watch(
             </n-form-item-gi>
             <n-form-item-gi span="2" label="国家/州省">
               <n-tree-select
-                v-model:value="formValue.actiongeoCountrycodeAndAdm1code"
+                v-model:value="getFormValueSource.actiongeoCountrycodeAndAdm1code"
                 :options="geoCountryCodeList"
                 multiple
                 max-tag-count="responsive"
@@ -853,13 +846,16 @@ watch(
               <p style="margin: 5px 0">逻辑运算符:||表示“或”,例如A||B||C</p>
             </n-gi>
             <n-form-item-gi span="3" label="地理全称">
-              <n-input v-model:value="formValue.actiongeoFullname" />
+              <n-input
+                v-model:value="getFormValueSource.actiongeoFullname"
+                clearable
+              />
             </n-form-item-gi>
             <n-form-item-gi span="1">
               <n-checkbox
-                :checked="formValue.actiongeoFullnameIsBig === 0"
+                :checked="getFormValueSource.actiongeoFullnameIsBig === 0"
                 @update:checked="(checked) => {
-                  checked ? formValue.actiongeoFullnameIsBig = 0 : formValue.actiongeoFullnameIsBig = 1
+                  checked ? getFormValueSource.actiongeoFullnameIsBig = 0 : getFormValueSource.actiongeoFullnameIsBig = 1
                 }"
               >
                 区分大小写
@@ -881,49 +877,56 @@ watch(
             responsive="self"
           >
             <n-form-item-gi span="1" label="源url">
-              <n-input v-model:value="formValue.sourceUrl" />
+              <n-input
+                v-model:value="getFormValueSource.sourceUrl"
+                clearable
+              />
             </n-form-item-gi>
             <n-form-item-gi span="1" label="情感值">
               <n-input-number
-                v-model:value="formValue.beginAvgtone"
+                v-model:value="getFormValueSource.beginAvgtone"
                 :show-button="false"
                 :precision="0"
                 :min="-100"
                 :max="100"
                 style="padding-right: 5px;"
+                clearable
               />
               至
               <n-input-number
-                v-model:value="formValue.endAvgtone"
+                v-model:value="getFormValueSource.endAvgtone"
                 :show-button="false"
                 :precision="0"
                 :min="-100"
                 :max="100"
                 style="padding-left: 5px;"
+                clearable
               />
             </n-form-item-gi>
             <n-form-item-gi span="1" label="影响度">
               <n-input-number
-                v-model:value="formValue.beginGoldsteinscale"
+                v-model:value="getFormValueSource.beginGoldsteinscale"
                 :show-button="false"
                 :precision="0"
                 :min="-10"
                 :max="10"
                 style="padding-right: 5px;"
+                clearable
               />
               至
               <n-input-number
-                v-model:value="formValue.endGoldsteinscale"
+                v-model:value="getFormValueSource.endGoldsteinscale"
                 :show-button="false"
                 :precision="0"
                 :min="-10"
                 :max="10"
                 style="padding-left: 5px;"
+                clearable
               />
             </n-form-item-gi>
             <n-form-item-gi span="1" label="是否根类">
               <n-select
-                v-model:value="formValue.isrootevent"
+                v-model:value="getFormValueSource.isrootevent"
                 :options="rootOptions"
               />
             </n-form-item-gi>
@@ -950,53 +953,59 @@ watch(
       >
         <n-form-item-gi span="1" label="事件数" label-width="60">
           <n-input-number
-            v-model:value="formValue.nummentionsMin"
+            v-model:value="getFormValueSource.nummentionsMin"
             :show-button="false"
             :precision="0"
             :min="0"
             style="padding-right: 5px;"
+            clearable
           />
           至
           <n-input-number
-            v-model:value="formValue.nummentionsMax"
+            v-model:value="getFormValueSource.nummentionsMax"
             :show-button="false"
             :precision="0"
             :min="0"
             style="padding-left: 5px;"
+            clearable
           />
         </n-form-item-gi>
         <n-form-item-gi span="1" label="文章数" label-width="60">
           <n-input-number
-            v-model:value="formValue.numarticlesMin"
+            v-model:value="getFormValueSource.numarticlesMin"
             :show-button="false"
             :precision="0"
             :min="0"
             style="padding-right: 5px;"
+            clearable
           />
           至
           <n-input-number
-            v-model:value="formValue.numarticlesMax"
+            v-model:value="getFormValueSource.numarticlesMax"
             :show-button="false"
             :precision="0"
             :min="0"
             style="padding-left: 5px;"
+            clearable
           />
         </n-form-item-gi>
         <n-form-item-gi span="1" label="信源数" label-width="60">
           <n-input-number
-            v-model:value="formValue.numsourcesMin"
+            v-model:value="getFormValueSource.numsourcesMin"
             :show-button="false"
             :precision="0"
             :min="0"
             style="padding-right: 5px;"
+            clearable
           />
           至
           <n-input-number
-            v-model:value="formValue.numsourcesMax"
+            v-model:value="getFormValueSource.numsourcesMax"
             :show-button="false"
             :precision="0"
             :min="0"
             style="padding-left: 5px;"
+            clearable
           />
         </n-form-item-gi>
       </n-grid>

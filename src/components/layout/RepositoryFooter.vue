@@ -1,23 +1,31 @@
 <script setup lang="ts">
 import { NButton, NLayoutFooter, NTabs, NTabPane, NScrollbar } from 'naive-ui'
 import type { Ref } from 'vue'
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
-import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
-import { eventConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
 import GraphConfigForm from '@/components/form/graph/GraphConfigForm.vue'
-import { graphConfigFormInitialValue } from '@/utils/constant/form/graph/graphConfigForm'
-import type { graphConfigFormInitialValueType } from '@/types/components/form/graph'
+import { useNewsStore } from '@/stores/news'
+import { storeToRefs } from 'pinia'
+
+const newsStore = useNewsStore()
+const { eventConfigFormValue, graphConfigFormValue } = storeToRefs(newsStore)
+const { resetAll } = newsStore
 
 const footerExpand: Ref<boolean> = ref(false)
 const eventConfigFormRef: Ref<any | null> = ref(null)
-const eventConfigFormValue: Ref<eventConfigFormInitialValueType> = ref(eventConfigFormInitialValue)
 const graphConfigFormRef: Ref<any | null> = ref(null)
-const graphConfigFormValue: Ref<graphConfigFormInitialValueType> = ref(graphConfigFormInitialValue)
 
 const changeExpand = () => {
   footerExpand.value = !footerExpand.value
 }
+
+const handleClick = () => {
+
+}
+
+onBeforeUnmount(() => {
+  resetAll()
+})
 </script>
 
 <template>
@@ -45,7 +53,7 @@ const changeExpand = () => {
       <n-tab-pane
         name="event"
         tab="事件表单"
-        display-directive="show:lazy"
+        display-directive="show"
       >
         <n-scrollbar style="max-height: 100%;">
           <EventConfigForm
@@ -53,8 +61,19 @@ const changeExpand = () => {
             :initialValue="eventConfigFormValue"
             :configType="['event_news_show_viz']"
             :formDisabled="false"
+            type="news"
             style="padding: 5px 13px;"
           />
+          <div
+            style="width: 100%;text-align: center;"
+          >
+            <n-button
+              type="info"
+              @click="handleClick"
+            >
+              提交
+            </n-button>
+          </div>
         </n-scrollbar>
       </n-tab-pane>
       <n-tab-pane
@@ -68,8 +87,19 @@ const changeExpand = () => {
             :initialValue="graphConfigFormValue"
             :configType="['event_news_show_viz']"
             :formDisabled="false"
+            type="news"
             style="padding: 5px 13px;"
           />
+          <div
+            style="width: 100%;text-align: center;"
+          >
+            <n-button
+              type="info"
+              @click="handleClick"
+            >
+              提交
+            </n-button>
+          </div>
         </n-scrollbar>
       </n-tab-pane>
     </n-tabs>
@@ -78,7 +108,7 @@ const changeExpand = () => {
 
 <style scoped lang="scss">
 .layout-footer {
-  height: 52px;
+  height: 58px;
   padding: 10px 24px;
   z-index: 3;
   transition: height .3s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);

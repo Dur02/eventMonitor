@@ -340,7 +340,7 @@ const setHeatMapOption = (value: string) => {
           pointSize: 8
         }
       ],
-    });
+    })
   })
 }
 
@@ -394,6 +394,10 @@ const initAllChart = () => {
   initLineData()
   echartsLine?.clear()
   setLineOption(lineOptionValue.value)
+  echartsLine?.on('restore', () => {
+    echartsLine?.clear()
+    setLineOption(lineOptionValue.value)
+  })
   echartsLine?.on('click', (param) => {
     console.log(param)
   })
@@ -416,11 +420,13 @@ const destroyAll = () => {
   echartsLine?.dispose()
   echartsHeatMap?.dispose()
   // echartsScatter?.dispose()
+  echartsLine = null
+  echartsHeatMap = null
   resizeObserver.unobserve(echartsLineRef.value!)
   controller.abort()
 }
 
-onMounted(() => {
+onMounted(async () => {
   echartsLine = echarts.init(echartsLineRef.value, null, { renderer: 'canvas' })
   echartsHeatMap = echarts.init(echartsHeatMapRef.value, null, { renderer: 'canvas' })
   // echartsScatter = echarts.init(echartsScatterRef.value, null, { renderer: 'canvas' })
@@ -441,9 +447,6 @@ watch(
       await reloadTableData()
       initAllChart()
     }
-  },
-  {
-    immediate: true
   }
 )
 

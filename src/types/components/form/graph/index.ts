@@ -1,6 +1,5 @@
 export interface graphConfigFormInitialValueType {
   sqldate: [number, number] | null,
-  dataSource: string,
   weightBasis: number,
   statisticsBasis: number,
   counts: string,

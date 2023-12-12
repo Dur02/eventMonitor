@@ -2,7 +2,7 @@
 import CommonConfig from '@/components/config/common/ComonConfig.vue'
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
-import { useEventConfigStore } from '@/stores/eventConfig'
+import { useConfigStore } from '@/stores/config'
 import { onMounted, onBeforeUnmount } from 'vue'
 import EventConfigDrawer from '@/components/drawer/EventConfigDrawer.vue'
 import { eventConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
@@ -11,7 +11,7 @@ import { allCommonColumns } from '@/utils/constant/config/common/commonConfig'
 const constantStore = useConstantStore()
 const { eventConfigTypeList } = storeToRefs(constantStore)
 const { getAllEventConfigType } = constantStore
-const eventConfigStore = useEventConfigStore()
+const eventConfigStore = useConfigStore()
 const {
   setConfigPage,
   setTableLoading,

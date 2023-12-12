@@ -33,6 +33,7 @@ import NewsEvent from '@/components/modal/NewsEvent.vue'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
 import NewsGraph from '@/components/modal/NewsGraph.vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useNewsStore } from '@/stores/news';
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
@@ -42,24 +43,13 @@ const route = useRoute()
 
 const footStore = useFooterStore()
 const { selectedId, configType, configList } = storeToRefs(footStore)
+const newsStore = useNewsStore()
+const { searchValue, lastSearchValue } = storeToRefs(newsStore)
+const { updateSearchValue, updateLastSearchValue } = newsStore
 
 const newLoadingRef: Ref<boolean> = ref(false)
 const i18nValue: Ref<'ZhCN' | 'EN'> = ref('ZhCN')
 const searchLoadingRef: Ref<boolean> = ref(false)
-const searchValue: Ref<NewsSearchValueType> = ref({
-  publicTime: null,
-  orderBy: 'DESC',
-  type: 2,
-  isExact: 1,
-  queryContent: ''
-})
-const lastSearchValue: Ref<NewsSearchValueType> = ref({
-  publicTime: null,
-  orderBy: 'DESC',
-  type: 2,
-  isExact: 1,
-  queryContent: ''
-})
 const newsEventDisplay: Ref<boolean> = ref(false)
 const newsEventData: Ref<never[]> = ref([])
 const newsGraphDisplay: Ref<boolean> = ref(false)
@@ -76,9 +66,16 @@ const data: Ref<any[]> = ref([])
 const handleSearch = async () => {
   if (!searchLoadingRef.value) {
     searchLoadingRef.value = true
-    lastSearchValue.value = deepCopy(searchValue.value)
-    currentEvent.value = {
-      ...find(propEq('id', selectedId.value))(configList.value)
+    updateLastSearchValue(deepCopy(searchValue.value))
+    if (route.meta.footerType === 'normal') {
+      currentEvent.value = {
+        ...find(propEq('id', selectedId.value))(configList.value)
+      }
+    }
+    if (route.meta.footerType === 'repository') {
+      currentEvent.value = {
+        test: '1234545'
+      }
     }
     await reloadTableData(1)
     searchLoadingRef.value = false
@@ -86,8 +83,11 @@ const handleSearch = async () => {
 }
 
 const handleDateChange = (value: [number, number] | null) => {
-  if (intersection(value, deepCopy(searchValue.value.publicTime)).length !== 2 ) {
-    searchValue.value.publicTime = value
+  if (intersection(value, deepCopy(searchValue.value.publicTime)).length !== 2 && value !== deepCopy(searchValue.value.publicTime) ) {
+    updateSearchValue({
+      ...deepCopy(searchValue.value),
+      publicTime: value
+    })
     handleSearch()
   }
 }
@@ -219,20 +219,20 @@ watch(
   async () => {
     newLoadingRef.value = false
     searchLoadingRef.value = false
-    searchValue.value = {
+    updateSearchValue({
       publicTime: null,
       orderBy: 'DESC',
       type: 2,
       isExact: 1,
       queryContent: ''
-    }
-    lastSearchValue.value = {
+    })
+    updateLastSearchValue({
       publicTime: null,
       orderBy: 'DESC',
       type: 2,
       isExact: 1,
       queryContent: ''
-    }
+    })
     scrollbarRef.value?.scrollTo({ top: 0 })
     paginationReactive.page = 1
     paginationReactive.itemCount = 0
@@ -345,7 +345,7 @@ footStore.$onAction(({ name, after }) => {
   </n-space>
   <n-scrollbar
     ref="scrollbarRef"
-    style="max-height: calc(100vh - 266px);"
+    style="max-height: calc(100vh - 274px);"
   >
     <n-space v-if="data.length !== 0" vertical :size="[0, 10]">
       <n-card
@@ -421,6 +421,7 @@ footStore.$onAction(({ name, after }) => {
             text
           />
           <n-ellipsis
+            v-else
             :line-clamp="2"
             :tooltip="false"
             :style="{

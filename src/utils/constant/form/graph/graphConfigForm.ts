@@ -2,7 +2,7 @@ import type { graphConfigFormInitialValueType } from '@/types/components/form/gr
 
 export const graphConfigFormInitialValue: graphConfigFormInitialValueType = {
   sqldate: null,
-  dataSource: 'dataSource1',
+  // dataSource: 'dataSource1',
   weightBasis: 1,
   statisticsBasis: 2,
   counts: '',

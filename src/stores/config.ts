@@ -23,7 +23,7 @@ import {
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
 
-export const useEventConfigStore = defineStore('eventConfig', () => {
+export const useConfigStore = defineStore('config', () => {
   const configPage: Ref<'event' | 'graph' | ''> = ref('')
   const reloadFun: Ref<Function | null> = ref(null)
   const updateSingleFun: Ref<Function | null> = ref(null)

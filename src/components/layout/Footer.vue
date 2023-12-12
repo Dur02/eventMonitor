@@ -185,7 +185,7 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .layout-footer {
-  height: 52px;
+  height: 58px;
   padding: 10px 24px;
   z-index: 3;
   transition: height .3s, box-shadow .3s var(--n-bezier), background-color .3s var(--n-bezier), color .3s var(--n-bezier);

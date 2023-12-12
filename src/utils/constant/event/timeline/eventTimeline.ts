@@ -31,15 +31,15 @@ export const getLineOption = (xData: string[], data: number[]): LineECOption => 
           back: '区域缩放还原'
         }
       },
-      // restore: {
-      //   title: '还原'
-      // },
-      saveAsImage: {
-        title: '保存为图谱'
+      restore: {
+        title: '还原'
       },
-      // dataView: {
-      //   title: '数据视图'
-      // }
+      saveAsImage: {
+        title: '保存为图片'
+      },
+      dataView: {
+        title: '数据视图'
+      }
     }
   },
   dataZoom: [
@@ -130,7 +130,9 @@ export const getHeatMapOptions = (xData: string[], yData: string[], data: number
   },
   toolbox: {
     feature: {
-      saveAsImage: {}
+      saveAsImage: {
+        title: '保存为图片'
+      }
     }
   },
   grid: {

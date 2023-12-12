@@ -51,7 +51,7 @@ const afterModalClose = () => {
     :show="showModal"
     size="small"
     preset="card"
-    style="max-width: 1000px;"
+    style="width: 80%;height: 1000px;"
     display-directive="if"
     @update:show="handleModalClose"
     @after-leave="afterModalClose"
@@ -88,7 +88,7 @@ const afterModalClose = () => {
         :data="event"
         :pagination="false"
         :row-key="(rowData: eventDisplayRowsType) => rowData.globaleventid"
-        max-height="500"
+        max-height="850"
       />
     </n-space>
   </n-modal>

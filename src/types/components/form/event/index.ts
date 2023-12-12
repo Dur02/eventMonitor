@@ -1,6 +1,6 @@
 export interface eventConfigFormInitialValueType {
   sqldate: [number, number] | null,
-  dataSource: string,
+  // dataSource: string,
   weightBasis: number,
   statisticsBasis: number,
   actor1countrycode: Array<string> | null,

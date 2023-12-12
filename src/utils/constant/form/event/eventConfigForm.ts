@@ -27,7 +27,7 @@ export const rootOptions: Array<SelectOption | SelectGroupOption> = [
 
 export const eventConfigFormInitialValue: eventConfigFormInitialValueType = {
   sqldate: null,
-  dataSource: 'dataSource1',
+  // dataSource: 'dataSource1',
   weightBasis: 4,
   statisticsBasis: 2,
   actor1countrycode: [],
@@ -91,13 +91,13 @@ export const eventConfigFormRules: FormRules = {
       trigger: ['change', 'blur']
     }
   ],
-  dataSource: [
-    {
-      required: true,
-      message: '请选择数据源',
-      trigger: ['input', 'blur']
-    }
-  ],
+  // dataSource: [
+  //   {
+  //     required: true,
+  //     message: '请选择数据源',
+  //     trigger: ['input', 'blur']
+  //   }
+  // ],
   weightBasis: [
     {
       type: 'number',
@@ -118,7 +118,7 @@ export const eventConfigFormRules: FormRules = {
 
 export const getConfigFormInitialValue = (rowData: eventConfigRowsType): eventConfigFormInitialValueType => ({
   sqldate: getSqlDate(rowData.beginSqldate, rowData.endSqldate),
-  dataSource: 'dataSource1',
+  // dataSource: 'dataSource1',
   weightBasis: rowData.weightBasis,
   statisticsBasis: rowData.statisticsBasis,
   actor1countrycode: splitString(rowData.actor1countrycode),
