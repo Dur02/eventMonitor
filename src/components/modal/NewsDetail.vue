@@ -55,7 +55,7 @@ const afterModalClose = (): void => {
 
             <n-a
               v-for="(item, index) in detail.author"
-              class="author-name"
+              class="content-text"
               :key="item.name"
               @click="openNewWindow(item.link)"
             >
@@ -106,7 +106,7 @@ const afterModalClose = (): void => {
         <n-space vertical>
           <n-a
             v-for="item in detail.media"
-            class="author-name"
+            class="content-text"
             :key="item.mediaUrl"
             @click="openNewWindow(item.mediaUrl)"
           >
@@ -125,7 +125,7 @@ const afterModalClose = (): void => {
     margin: 0;
   }
 
-  .author-name {
+  .content-text {
     padding: 0 3px;
 
     &:first-of-type {

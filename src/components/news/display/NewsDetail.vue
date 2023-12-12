@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { NA, NEllipsis, NSpace, NText, NSpin, NEmpty, NButton, NButtonGroup } from 'naive-ui'
+import { NA, NEllipsis, NSpace, NText, NSpin, NEmpty, NButton, NButtonGroup, NImage } from 'naive-ui'
 import type { Ref } from 'vue'
 import { onMounted, ref } from 'vue'
-import { useSystemStore } from '@/stores/system'
-import { storeToRefs } from 'pinia'
 import { getNewsDetail } from '@/api/news'
 import { split } from 'lodash/fp'
 import { useRouter } from 'vue-router'
@@ -14,9 +12,6 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
-
-const systemStore = useSystemStore()
-const { isLight } = storeToRefs(systemStore)
 
 const loadingRef: Ref<boolean> = ref(false)
 const newsDetailData: Ref<any> = ref(null)
@@ -41,12 +36,16 @@ onMounted(async () => {
       if (splitArr[2]) {
         newsDetailData.value = {
           ...resultData,
-          site: splitArr[0] + '//' + splitArr[2]
+          site: splitArr[0] + '//' + splitArr[2],
+          contentZh: split('\n')(resultData.contentZh),
+          content: split('\n')(resultData.content),
         }
       } else {
         newsDetailData.value = {
           ...resultData,
-          site: ''
+          site: '',
+          contentZh: split('\n')(resultData.contentZh),
+          content: split('\n')(resultData.content),
         }
       }
     } catch (e) {
@@ -100,21 +99,38 @@ onMounted(async () => {
             <span>作者：</span>
             <n-a
               v-for="(item, index) in newsDetailData.author"
-              class="author-name"
+              class="content-text"
               :key="item.name"
               @click="openNewWindow(item.link)"
             >
               {{ item.name }}{{ index < newsDetailData.author.length - 1 ? ',' : '' }}
             </n-a>
+            <!--            定制tooltip长度，避免长度过长-->
+            <template #tooltip>
+              <div style="max-width: 700px;">
+                <span>作者：</span>
+                <n-a
+                  v-for="(item, index) in newsDetailData.author"
+                  class="content-text"
+                  :key="item.name"
+                  @click="openNewWindow(item.link)"
+                >
+                  {{ item.name }}{{ index < newsDetailData.author.length - 1 ? ',' : '' }}
+                </n-a>
+              </div>
+            </template>
           </n-ellipsis>
         </n-text>
         <n-text>
           采集时间：{{ newsDetailData.crawlTime }}
         </n-text>
       </n-space>
-      <n-space justify="space-between"  >
+      <n-space justify="space-between">
         <n-text>
-          网站：{{ newsDetailData.site }}
+          网站：
+          <n-a @click="openNewWindow(newsDetailData.site)">
+            {{ newsDetailData.site }}
+          </n-a>
         </n-text>
         <n-text>
           发布时间：{{ newsDetailData.pubtime }}
@@ -130,26 +146,28 @@ onMounted(async () => {
           </n-a>
         </n-ellipsis>
       </n-text>
-      <n-text
-        :style="{
-          textIndent: i18n === 'ZhCN' ? '2em' : '0'
-        }"
-      >
-        {{ i18n === 'ZhCN' ? newsDetailData.contentZh: newsDetailData.content }}
-      </n-text>
-      <n-text>
-        图片URL地址集合：
-        <n-space vertical>
-          <n-a
-            v-for="item in newsDetailData.media"
-            class="author-name"
-            :key="item.mediaUrl"
-            @click="openNewWindow(item.mediaUrl)"
-          >
-            {{ item.mediaUrl }}
-          </n-a>
-        </n-space>
-      </n-text>
+      <div>
+        <pre
+          v-for="item in i18n === 'ZhCN' ? newsDetailData.contentZh : newsDetailData.content"
+          :style="{
+            textIndent: i18n === 'ZhCN' ? '2em' : '0',
+          }"
+          style="word-break: break-all;margin: 0;white-space: pre-line;"
+        >
+          {{ item }}
+        </pre>
+      </div>
+      <n-space vertical justify="space-between" align="center">
+        <n-image
+          v-for="item in newsDetailData.media"
+          :key="item.mediaUrl"
+          lazy
+          :show-toolbar="false"
+          width="1000"
+          :src="item.image"
+          alt="加载失败"
+        />
+      </n-space>
     </n-space>
     <n-empty
       v-else
@@ -166,7 +184,7 @@ onMounted(async () => {
   margin: 0;
 }
 
-.author-name {
+.content-text {
   padding: 0 3px;
 
   &:first-of-type {

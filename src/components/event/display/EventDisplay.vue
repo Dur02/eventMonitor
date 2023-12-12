@@ -8,7 +8,7 @@ import type {
   SelectOption,
   SelectGroupOption
 } from 'naive-ui'
-import { NDataTable, NButton, NSpace, NIcon, NPopselect } from 'naive-ui'
+import { NDataTable, NButton, NSpace, NIcon, NPopselect, NCard } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia';
 import { List } from '@vicons/ionicons5'
