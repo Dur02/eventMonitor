@@ -11,7 +11,7 @@ import {
   useMessage
 } from 'naive-ui'
 import { getConfigSettingValue } from '@/utils/constant/form/common/configSetting'
-import { getConfigFormValue } from '@/utils/constant/form/event/eventConfigForm'
+import { getEventConfigFormValue } from '@/utils/constant/form/event/eventConfigForm'
 import { storeToRefs } from 'pinia'
 import ConfigSetting from '@/components/form/common/ConfigSetting.vue'
 import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
@@ -64,8 +64,8 @@ const handleCreate = () => {
         btnLoading.value = true
         try {
           await addEventConfig({
-            ...getConfigSettingValue(configSetting.value),
-            ...getConfigFormValue(configForm.value)
+            ...getConfigSettingValue(configSetting.value.formValue),
+            ...getEventConfigFormValue(configForm.value.formValue)
           })
           await props.reloadTableData(props.paginationReactive.page!)
           message.success('创建成功')
@@ -89,8 +89,8 @@ const handleUpdate = () => {
         btnLoading.value = true
         try {
           await updateEventConfig({
-            ...getConfigSettingValue(configSetting.value),
-            ...getConfigFormValue(configForm.value),
+            ...getConfigSettingValue(configSetting.value.formValue),
+            ...getEventConfigFormValue(configForm.value.formValue),
             id: props.configId
           })
           await props.reloadTableData(props.paginationReactive.page!)

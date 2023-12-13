@@ -876,13 +876,13 @@ watch(
             item-responsive
             responsive="self"
           >
-            <n-form-item-gi span="1" label="源url">
+            <n-form-item-gi span="2 1100:1" label="源url">
               <n-input
                 v-model:value="getFormValueSource.sourceUrl"
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="情感值">
+            <n-form-item-gi span="2 1100:1" label="情感值">
               <n-input-number
                 v-model:value="getFormValueSource.beginAvgtone"
                 :show-button="false"
@@ -903,7 +903,7 @@ watch(
                 clearable
               />
             </n-form-item-gi>
-            <n-form-item-gi span="1" label="影响度">
+            <n-form-item-gi span="2 1100:1" label="影响度">
               <n-input-number
                 v-model:value="getFormValueSource.beginGoldsteinscale"
                 :show-button="false"
@@ -948,7 +948,7 @@ watch(
         </div>
       </template>
       <n-grid
-        cols="2 600:3 800:4"
+        cols="2 600:3"
         x-gap="15"
       >
         <n-form-item-gi span="1" label="事件数" label-width="60">

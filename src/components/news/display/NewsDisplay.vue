@@ -24,7 +24,6 @@ import {
 import { storeToRefs } from 'pinia'
 import { flow, map, split, find, propEq } from 'lodash/fp'
 import { useFooterStore } from '@/stores/footer'
-import type { NewsSearchValueType } from '@/types/components/news/display'
 import { isExactOptions, orderByOptions, typeOptions } from '@/utils/constant/news/display/newsDisplay'
 import deepCopy from '@/utils/function/deepcopy'
 import { formatTimeStamp } from '@/utils/function/date'
@@ -33,7 +32,7 @@ import NewsEvent from '@/components/modal/NewsEvent.vue'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
 import NewsGraph from '@/components/modal/NewsGraph.vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useNewsStore } from '@/stores/news';
+import { useNewsStore } from '@/stores/news'
 
 // @ts-ignore
 const mapWithIndex = map.convert({ cap: false })
@@ -43,9 +42,31 @@ const route = useRoute()
 
 const footStore = useFooterStore()
 const { selectedId, configType, configList } = storeToRefs(footStore)
+
 const newsStore = useNewsStore()
-const { searchValue, lastSearchValue } = storeToRefs(newsStore)
-const { updateSearchValue, updateLastSearchValue } = newsStore
+const { searchValue, lastSearchValue, paginationReactive } = storeToRefs(newsStore)
+const { updateSearchValue, updateLastSearchValue, updatePaginationReactive, globalSearch } = newsStore
+
+footStore.$onAction(({ name, after }) => {
+  if (name === 'instantQuery') {
+    after(async (res) => {
+      if (route.meta.footerType === 'normal' && res.configType === 'event_news_show_viz') {
+        currentEvent.value = res
+        await reloadTableData(1)
+      }
+    })
+  }
+})
+
+newsStore.$onAction(({ name, after }) => {
+  if (name === 'globalSearch') {
+    after(async (res) => {
+      if (route.meta.footerType === 'repository') {
+        setNewData(paginationReactive.value.page!, paginationReactive.value.itemCount!, res)
+      }
+    })
+  }
+})
 
 const newLoadingRef: Ref<boolean> = ref(false)
 const i18nValue: Ref<'ZhCN' | 'EN'> = ref('ZhCN')
@@ -55,11 +76,7 @@ const newsEventData: Ref<never[]> = ref([])
 const newsGraphDisplay: Ref<boolean> = ref(false)
 const newsGraphData: Ref<never[]> = ref([])
 const scrollbarRef: Ref<ScrollbarInst | null> = ref(null)
-const paginationReactive: PaginationProps = reactive({
-  page: 1,
-  pageSize: 10,
-  itemCount: 0
-})
+
 const currentEvent = ref({})
 const data: Ref<any[]> = ref([])
 
@@ -71,13 +88,11 @@ const handleSearch = async () => {
       currentEvent.value = {
         ...find(propEq('id', selectedId.value))(configList.value)
       }
+      await reloadTableData(1)
     }
     if (route.meta.footerType === 'repository') {
-      currentEvent.value = {
-        test: '1234545'
-      }
+      await globalSearch()
     }
-    await reloadTableData(1)
     searchLoadingRef.value = false
   }
 }
@@ -103,25 +118,25 @@ const setNewData = (page: number, total: number, rows: any[]) => {
       if (splitArr[2]) {
         return {
           ...item,
-          numbers: index + (page - 1) * paginationReactive.pageSize! + 1,
+          numbers: index + (page - 1) * paginationReactive.value.pageSize! + 1,
           site: splitArr[0] + '//' + splitArr[2]
         }
       } else {
         return {
           ...item,
-          numbers: index + (page - 1) * paginationReactive.pageSize! + 1,
+          numbers: index + (page - 1) * paginationReactive.value.pageSize! + 1,
           site: ''
         }
       }
     })
   )(rows)
-  paginationReactive.itemCount = total
+  updatePaginationReactive('itemCount', total)
 }
 
 const reloadTableData = async (page: number) => {
   if (!newLoadingRef.value) {
     newLoadingRef.value = true
-    paginationReactive.page = page
+    updatePaginationReactive('page', page)
     try {
       const {
         data: {
@@ -132,7 +147,7 @@ const reloadTableData = async (page: number) => {
         }
       } = await searchNews({
         pageNum: page,
-        pageSize: paginationReactive.pageSize,
+        pageSize: paginationReactive.value.pageSize,
         ...lastSearchValue.value,
         beginPubtime: lastSearchValue.value.publicTime ? formatTimeStamp(lastSearchValue.value.publicTime[0]) : null,
         endPubtime: lastSearchValue.value.publicTime ? formatTimeStamp(lastSearchValue.value.publicTime[1]) : null,
@@ -190,13 +205,28 @@ const afterGraphClose = () => {
   newsGraphData.value = []
 }
 
-const handlePageSizeChange = (value: number) => {
-  paginationReactive.pageSize = value
-  const maxPage = Math.ceil(paginationReactive.itemCount! / value)
-  if (paginationReactive.page! > maxPage) {
-    paginationReactive.page = maxPage
+const handlePageChange = async (value: number) => {
+  updatePaginationReactive('page', value)
+  if (route.meta.footerType === 'normal') {
+    await reloadTableData(paginationReactive.value.page!)
   }
-  reloadTableData(paginationReactive.page!)
+  if (route.meta.footerType === 'repository') {
+    await globalSearch()
+  }
+}
+
+const handlePageSizeChange = async (value: number) => {
+  updatePaginationReactive('pageSize', value)
+  const maxPage = Math.ceil(paginationReactive.value.itemCount! / value)
+  if (paginationReactive.value.page! > maxPage) {
+    updatePaginationReactive('page', maxPage)
+  }
+  if (route.meta.footerType === 'normal') {
+    await reloadTableData(paginationReactive.value.page!)
+  }
+  if (route.meta.footerType === 'repository') {
+    await globalSearch()
+  }
 }
 
 watch(
@@ -234,30 +264,19 @@ watch(
       queryContent: ''
     })
     scrollbarRef.value?.scrollTo({ top: 0 })
-    paginationReactive.page = 1
-    paginationReactive.itemCount = 0
+    updatePaginationReactive('page', 1)
+    updatePaginationReactive('itemCount', 0)
     currentEvent.value = {}
     i18nValue.value = 'ZhCN'
     data.value = []
     if (route.meta.footerType === 'repository') {
-      await reloadTableData(1)
+      await globalSearch()
     }
   },
   {
     immediate: true
   }
 )
-
-footStore.$onAction(({ name, after }) => {
-  if (name === 'instantQuery') {
-    after(async (res) => {
-      if (res.configType === 'event_news_show_viz') {
-        currentEvent.value = res
-        await reloadTableData(1)
-      }
-    })
-  }
-})
 </script>
 
 <template>
@@ -448,7 +467,7 @@ footStore.$onAction(({ name, after }) => {
     :page-sizes="[10, 20, 50, 100]"
     show-quick-jumper
     show-size-picker
-    @update:page="reloadTableData"
+    @update:page="handlePageChange"
     @update:page-size="handlePageSizeChange"
   >
     <template #suffix="{ itemCount }">

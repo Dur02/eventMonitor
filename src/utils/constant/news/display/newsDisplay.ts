@@ -58,22 +58,8 @@ export const graphDisplayColumns: any =[
     ellipsisComponent
   },
   {
-    title: 'counts',
-    key: 'counts',
-    ellipsis,
-    align,
-    ellipsisComponent
-  },
-  {
     title: '日期',
     key: 'date',
-    ellipsis,
-    align,
-    ellipsisComponent
-  },
-  {
-    title: '地理位置',
-    key: 'locations',
     ellipsis,
     align,
     ellipsisComponent
@@ -86,21 +72,35 @@ export const graphDisplayColumns: any =[
     ellipsisComponent
   },
   {
-    title: '组织',
+    title: '冲突集列表',
+    key: 'counts',
+    ellipsis,
+    align,
+    ellipsisComponent
+  },
+  {
+    title: '地理列表',
+    key: 'locations',
+    ellipsis,
+    align,
+    ellipsisComponent
+  },
+  {
+    title: '组织列表',
     key: 'organizations',
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: '人物',
+    title: '人物列表',
     key: 'persons',
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: '主题',
+    title: '主题列表',
     key: 'themes',
     ellipsis,
     align,

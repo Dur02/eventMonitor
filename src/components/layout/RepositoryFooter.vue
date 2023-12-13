@@ -9,9 +9,10 @@ import { storeToRefs } from 'pinia'
 
 const newsStore = useNewsStore()
 const { eventConfigFormValue, graphConfigFormValue } = storeToRefs(newsStore)
-const { resetAll } = newsStore
+const { globalSearch, resetAll } = newsStore
 
 const footerExpand: Ref<boolean> = ref(false)
+const submitLoading: Ref<boolean> = ref(false)
 const eventConfigFormRef: Ref<any | null> = ref(null)
 const graphConfigFormRef: Ref<any | null> = ref(null)
 
@@ -19,8 +20,10 @@ const changeExpand = () => {
   footerExpand.value = !footerExpand.value
 }
 
-const handleClick = () => {
-
+const handleClick = async () => {
+  submitLoading.value = true
+  await globalSearch()
+  submitLoading.value = false
 }
 
 onBeforeUnmount(() => {
@@ -68,6 +71,7 @@ onBeforeUnmount(() => {
             style="width: 100%;text-align: center;"
           >
             <n-button
+              :loading="submitLoading"
               type="info"
               @click="handleClick"
             >
@@ -94,6 +98,7 @@ onBeforeUnmount(() => {
             style="width: 100%;text-align: center;"
           >
             <n-button
+              :loading="submitLoading"
               type="info"
               @click="handleClick"
             >

@@ -7,7 +7,7 @@ import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import deepCopy from '@/utils/function/deepcopy'
 import EventConfigForm from '@/components/form/event/EventConfigForm.vue'
-import { eventConfigFormInitialValue, getConfigFormValue, getConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
+import { eventConfigFormInitialValue, getEventConfigFormValue, getEventConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
 import type { eventConfigFormInitialValueType } from '@/types/components/form/event'
 import { flow, find, propEq } from 'lodash/fp'
 import ConfigSave from '@/components/form/common/ConfigSave.vue'
@@ -41,7 +41,7 @@ const handleCreate = async (e: MouseEvent) => {
             isSaveConfig: configSaveRef.value?.formValue.isSave,
             configName: configSaveRef.value?.formValue.configName,
             queryType: route.meta.queryType,
-            ...getConfigFormValue(configFormRef.value)
+            ...getEventConfigFormValue(configFormRef.value.formValue)
           })
           setSelectedId(null)
           // && route.meta.requestFunc && route.meta.configType && route.meta.instantQuery
@@ -87,7 +87,7 @@ watch(
           formDisabled.value = true
           formValue.value = flow(
             find(propEq('id', selectedId.value)),
-            getConfigFormInitialValue
+            getEventConfigFormInitialValue
           )(deepCopy(configList.value))
         }
         break

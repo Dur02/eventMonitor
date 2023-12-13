@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { SelectOption, TreeSelectOption  } from 'naive-ui'
 import { getAllEventCodeList as getAllEventCodeListApi, getConfigCodeList } from '@/api/eventCodeDict'
-import { map } from 'lodash/fp'
+import { flatten, map } from 'lodash/fp'
+import deepCopy from '@/utils/function/deepcopy';
 
 export const useConstantStore = defineStore('constant', () => {
   const actorCountryCodeList: Ref<SelectOption[]> = ref([])
@@ -21,6 +22,7 @@ export const useConstantStore = defineStore('constant', () => {
   const quadClass: Ref<SelectOption[]>   = ref([])
   const religionCode: Ref<SelectOption[]>  = ref([])
   const rootCodeList: Ref<SelectOption[]> = ref([])
+  const concatAllCodeList: Ref<SelectOption[]> = ref([])
   const eventConfigTypeList: Ref<SelectOption[]> = ref([])
   const graphConfigTypeList: Ref<SelectOption[]> = ref([])
 
@@ -92,6 +94,12 @@ export const useConstantStore = defineStore('constant', () => {
           labelZh: eventNameZh,
           eventQuadClass
         }))(data.rootCodeList)
+
+        concatAllCodeList.value = map(({ eventCode, eventNameZh, eventNameEn }) => ({
+          label: `${eventNameZh}(${eventNameEn})`,
+          value: eventCode,
+          labelZh: eventNameZh,
+        }))(flatten([data.baseCodeList, data.eventCodeList, data.rootCodeList]))
       } catch (e) {
         return Promise.reject()
       }
@@ -137,6 +145,7 @@ export const useConstantStore = defineStore('constant', () => {
     rootCodeList,
     eventConfigTypeList,
     graphConfigTypeList,
+    concatAllCodeList,
     getAllEventCodeList,
     getAllEventConfigType,
     getAllGraphConfigType

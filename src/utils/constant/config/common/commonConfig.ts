@@ -29,7 +29,7 @@ import {
 import { CalendarEdit20Filled } from '@vicons/fluent'
 import { useSystemStore } from '@/stores/system'
 import { eventConfigExport } from '@/api/eventAnalyse'
-import { eventConfigFormInitialValue, getConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
+import { eventConfigFormInitialValue, getEventConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm'
 import { configSettingInitialValue, getConfigSettingInitialValue } from '@/utils/constant/form/common/configSetting'
 
 const systemStore = useSystemStore(pinia)
@@ -336,7 +336,7 @@ export const allCommonColumns = (
                         handleUpdateDrawer(
                           '修改配置',
                           getConfigSettingInitialValue(rowData),
-                          getConfigFormInitialValue(rowData),
+                          getEventConfigFormInitialValue(rowData),
                           true,
                           true,
                           (!(runStatus === 0 || runStatus === 3)),
@@ -481,7 +481,7 @@ export const allCommonColumns = (
                           ...getConfigSettingInitialValue(rowData),
                           remark: '配置复制产生'
                         },
-                        getConfigFormInitialValue(rowData),
+                        getEventConfigFormInitialValue(rowData),
                         true,
                         false,
                         false,

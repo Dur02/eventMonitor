@@ -13,5 +13,19 @@ export interface graphConfigFormInitialValueType {
   organizations: string,
   organizationsIsBig: number,
   websiteRegion: Array<string> | null,
-  cameoeventids: string
+  websiteUrl: string,
+  cameoeventids: string,
+  cameoeventidsIsAnd: number,
+  avgEmMin: number | null,
+  avgEmMax: number | null,
+  proEmMin: number | null,
+  proEmMax: number | null,
+  negEmMin: number | null,
+  negEmMax: number | null,
+  polRaMin: number | null,
+  polRaMax: number | null,
+  actRaMin: number | null,
+  actRaMax: number | null,
+  propRaMin: number | null,
+  propRaMax: number | null
 }

@@ -88,6 +88,15 @@ export default [
     component: () => import('../views/layout/LayoutView.vue'),
     children: [
       {
+        path: 'repository',
+        name: 'newsRepository',
+        meta: {
+          breadcrumb: '新闻全库',
+          footerType: 'repository',
+        },
+        component: () => import('../views/news/display/NewsDisplayView.vue')
+      },
+      {
         path: 'display',
         name: 'newsDisplay',
         meta: {
@@ -98,15 +107,6 @@ export default [
           requestFunc: getEventConfigListByConfigName,
           instantQuery: eventInstantQuery,
           queryType: 'page',
-        },
-        component: () => import('../views/news/display/NewsDisplayView.vue')
-      },
-      {
-        path: 'repository',
-        name: 'newsRepository',
-        meta: {
-          breadcrumb: '新闻全库',
-          footerType: 'repository',
         },
         component: () => import('../views/news/display/NewsDisplayView.vue')
       },

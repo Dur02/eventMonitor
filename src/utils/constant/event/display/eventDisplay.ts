@@ -2,7 +2,8 @@ import type { DataTableColumns, EllipsisProps } from 'naive-ui'
 import type { eventDisplayRowsType } from '@/types/components/event/display'
 import { useConstantStore } from '@/stores/constant'
 import { storeToRefs } from 'pinia'
-import { flow, find, propEq, prop, includes } from 'lodash/fp'
+import { flow, find, propEq, prop, includes, concat, flatten } from 'lodash/fp'
+import deepCopy from '@/utils/function/deepcopy';
 
 const eventStore = useConstantStore()
 const {
@@ -16,7 +17,8 @@ const {
   knownGroupCode,
   quadClass,
   religionCode,
-  rootCodeList
+  rootCodeList,
+  concatAllCodeList
 } = storeToRefs(eventStore)
 
 const findValueInTarget = (value: string | number, target: any) => flow(
@@ -65,7 +67,7 @@ export const eventDisplayColumns: DataTableColumns<eventDisplayRowsType> = [
   {
     title: '根事件',
     key: 'eventrootcode',
-    render: ({ eventrootcode }) => findValueInTarget(eventrootcode, rootCodeList.value),
+    render: ({ eventrootcode }) => findValueInTarget(eventrootcode, concatAllCodeList.value),
     ellipsis,
     align,
     ellipsisComponent
@@ -73,15 +75,15 @@ export const eventDisplayColumns: DataTableColumns<eventDisplayRowsType> = [
   {
     title: '基事件',
     key: 'eventbasecode',
-    render: ({ eventbasecode }) => findValueInTarget(eventbasecode, baseCodeList.value),
+    render: ({ eventbasecode }) => findValueInTarget(eventbasecode, concatAllCodeList.value),
     ellipsis,
     align,
     ellipsisComponent
   },
   {
-    title: '事件编码',
+    title: '子类事件',
     key: 'eventcode',
-    render: ({ eventcode }) => findValueInTarget(eventcode, eventCodeList.value),
+    render: ({ eventcode }) => findValueInTarget(eventcode, concatAllCodeList.value),
     ellipsis,
     align,
     ellipsisComponent

@@ -81,6 +81,7 @@ const handleMultipleDelete = () => {
 }
 
 const handleInputClear = () => {
+  console.log('123')
   nextTick(async () => await handleSearch())
 }
 

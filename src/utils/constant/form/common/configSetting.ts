@@ -67,6 +67,6 @@ export const getConfigSettingInitialValue = (rowData: eventConfigRowsType) => ({
 })
 
 export const getConfigSettingValue = (configSetting: any) => ({
-  ...configSetting.formValue,
-  configType: joinArray(configSetting.formValue.configType)
+  ...configSetting,
+  configType: joinArray(configSetting.configType)
 })

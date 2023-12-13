@@ -13,7 +13,7 @@ import {
   NSpace,
   NGrid,
   NSelect,
-  NCheckbox
+  NCheckbox, NInputNumber
 } from 'naive-ui'
 import type { Ref } from 'vue'
 import { ref, watch, computed } from 'vue'
@@ -23,11 +23,12 @@ import type { graphConfigFormInitialValueType } from '@/types/components/form/gr
 import { Calculator, Calendar, Heart } from '@vicons/ionicons5'
 import { IosApps } from '@vicons/ionicons4'
 import { ObjectGroup } from '@vicons/fa'
-import { CountertopsFilled, PersonSearchRound } from '@vicons/material'
+import { CountertopsFilled, PersonSearchRound, ShareRound } from '@vicons/material'
 import { Document, ApplicationWeb } from '@vicons/carbon'
 import { Earth16Filled, Organization48Filled } from '@vicons/fluent'
 import { useNewsStore } from '@/stores/news'
 import { storeToRefs } from 'pinia'
+import { useConstantStore } from '@/stores/constant'
 
 const props = defineProps<{
   initialValue: graphConfigFormInitialValueType,
@@ -38,6 +39,9 @@ const props = defineProps<{
 
 const newsStore = useNewsStore()
 const { graphConfigFormValue } = storeToRefs(newsStore)
+
+const constantStore = useConstantStore()
+const { actorCountryCodeList } = storeToRefs(constantStore)
 
 const getFormValueSource = computed(() => {
   return props.type === 'news' ? graphConfigFormValue.value : formValue.value
@@ -161,19 +165,19 @@ watch(
           <n-icon class="icon" size="20">
             <CountertopsFilled />
           </n-icon>
-          <span>counts</span>
+          <span>冲突集列表</span>
         </div>
       </template>
       <n-grid :cols="24">
         <n-form-item-gi
-          span="16"
+          span="20"
         >
           <n-input
             v-model:value="getFormValueSource.counts"
           />
         </n-form-item-gi>
         <n-form-item-gi
-          span="4"
+          span="3"
           offset="1"
         >
           <n-checkbox
@@ -197,19 +201,19 @@ watch(
           <n-icon class="icon" size="20">
             <Document />
           </n-icon>
-          <span>主题</span>
+          <span>主题列表</span>
         </div>
       </template>
       <n-grid :cols="24">
         <n-form-item-gi
-          span="16"
+          span="20"
         >
           <n-input
             v-model:value="getFormValueSource.themes"
           />
         </n-form-item-gi>
         <n-form-item-gi
-          span="4"
+          span="3"
           offset="1"
         >
           <n-checkbox
@@ -233,19 +237,19 @@ watch(
           <n-icon class="icon" size="20">
             <Earth16Filled />
           </n-icon>
-          <span>地理</span>
+          <span>地理列表</span>
         </div>
       </template>
       <n-grid :cols="24">
         <n-form-item-gi
-          span="16"
+          span="20"
         >
           <n-input
             v-model:value="getFormValueSource.locations"
           />
         </n-form-item-gi>
         <n-form-item-gi
-          span="4"
+          span="3"
           offset="1"
         >
           <n-checkbox
@@ -269,19 +273,19 @@ watch(
           <n-icon class="icon" size="20">
             <PersonSearchRound />
           </n-icon>
-          <span>人物</span>
+          <span>人物列表</span>
         </div>
       </template>
       <n-grid :cols="24">
         <n-form-item-gi
-          span="16"
+          span="20"
         >
           <n-input
             v-model:value="getFormValueSource.persons"
           />
         </n-form-item-gi>
         <n-form-item-gi
-          span="4"
+          span="3"
           offset="1"
         >
           <n-checkbox
@@ -305,19 +309,19 @@ watch(
           <n-icon class="icon" size="20">
             <Organization48Filled />
           </n-icon>
-          <span>组织</span>
+          <span>组织列表</span>
         </div>
       </template>
       <n-grid :cols="24">
         <n-form-item-gi
-          span="16"
+          span="20"
         >
           <n-input
             v-model:value="getFormValueSource.organizations"
           />
         </n-form-item-gi>
         <n-form-item-gi
-          span="4"
+          span="3"
           offset="1"
         >
           <n-checkbox
@@ -334,6 +338,7 @@ watch(
     <n-form-item
       label-style="font-weight: 600;"
       label-width="115"
+      :show-feedback="false"
     >
       <template #label>
         <div class="icon-label">
@@ -343,11 +348,48 @@ watch(
           <span>网站地域</span>
         </div>
       </template>
-      <n-select />
+      <n-grid :cols="24">
+        <n-form-item-gi
+          span="20"
+        >
+          <n-select
+            v-model:value="getFormValueSource.websiteRegion"
+            :options="actorCountryCodeList"
+            max-tag-count="responsive"
+            placement="bottom"
+            multiple
+            clearable
+          />
+        </n-form-item-gi>
+      </n-grid>
     </n-form-item>
     <n-form-item
       label-style="font-weight: 600;"
       label-width="115"
+      :show-feedback="false"
+    >
+      <template #label>
+        <div class="icon-label">
+          <n-icon class="icon" size="20">
+            <ShareRound />
+          </n-icon>
+          <span>来源网站</span>
+        </div>
+      </template>
+      <n-grid :cols="24">
+        <n-form-item-gi
+          span="20"
+        >
+          <n-input
+            v-model:value="getFormValueSource.websiteUrl"
+          />
+        </n-form-item-gi>
+      </n-grid>
+    </n-form-item>
+    <n-form-item
+      label-style="font-weight: 600;"
+      label-width="115"
+      :show-feedback="false"
     >
       <template #label>
         <div class="icon-label">
@@ -357,21 +399,169 @@ watch(
           <span>情感值</span>
         </div>
       </template>
-      <n-checkbox-group v-model:value="getFormValueSource.emo">
-        <n-space item-style="display: flex;">
-          <n-checkbox value="Beijing" label="平均情感" />
-          <n-checkbox value="Shanghai" label="正情感词比例" />
-          <n-checkbox value="Guangzhou" label="负情感词比例" />
-          <n-checkbox value="Shenzen" label="极性词比例" />
-          <n-checkbox value="Shenzen" label="活动词比例" />
-          <n-checkbox value="Shenzen" label="代称比例" />
-        </n-space>
-      </n-checkbox-group>
+      <n-grid
+        :cols="6"
+        :x-gap="15"
+        item-responsive
+        responsive="self"
+      >
+        <n-form-item-gi
+          label="平均情感"
+          label-width="110"
+          span="3 800:2"
+        >
+          <n-input-number
+            v-model:value="getFormValueSource.avgEmMin"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-right: 5px;"
+            clearable
+          />
+          至
+          <n-input-number
+            v-model:value="getFormValueSource.avgEmMax"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-left: 5px;"
+            clearable
+          />
+        </n-form-item-gi>
+        <n-form-item-gi
+          label="正向情感词比例"
+          label-width="110"
+          span="3 800:2"
+        >
+          <n-input-number
+            v-model:value="getFormValueSource.proEmMin"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-right: 5px;"
+            clearable
+          />
+          至
+          <n-input-number
+            v-model:value="getFormValueSource.proEmMax"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-left: 5px;"
+            clearable
+          />
+        </n-form-item-gi>
+        <n-form-item-gi
+          label="负向情感词比例"
+          label-width="110"
+          span="3 800:2"
+        >
+          <n-input-number
+            v-model:value="getFormValueSource.negEmMin"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-right: 5px;"
+            clearable
+          />
+          至
+          <n-input-number
+            v-model:value="getFormValueSource.negEmMax"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-left: 5px;"
+            clearable
+          />
+        </n-form-item-gi>
+        <n-form-item-gi
+          label="极性词比例"
+          label-width="110"
+          span="2 1100:1"
+        >
+          <n-input-number
+            v-model:value="getFormValueSource.polRaMin"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-right: 5px;"
+            clearable
+          />
+          至
+          <n-input-number
+            v-model:value="getFormValueSource.polRaMax"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-left: 5px;"
+            clearable
+          />
+        </n-form-item-gi>
+        <n-form-item-gi
+          label="活动词比例"
+          label-width="110"
+          span="2 1100:1"
+        >
+          <n-input-number
+            v-model:value="getFormValueSource.actRaMin"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-right: 5px;"
+            clearable
+          />
+          至
+          <n-input-number
+            v-model:value="getFormValueSource.actRaMax"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-left: 5px;"
+            clearable
+          />
+        </n-form-item-gi>
+        <n-form-item-gi
+          label="活动词比例"
+          label-width="110"
+          span="2 1100:1"
+        >
+          <n-input-number
+            v-model:value="getFormValueSource.propRaMin"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-right: 5px;"
+            clearable
+          />
+          至
+          <n-input-number
+            v-model:value="getFormValueSource.propRaMax"
+            :show-button="false"
+            :precision="0"
+            :min="-100"
+            :max="100"
+            style="padding-left: 5px;"
+            clearable
+          />
+        </n-form-item-gi>
+      </n-grid>
     </n-form-item>
     <p style="margin: 0 0 5px 115px;">支持多个事件ID的精确查询,输入形式包括1.多个ID之间用","(英文)分割,如:256,257;2.两个ID之间用"-"分割,表示事件ID的范围</p>
     <n-form-item
       label-style="font-weight: 600;"
       label-width="115"
+      :show-feedback="false"
     >
       <template #label>
         <div class="icon-label">
@@ -381,9 +571,30 @@ watch(
           <span>ID集合</span>
         </div>
       </template>
-      <n-input
-        v-model:value="getFormValueSource.cameoeventids"
-      />
+      <n-grid :cols="24">
+        <n-form-item-gi
+          span="20"
+        >
+          <n-input
+            v-model:value="getFormValueSource.cameoeventids"
+          />
+        </n-form-item-gi>
+        <n-form-item-gi
+          span="3"
+          offset="1"
+        >
+          <n-radio-group v-model:value="getFormValueSource.cameoeventidsIsAnd">
+            <n-space>
+              <n-radio :value="0">
+                或
+              </n-radio>
+              <n-radio :value="1">
+                且
+              </n-radio>
+            </n-space>
+          </n-radio-group>
+        </n-form-item-gi>
+      </n-grid>
     </n-form-item>
   </n-form>
 </template>
