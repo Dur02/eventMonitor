@@ -14,7 +14,7 @@ import {
 import { LineChart, HeatmapChart, ScatterChart } from 'echarts/charts'
 import { LabelLayout, UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
-import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard, NSkeleton } from 'naive-ui'
+import { NGi, NGrid, NRadio, NRadioGroup, NSpace, NSpin, NCard } from 'naive-ui'
 import { useFooterStore } from '@/stores/footer'
 import { storeToRefs } from 'pinia'
 import { getResultDataByConfigId } from '@/api/eventAnalyse'
@@ -28,20 +28,25 @@ import {
   join,
   drop,
   dropRight,
-  includes
+  includes,
+  find,
+  propEq,
+  concat
 } from 'lodash/fp'
-import { getWeek, getYear, getMonth } from '@/utils/function/date'
+import { getWeek, getYear, getMonth, getSqlDate, weekGetDay } from '@/utils/function/date'
 import {
   lineOptions,
   getLineOption,
   heatMapOptions,
   getHeatMapOptions,
-  getNewHeatMapOption,
-  // getScatterOption
+  getNewHeatMapOption
 } from '@/utils/constant/event/timeline/eventTimeline'
 import type { timelineDataType } from '@/types/components/event/timeline'
 import world from '@/utils/constant/echarts/world.json'
 import { useDebounce } from '@/utils/function/debounce'
+import { useNewsStore } from '@/stores/news'
+import router from '@/router';
+import { getEventConfigFormInitialValue } from '@/utils/constant/form/event/eventConfigForm';
 
 echarts.use([
   GridComponent,
@@ -63,7 +68,10 @@ echarts.registerMap('world', JSON.stringify(world))
 const mapWithIndex = map.convert({ cap: false })
 
 const footStore = useFooterStore()
-const { selectedId, configType } = storeToRefs(footStore)
+const { selectedId, configType, configList } = storeToRefs(footStore)
+
+const newsStore = useNewsStore()
+const { updateEventConfigFormValue } = newsStore
 
 const loadingRef: Ref<boolean> = ref(false)
 let allData: timelineDataType[] | null = null
@@ -398,8 +406,100 @@ const initAllChart = () => {
     echartsLine?.clear()
     setLineOption(lineOptionValue.value)
   })
-  echartsLine?.on('click', (param) => {
-    console.log(param)
+  echartsLine?.getZr().on('click', (params) => {
+    const pointInPixel = [params.offsetX, params.offsetY]
+    if (echartsLine?.containPixel('grid', pointInPixel)) {
+      const pointInGrid = echartsLine?.convertFromPixel({
+        seriesIndex: 0
+      }, pointInPixel)
+      const op: any = echartsLine?.getOption()
+      const yData = op.series[0].data[pointInGrid[0]]
+      const xData = op.xAxis[0].data[pointInGrid[0]]
+      const currentConfig = find(propEq('id', selectedId.value))(configList.value)
+
+      const getEventForm = () => {
+        switch (lineOptionValue.value) {
+          case 'day': {
+            updateEventConfigFormValue({
+              ...getEventConfigFormInitialValue(currentConfig),
+              sqldate: getSqlDate(xData, xData)
+            })
+            break
+          }
+          case 'week': {
+            const year = flow(
+              dropRight(2),
+              join(''),
+              Number
+            )(xData)
+            const week = flow(
+              drop(4),
+              join(''),
+              Number
+            )(xData)
+            const a = weekGetDay(year, week)
+            updateEventConfigFormValue({
+              ...getEventConfigFormInitialValue(currentConfig),
+              sqldate: [new Date(a[0]).getTime(), new Date(a[1]).getTime()]
+            })
+            break
+          }
+          case 'month': {
+            const year = flow(
+              dropRight(2),
+              join(''),
+              Number
+            )(xData)
+            const month = flow(
+              drop(4),
+              join(''),
+              Number
+            )(xData)
+            let maxDay
+            const Month31Day = [1, 3, 5, 7, 8, 10, 12]
+            const Month30Day = [4, 6, 9, 11]
+            if (includes(month)(Month31Day)) {
+              maxDay = 31
+            } else if (includes(month)(Month30Day)) {
+              maxDay = 30
+            } else {
+              if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) {
+                maxDay = 29
+              } else {
+                maxDay = 28
+              }
+            }
+            const beginSqldate = new Date(`${year}-${month < 10 ? '0' + month : month}-01`).getTime()
+            const endSqldate = new Date(`${year}-${month < 10 ? '0' + month : month}-${maxDay}`).getTime()
+            updateEventConfigFormValue({
+              ...getEventConfigFormInitialValue(currentConfig),
+              sqldate: [beginSqldate, endSqldate]
+            })
+            break
+          }
+          case 'year': {
+            const year = flow(
+              dropRight(2),
+              join(''),
+              Number
+            )(xData)
+            const beginSqldate = new Date(`${year}-01-01`).getTime()
+            const endSqldate = new Date(`${year}-12-31`).getTime()
+            updateEventConfigFormValue({
+              ...getEventConfigFormInitialValue(currentConfig),
+              sqldate: [beginSqldate, endSqldate]
+            })
+            break
+          }
+          default: {
+            break
+          }
+        }
+        router.push({ path: '/news/repository' })
+      }
+
+      getEventForm()
+    }
   })
 
   initHeatMapData()
@@ -590,7 +690,7 @@ onBeforeUnmount(() => {
 
   .echarts-line, .echarts-heatMap, .echarts-scatter {
     width: 100%;
-    height: 470px;
+    height: 465px;
   }
 }
 </style>

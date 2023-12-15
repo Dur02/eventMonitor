@@ -92,6 +92,7 @@ const handleSearch = async () => {
     }
     if (route.meta.footerType === 'repository') {
       await globalSearch()
+      scrollbarRef.value?.scrollTo({ top: 0 })
     }
     searchLoadingRef.value = false
   }
@@ -212,6 +213,7 @@ const handlePageChange = async (value: number) => {
   }
   if (route.meta.footerType === 'repository') {
     await globalSearch()
+    scrollbarRef.value?.scrollTo({ top: 0 })
   }
 }
 
@@ -226,6 +228,7 @@ const handlePageSizeChange = async (value: number) => {
   }
   if (route.meta.footerType === 'repository') {
     await globalSearch()
+    scrollbarRef.value?.scrollTo({ top: 0 })
   }
 }
 
@@ -271,6 +274,7 @@ watch(
     data.value = []
     if (route.meta.footerType === 'repository') {
       await globalSearch()
+      scrollbarRef.value?.scrollTo({ top: 0 })
     }
   },
   {

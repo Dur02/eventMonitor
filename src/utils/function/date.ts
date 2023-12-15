@@ -81,3 +81,156 @@ export const getSqlDate = (beginSqldate: number, endSqldate: number): [number, n
   const end = `${getYear(String(endSqldate))}-${getMonth(String(endSqldate))}-${getDay(String(endSqldate))}`
   return [new Date(begin).getTime(), new Date(end).getTime()]
 }
+
+export const weekGetDay = (year: number, week: number) => {
+  const date = new Date(year, 0, 1)
+  let time = date.getTime()
+  const _week = date.getDay()
+
+  if (_week !== 0) {
+    if (week === 54) {
+      return '今年没有54周'
+    }
+    let cnt = 0
+    switch (_week) {
+      case 0:
+        cnt = 7
+        break
+      case 1:
+        cnt = 6
+        break
+      case 2:
+        cnt = 5
+        break
+      case 3:
+        cnt = 4
+        break
+      case 4:
+        cnt = 3
+        break
+      case 5:
+        cnt = 2
+        break
+      default:
+        cnt = 1
+        break
+    }
+    cnt += 1
+    time += cnt * 24 * 3600000
+    const nextYear = new Date(parseInt(String(year), 10) + 1, 0, 1)
+    const nextWeek = nextYear.getDay()
+    let lastcnt = 0
+    switch (nextWeek) {
+      case 0:
+        lastcnt = 7
+        break
+      case 1:
+        lastcnt = 6
+        break
+      case 2:
+        lastcnt = 5
+        break
+      case 3:
+        lastcnt = 4
+        break
+      case 4:
+        lastcnt = 3
+        break
+      case 5:
+        lastcnt = 2
+        break
+      default:
+        lastcnt = 1
+        break
+    }
+    if (week === 1) {
+      const start = formatTimeStamp(date.getTime())
+      date.setTime(time - 24 * 3600000)
+      return [start, String(date)]
+    } else if (week === 53) {
+      const start = time + (week - 2) * 7 * 24 * 3600000
+      const end = time + (week - 2) * 7 * 24 * 3600000 + lastcnt * 24 * 3600000 - 24 * 3600000
+      date.setTime(start)
+      const _start = formatTimeStamp(date.getTime())
+      date.setTime(end)
+      const _end = formatTimeStamp(date.getTime())
+      return [_start, _end]
+    } else {
+      const start = time + (week - 2) * 7 * 24 * 3600000
+      const end = time + (week - 1) * 7 * 24 * 3600000
+      date.setTime(start)
+      const _start = formatTimeStamp(date.getTime())
+      date.setTime(end)
+      const _end = formatTimeStamp(date.getTime())
+      return [_start, _end]
+    }
+  } else {
+    let cnt = 0
+    if (_week === 0 && week === 1) {
+      cnt = 0
+    } else if (_week === 0) {
+      cnt = 7
+    } else if (_week === 1) {
+      cnt = 6
+    } else if (_week === 2) {
+      cnt = 5
+    } else if (_week === 3) {
+      cnt = 4
+    } else if (_week === 4) {
+      cnt = 3
+    } else if (_week === 5) {
+      cnt = 2
+    } else if (_week === 6) {
+      cnt = 1
+    }
+    cnt += 1
+    time += 24 * 3600000
+    const nextYear = new Date(parseInt(String(year), 10) + 1, 0, 1)
+    const nextWeek = nextYear.getDay()
+    let lastcnt = 0
+    switch (nextWeek) {
+      case 0:
+        lastcnt = 7
+        break
+      case 1:
+        lastcnt = 6
+        break
+      case 2:
+        lastcnt = 5
+        break
+      case 3:
+        lastcnt = 4
+        break
+      case 4:
+        lastcnt = 3
+        break
+      case 5:
+        lastcnt = 2
+        break
+      default:
+        lastcnt = 1
+        break
+    }
+    if (week === 1) {
+      const start = formatTimeStamp(date.getTime())
+      date.setTime(time - 24 * 3600000)
+      return [start, String(date)]
+    } else if (week === 54) {
+      const start = time + (week - 2) * 7 * 24 * 3600000
+      const end = time + (week - 2) * 7 * 24 * 3600000 + lastcnt * 24 * 3600000 - 24 * 3600000
+      date.setTime(start)
+      const _start = formatTimeStamp(date.getTime())
+      date.setTime(end)
+      const _end = formatTimeStamp(date.getTime())
+      return [_start, _end]
+    } else {
+      const start = time + (week - 2) * 7 * 24 * 3600000
+      const end = time + (week - 1) * 7 * 24 * 3600000 - 24 * 3600000
+      date.setTime(start)
+      const _start = formatTimeStamp(date.getTime())
+      date.setTime(end)
+      const _end = formatTimeStamp(date.getTime())
+      return [_start, _end]
+    }
+  }
+}
