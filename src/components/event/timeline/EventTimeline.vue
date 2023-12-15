@@ -413,7 +413,6 @@ const initAllChart = () => {
         seriesIndex: 0
       }, pointInPixel)
       const op: any = echartsLine?.getOption()
-      const yData = op.series[0].data[pointInGrid[0]]
       const xData = op.xAxis[0].data[pointInGrid[0]]
       const currentConfig = find(propEq('id', selectedId.value))(configList.value)
 
@@ -505,8 +504,8 @@ const initAllChart = () => {
   initHeatMapData()
   echartsHeatMap?.clear()
   setHeatMapOption(heatMapOptionValue.value)
-  echartsHeatMap?.on('click', (param) => {
-    console.log(param)
+  echartsHeatMap?.on('click', (params) => {
+    console.log(params)
   })
 
   // echartsScatter?.clear()
